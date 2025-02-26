@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { AlertSound } from '../types/timer';
+import { sounds } from '../config/alerts';
 
 export const useAudio = (soundName: AlertSound) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -8,19 +9,14 @@ export const useAudio = (soundName: AlertSound) => {
 
   useEffect(() => {
     if (Platform.OS === 'web') {
-      const audio = new Audio(
-        soundName === 'gong' 
-          ? 'https://assets.mixkit.co/active_storage/sfx/2424/2424-preview.mp3'
-          : soundName === 'bell'
-          ? 'https://assets.mixkit.co/active_storage/sfx/2400/2400-preview.mp3'
-          : 'https://assets.mixkit.co/active_storage/sfx/2399/2399-preview.mp3'
-      );
-      
-      audio.addEventListener('ended', () => {
-        setIsPlaying(false);
-      });
-      
-      audioRef.current = audio;
+      const soundConfig = sounds.find(s => s.id === soundName);
+      if (soundConfig) {
+        const audio = new Audio(soundConfig.url);
+        audio.addEventListener('ended', () => {
+          setIsPlaying(false);
+        });
+        audioRef.current = audio;
+      }
       return () => {
         if (audioRef.current) {
           audioRef.current.pause();

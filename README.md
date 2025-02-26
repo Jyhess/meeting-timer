@@ -2,6 +2,10 @@
 
 CoachTimer est une application de minuterie professionnelle conçue pour les coachs, les présentateurs et les formateurs. Elle offre une interface élégante et des fonctionnalités avancées de gestion du temps.
 
+## À propos
+
+Cette application a été créée par Bolt, une IA développée par StackBlitz, en collaboration avec un utilisateur humain. Elle représente un exemple de co-création entre l'intelligence artificielle et l'humain pour produire une application professionnelle et fonctionnelle.
+
 ## Fonctionnalités
 
 - ⏱️ Minuterie intuitive avec saisie rapide
@@ -33,7 +37,7 @@ CoachTimer est une application de minuterie professionnelle conçue pour les coa
 
 1. Clonez le dépôt :
 ```bash
-git clone https://github.com/votre-username/coach-timer.git
+git clone https://github.com/jyhess/coach-timer.git
 ```
 
 2. Installez les dépendances :

@@ -1,5 +1,5 @@
 export type AlertEffect = 'flash' | 'pulse' | 'shake';
-export type AlertSound = 'gong' | 'bell' | 'chime';
+export type AlertSound = 'gong' | 'bell' | 'chime' | 'alarm';
 
 export type Alert = {
   id: string;
@@ -9,4 +9,12 @@ export type Alert = {
   sound: AlertSound;
   effect: AlertEffect;
   lastTriggered?: number;
+};
+
+export type TimerPreset = {
+  id: string;
+  name: string;
+  minutes: number;
+  alerts: Alert[];
+  created_at: string;
 };

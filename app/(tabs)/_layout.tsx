@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '../../src/components/Timer/Icon';
 
 export default function TabLayout() {
   return (
@@ -12,13 +12,23 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: '#666',
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Timer',
+          title: 'Timers',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="timer-outline" size={size} color={color} />
+            <Icon name="schedule" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="timer"
+        options={{
+          title: 'Nouveau',
+          tabBarIcon: ({ size, color }) => (
+            <Icon name="add_circle" size={size} color={color} />
           ),
         }}
       />

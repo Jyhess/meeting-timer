@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 declare global {
   interface Window {
@@ -12,7 +12,9 @@ declare global {
 
 export default function RootLayout() {
   useEffect(() => {
-    window.frameworkReady?.();
+    if (Platform.OS === 'web') {
+      window.frameworkReady?.();
+    }
   }, []);
 
   return (
