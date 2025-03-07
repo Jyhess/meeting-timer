@@ -4,14 +4,12 @@ import {
   Text,
   Pressable,
   ScrollView,
-  Switch,
   Platform,
   TextInput,
   Vibration,
   FlatList,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Icon } from '../../src/components/Timer/Icon';

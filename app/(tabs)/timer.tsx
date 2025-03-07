@@ -21,8 +21,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string }>();

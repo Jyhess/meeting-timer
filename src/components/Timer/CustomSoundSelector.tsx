@@ -10,7 +10,6 @@ import Animated, {
 import { Icon } from './Icon';
 import { useCustomSounds } from '../../hooks/useCustomSounds';
 import { styles } from '../../styles/CustomSoundSelector.styles';
-import { CustomSound } from '../../types/timer';
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 

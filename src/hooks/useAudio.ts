@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from 'react';
-import { Platform } from 'react-native';
 import { Audio } from 'expo-av';
 import { AlertSound } from '../types/timer';
 import { sounds } from '../config/alerts';

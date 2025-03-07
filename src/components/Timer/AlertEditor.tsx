@@ -12,7 +12,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { Alert, AlertEffect, AlertSound } from '../../types/timer';
-import { ToggleSlider } from './ToggleSlider';
 import { useAudio } from '../../hooks/useAudio';
 import { sounds, effects } from '../../config/alerts';
 import { Icon } from './Icon';

@@ -5,7 +5,6 @@ import Animated, {
   withRepeat, 
   withSequence,
   withTiming,
-  Easing,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { Alert } from '../../types/timer';

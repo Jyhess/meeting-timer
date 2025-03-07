@@ -4,7 +4,6 @@ import {
   Text,
   Pressable,
   ScrollView,
-  Platform,
 } from 'react-native';
 import { Link, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';

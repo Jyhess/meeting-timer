@@ -1,6 +1,5 @@
 import React from 'react';
 import { Image, ImageStyle } from 'react-native';
-import { styles } from '../../styles/Icon.styles';
 
 const iconMap = {
   add: require('../../../assets/icons/add.png'),
