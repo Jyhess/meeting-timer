@@ -28,13 +28,13 @@ export const styles = StyleSheet.create({
   alertTime: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#999',
+    color: '#aaa',
     marginTop: 4,
     textAlign: 'center',
     letterSpacing: 0.5,
   },
   alertTimeActive: {
-    color: '#fff',
+    color: '#eee',
     fontWeight: '700',
   },
   alertTimeDisabled: {
@@ -58,5 +58,14 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f44336',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  effectIconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 4,
+    gap: 4,
+  },
+  effectIcon: {
+    opacity: 0.8,
   },
 });

@@ -1,8 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { TimerPreset } from '../types/timer';
+import { Settings } from '../hooks/useSettings';
 
-const STORAGE_KEY = 'timer_presets';
+const PRESETS_KEY = 'timer_presets';
+const SETTINGS_KEY = 'timer_settings';
 
 const webStorage = {
   getItem: (key: string) => {
@@ -26,7 +28,7 @@ if (!storage) {
 
 export const loadPresets = async (): Promise<TimerPreset[]> => {
   try {
-    const presetsJson = await storage.getItem(STORAGE_KEY);
+    const presetsJson = await storage.getItem(PRESETS_KEY);
     if (presetsJson) {
       return JSON.parse(presetsJson);
     }
@@ -38,8 +40,28 @@ export const loadPresets = async (): Promise<TimerPreset[]> => {
 
 export const savePresets = async (presets: TimerPreset[]): Promise<void> => {
   try {
-    await storage.setItem(STORAGE_KEY, JSON.stringify(presets));
+    await storage.setItem(PRESETS_KEY, JSON.stringify(presets));
   } catch (error) {
     console.error('Error saving presets:', error);
+  }
+};
+
+export const loadSettings = async (): Promise<Settings | null> => {
+  try {
+    const settingsJson = await storage.getItem(SETTINGS_KEY);
+    if (settingsJson) {
+      return JSON.parse(settingsJson);
+    }
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+  return null;
+};
+
+export const saveSettings = async (settings: Settings): Promise<void> => {
+  try {
+    await storage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch (error) {
+    console.error('Error saving settings:', error);
   }
 };

@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { Alert, AlertSound, TimerPreset } from '../types/timer';
 import { useAudio } from './useAudio';
 import { loadPresets, savePresets } from '../lib/storage';
+import { useSettings } from './useSettings';
 
 type InputMode = 'minutes' | 'seconds';
 
 export const useTimer = (initialMinutes: number) => {
+  const { defaultTimerMinutes, defaultAlerts, defaultAlertDuration, isLoaded } = useSettings();
   const [minutes, setMinutes] = useState(initialMinutes);
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -19,7 +21,19 @@ export const useTimer = (initialMinutes: number) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastTimeRef = useRef<number>(timeLeft);
   const alertsRef = useRef<Alert[]>([]);
+  const initialLoadDoneRef = useRef<boolean>(false);
+  const soundTimersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const isMountedRef = useRef(true);
 
+  // Set up mount tracking
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  // Utiliser les alertes par défaut si elles sont chargées
   const [alerts, setAlerts] = useState<Alert[]>([
     {
       id: 'before',
@@ -27,7 +41,8 @@ export const useTimer = (initialMinutes: number) => {
       enabled: true,
       timeOffset: 5,
       sound: 'bell',
-      effect: 'pulse',
+      effects: ['flash'],
+      effectDuration: 5,
       lastTriggered: 0
     },
     {
@@ -36,7 +51,8 @@ export const useTimer = (initialMinutes: number) => {
       enabled: true,
       timeOffset: 0,
       sound: 'gong',
-      effect: 'flash',
+      effects: ['flash'],
+      effectDuration: 5,
       lastTriggered: 0
     },
     {
@@ -45,7 +61,8 @@ export const useTimer = (initialMinutes: number) => {
       enabled: true,
       timeOffset: 5,
       sound: 'alarm',
-      effect: 'shake',
+      effects: ['shake'],
+      vibrationDuration: 10,
       lastTriggered: 0
     }
   ]);
@@ -55,19 +72,122 @@ export const useTimer = (initialMinutes: number) => {
     alertsRef.current = alerts;
   }, [alerts]);
 
+  // Utiliser les valeurs par défaut une fois chargées
+  useEffect(() => {
+    if (isLoaded && !initialLoadDoneRef.current && !isRunning) {
+      // Mettre à jour les minutes et les secondes
+      setMinutes(defaultTimerMinutes);
+      setSeconds(0);
+      
+      // Mettre à jour le temps restant
+      setTimeLeft(defaultTimerMinutes * 60);
+      lastTimeRef.current = defaultTimerMinutes * 60;
+      
+      // Migrer les anciennes alertes avec 'effect' vers le nouveau format 'effects'
+      const migratedAlerts = defaultAlerts.map(alert => {
+        // Si l'alerte a déjà un tableau 'effects', l'utiliser
+        if (Array.isArray(alert.effects)) {
+          // Remplacer 'pulse' par 'flash' si présent
+          const newEffects = alert.effects.map(effect => 
+            effect === 'pulse' ? 'flash' : effect
+          );
+          
+          // Appliquer la durée d'alerte unifiée
+          const updatedAlert = { 
+            ...alert,
+            effects: newEffects
+          };
+          
+          // Mettre à jour les durées spécifiques en fonction des effets
+          if (newEffects.includes('flash')) {
+            updatedAlert.effectDuration = defaultAlertDuration;
+          }
+          
+          if (newEffects.includes('shake')) {
+            updatedAlert.vibrationDuration = defaultAlertDuration;
+          }
+          
+          return updatedAlert;
+        }
+        
+        // Sinon, convertir 'effect' en tableau 'effects'
+        let newEffect = alert.effect;
+        if (newEffect === 'pulse') {
+          newEffect = 'flash';
+        }
+        
+        const updatedAlert = {
+          ...alert,
+          effects: newEffect ? [newEffect] : [],
+        };
+        
+        // Mettre à jour les durées spécifiques en fonction des effets
+        if (newEffect === 'flash') {
+          updatedAlert.effectDuration = defaultAlertDuration;
+        }
+        
+        if (newEffect === 'shake') {
+          updatedAlert.vibrationDuration = defaultAlertDuration;
+        }
+        
+        return updatedAlert;
+      });
+      
+      // Mettre à jour les alertes avec une copie profonde pour éviter les références partagées
+      setAlerts(JSON.parse(JSON.stringify(migratedAlerts)));
+      alertsRef.current = JSON.parse(JSON.stringify(migratedAlerts));
+      
+      // Marquer l'initialisation comme terminée
+      initialLoadDoneRef.current = true;
+    }
+  }, [isLoaded, defaultTimerMinutes, defaultAlerts, defaultAlertDuration, isRunning]);
+
+  // Créer des hooks audio pour chaque type d'alerte
+  const beforeAlertSound = useAudio(alerts.find(a => a.id === 'before')?.sound || 'bell', 
+                                   alerts.find(a => a.id === 'before')?.customSoundUri);
+  const endAlertSound = useAudio(alerts.find(a => a.id === 'end')?.sound || 'gong',
+                                alerts.find(a => a.id === 'end')?.customSoundUri);
+  const afterAlertSound = useAudio(alerts.find(a => a.id === 'after')?.sound || 'alarm',
+                                  alerts.find(a => a.id === 'after')?.customSoundUri);
+
   const audioHooks = {
-    before: useAudio(alerts.find(a => a.id === 'before')?.sound || 'bell'),
-    end: useAudio(alerts.find(a => a.id === 'end')?.sound || 'gong'),
-    after: useAudio(alerts.find(a => a.id === 'after')?.sound || 'alarm'),
+    before: beforeAlertSound,
+    end: endAlertSound,
+    after: afterAlertSound,
   };
+
+  // Mettre à jour les hooks audio quand les alertes changent
+  useEffect(() => {
+    // Arrêter tous les sons en cours
+    Object.values(audioHooks).forEach(hook => hook.stopSound());
+    
+    // Les hooks audio seront automatiquement mis à jour avec les nouveaux sons
+  }, [alerts]);
+
+  // Nettoyer les timers lors du démontage du composant
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      
+      // Nettoyer tous les timers de son
+      soundTimersRef.current.forEach(timer => {
+        clearTimeout(timer);
+      });
+      soundTimersRef.current.clear();
+    };
+  }, []);
 
   useEffect(() => {
     refreshPresets();
   }, []);
 
   const refreshPresets = async () => {
+    if (!isMountedRef.current) return;
+    
     const savedPresets = await loadPresets();
-    if (savedPresets.length > 0) {
+    if (savedPresets.length > 0 && isMountedRef.current) {
       setPresets(savedPresets);
     }
   };
@@ -77,11 +197,18 @@ export const useTimer = (initialMinutes: number) => {
     return a1.every(alert1 => {
       const alert2 = a2.find(a => a.id === alert1.id);
       if (!alert2) return false;
+      
+      // Vérifier si les tableaux d'effets sont égaux
+      const effectsEqual = Array.isArray(alert1.effects) && Array.isArray(alert2.effects) 
+        ? alert1.effects.length === alert2.effects.length && 
+          alert1.effects.every(e => alert2.effects.includes(e))
+        : alert1.effect === alert2.effect; // Compatibilité avec l'ancien format
+      
       return (
         alert1.enabled === alert2.enabled &&
         alert1.timeOffset === alert2.timeOffset &&
         alert1.sound === alert2.sound &&
-        alert1.effect === alert2.effect
+        effectsEqual
       );
     });
   };
@@ -96,7 +223,7 @@ export const useTimer = (initialMinutes: number) => {
       id: Date.now().toString(),
       name: `Timer ${minutes}:${seconds.toString().padStart(2, '0')}`,
       minutes: minutes + seconds / 60,
-      alerts: alertsRef.current,
+      alerts: JSON.parse(JSON.stringify(alertsRef.current)), // Copie profonde pour éviter les références partagées
       created_at: new Date().toISOString()
     };
 
@@ -111,8 +238,10 @@ export const useTimer = (initialMinutes: number) => {
       updatedPresets = [newPreset, ...presets].slice(0, 6);
     }
 
-    setPresets(updatedPresets);
-    await savePresets(updatedPresets);
+    if (isMountedRef.current) {
+      setPresets(updatedPresets);
+      await savePresets(updatedPresets);
+    }
   };
 
   const loadPreset = (preset: TimerPreset) => {
@@ -123,9 +252,64 @@ export const useTimer = (initialMinutes: number) => {
     setMinutes(mins);
     setSeconds(secs);
     setTimeLeft(Math.round(totalMinutes * 60));
-    setAlerts(preset.alerts);
-    alertsRef.current = preset.alerts;
+    
+    // Migrer les anciennes alertes avec 'effect' vers le nouveau format 'effects'
+    const migratedAlerts = preset.alerts.map(alert => {
+      // Si l'alerte a déjà un tableau 'effects', l'utiliser
+      if (Array.isArray(alert.effects)) {
+        // Remplacer 'pulse' par 'flash' si présent
+        const newEffects = alert.effects.map(effect => 
+          effect === 'pulse' ? 'flash' : effect
+        );
+        
+        // Appliquer la durée d'alerte unifiée
+        const updatedAlert = { 
+          ...alert,
+          effects: newEffects
+        };
+        
+        // Mettre à jour les durées spécifiques en fonction des effets
+        if (newEffects.includes('flash')) {
+          updatedAlert.effectDuration = defaultAlertDuration;
+        }
+        
+        if (newEffects.includes('shake')) {
+          updatedAlert.vibrationDuration = defaultAlertDuration;
+        }
+        
+        return updatedAlert;
+      }
+      
+      // Sinon, convertir 'effect' en tableau 'effects'
+      let newEffect = alert.effect;
+      if (newEffect === 'pulse') {
+        newEffect = 'flash';
+      }
+      
+      const updatedAlert = {
+        ...alert,
+        effects: newEffect ? [newEffect] : [],
+      };
+      
+      // Mettre à jour les durées spécifiques en fonction des effets
+      if (newEffect === 'flash') {
+        updatedAlert.effectDuration = defaultAlertDuration;
+      }
+      
+      if (newEffect === 'shake') {
+        updatedAlert.vibrationDuration = defaultAlertDuration;
+      }
+      
+      return updatedAlert;
+    });
+    
+    // Utiliser une copie profonde pour éviter les références partagées
+    setAlerts(JSON.parse(JSON.stringify(migratedAlerts)));
+    alertsRef.current = JSON.parse(JSON.stringify(migratedAlerts));
     lastTimeRef.current = Math.round(totalMinutes * 60);
+    
+    // Marquer comme initialisé pour éviter l'écrasement par les valeurs par défaut
+    initialLoadDoneRef.current = true;
   };
 
   const checkAlerts = (currentTime: number) => {
@@ -142,7 +326,44 @@ export const useTimer = (initialMinutes: number) => {
       const shouldTrigger = hasPassedTrigger && (!alert.lastTriggered || now - alert.lastTriggered > 5000);
 
       if (shouldTrigger) {
-        audioHooks[alert.id as keyof typeof audioHooks].playSound();
+        // Jouer le son correspondant à l'alerte
+        let audioHook;
+        if (alert.id === 'before') {
+          audioHook = audioHooks.before;
+        } else if (alert.id === 'end') {
+          audioHook = audioHooks.end;
+        } else if (alert.id === 'after') {
+          audioHook = audioHooks.after;
+        }
+        
+        if (audioHook) {
+          audioHook.playSound();
+          
+          // Configurer un timer pour arrêter le son après la durée spécifiée
+          const soundDuration = alert.effectDuration || defaultAlertDuration || 5;
+          
+          // Créer une clé unique pour ce son
+          const soundKey = `${alert.id}_${now}`;
+          
+          // Nettoyer tout timer existant pour cette alerte
+          const existingTimer = soundTimersRef.current.get(alert.id);
+          if (existingTimer) {
+            clearTimeout(existingTimer);
+            soundTimersRef.current.delete(alert.id);
+          }
+          
+          // Créer un nouveau timer pour arrêter le son
+          const timer = setTimeout(() => {
+            if (isMountedRef.current) {
+              audioHook.stopSound();
+              soundTimersRef.current.delete(soundKey);
+            }
+          }, soundDuration * 1000);
+          
+          // Stocker le timer
+          soundTimersRef.current.set(soundKey, timer);
+        }
+        
         setActiveSound(alert.sound);
         setAlerts(prev => prev.map(a => 
           a.id === alert.id ? { ...a, lastTriggered: now } : a
@@ -157,6 +378,12 @@ export const useTimer = (initialMinutes: number) => {
     if (activeSound) {
       Object.values(audioHooks).forEach(hook => hook.stopSound());
       setActiveSound(null);
+      
+      // Nettoyer tous les timers de son
+      soundTimersRef.current.forEach(timer => {
+        clearTimeout(timer);
+      });
+      soundTimersRef.current.clear();
     }
   };
 
@@ -219,6 +446,12 @@ export const useTimer = (initialMinutes: number) => {
     setOvertime(0);
     lastTimeRef.current = totalSeconds;
     setAlerts(prev => prev.map(alert => ({ ...alert, lastTriggered: 0 })));
+    
+    // Nettoyer tous les timers de son
+    soundTimersRef.current.forEach(timer => {
+      clearTimeout(timer);
+    });
+    soundTimersRef.current.clear();
   };
 
   const handleNumberPress = (num: number) => {
@@ -263,14 +496,6 @@ export const useTimer = (initialMinutes: number) => {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
-
   return {
     minutes,
     seconds,
@@ -279,7 +504,18 @@ export const useTimer = (initialMinutes: number) => {
     timeLeft,
     overtime,
     alerts,
-    setAlerts,
+    setAlerts: (updater: React.SetStateAction<Alert[]>) => {
+      // Si c'est une fonction, l'appliquer et s'assurer que le résultat est une copie profonde
+      if (typeof updater === 'function') {
+        setAlerts(prev => {
+          const updated = updater(prev);
+          return JSON.parse(JSON.stringify(updated)); // Copie profonde
+        });
+      } else {
+        // Si c'est une valeur directe, s'assurer que c'est une copie profonde
+        setAlerts(JSON.parse(JSON.stringify(updater)));
+      }
+    },
     activeSound,
     stopActiveSound,
     presets,

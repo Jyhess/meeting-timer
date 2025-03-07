@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, Pressable, Vibration, Platform } from 'react-native';
 import Animated, { 
   useAnimatedStyle, 
   withRepeat, 
@@ -7,68 +7,98 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { Alert } from '../../types/timer';
 import { ToggleSlider } from './ToggleSlider';
 import { useAudio } from '../../hooks/useAudio';
 import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertIcon.styles';
+import { useSettings } from '../../hooks/useSettings';
 
 type AlertIconProps = {
   alert: Alert;
   isActive: boolean;
   onPress: () => void;
   onToggle: (enabled: boolean) => void;
+  timeColor?: string;
+  onStopEffects?: () => void;
 };
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export const AlertIcon = ({ alert, isActive, onPress, onToggle }: AlertIconProps) => {
-  const { isPlaying, stopSound } = useAudio(alert.sound);
+export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onStopEffects }: AlertIconProps) => {
+  const { isPlaying, stopSound, playSound } = useAudio(alert.sound, alert.customSoundUri);
   const soundConfig = sounds.find(s => s.id === alert.sound);
+  const vibrationStartTimeRef = useRef<number | null>(null);
+  const { defaultAlertDuration } = useSettings();
+  
+  // Utiliser la durée de vibration spécifique à l'alerte ou la valeur par défaut
+  const vibrationDuration = alert.vibrationDuration || defaultAlertDuration || 5;
+
+  // Sound and vibration effect
+  useEffect(() => {
+    let vibrationInterval: NodeJS.Timeout | null = null;
+    
+    if (isActive && alert.enabled) {
+      // Play sound
+      playSound();
+      
+      // Configure vibration if effect includes "shake" and on mobile
+      if (alert.effects.includes('shake') && Platform.OS !== 'web') {
+        vibrationStartTimeRef.current = Date.now();
+        
+        if (Platform.OS === 'ios') {
+          // For iOS, use Haptics with an interval
+          vibrationInterval = setInterval(async () => {
+            // Vérifier si la durée de vibration est dépassée
+            if (vibrationStartTimeRef.current && 
+                Date.now() - vibrationStartTimeRef.current >= vibrationDuration * 1000) {
+              if (vibrationInterval) {
+                clearInterval(vibrationInterval);
+                vibrationInterval = null;
+              }
+              return;
+            }
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          }, 500);
+        } else {
+          // For Android, use Vibration API with a pattern that will repeat
+          // for the specified duration
+          const pattern = [0, 300, 150, 300, 150, 300];
+          Vibration.vibrate(pattern, true);
+          
+          // Set a timeout to stop vibration after the specified duration
+          setTimeout(() => {
+            Vibration.cancel();
+          }, vibrationDuration * 1000);
+        }
+      }
+    }
+    
+    return () => {
+      // Clean up vibration
+      if (vibrationInterval) {
+        clearInterval(vibrationInterval);
+      }
+      if (Platform.OS !== 'web') {
+        Vibration.cancel();
+      }
+      vibrationStartTimeRef.current = null;
+    };
+  }, [isActive, alert.enabled, alert.effects, vibrationDuration]);
 
   const getAlertTimeText = () => {
     if (alert.id === 'end') return 'Fin';
-    if (alert.id === 'before') return `-${alert.timeOffset}min`;
-    return `+${alert.timeOffset}min`;
+    if (alert.id === 'before') return `-${alert.timeOffset} min`;
+    return `+${alert.timeOffset} min`;
   };
 
-  const flashAnimation = useAnimatedStyle(() => {
-    if (isActive && alert.effect === 'flash') {
-      return {
-        opacity: withRepeat(
-          withSequence(
-            withTiming(0.3, { duration: 250 }),
-            withTiming(1, { duration: 250 })
-          ),
-          -1
-        ),
-      };
-    }
-    return { opacity: 1 };
-  });
-
-  const pulseAnimation = useAnimatedStyle(() => {
-    if (isActive && alert.effect === 'pulse') {
-      return {
-        transform: [{
-          scale: withRepeat(
-            withSequence(
-              withTiming(1.2, { duration: 500, easing: Easing.out(Easing.ease) }),
-              withTiming(1, { duration: 500, easing: Easing.in(Easing.ease) })
-            ),
-            -1
-          ),
-        }],
-      };
-    }
-    return { transform: [{ scale: 1 }] };
-  });
-
+  // Suppression de l'animation de pulsation
   const shakeAnimation = useAnimatedStyle(() => {
-    if (isActive && alert.effect === 'shake') {
+    if (isActive && alert.effects.includes('shake')) {
       return {
-        transform: [{
+         transform: [{
           translateX: withRepeat(
             withSequence(
               withTiming(-5, { duration: 100 }),
@@ -83,6 +113,46 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle }: AlertIconProps
     return { transform: [{ translateX: 0 }] };
   });
 
+  // Générer des icônes pour les effets actifs
+  const renderEffectIcons = () => {
+    if (!alert.effects || alert.effects.length === 0) return null;
+    
+    return (
+      <View style={styles.effectIconsContainer}>
+        {alert.effects.map(effect => {
+          const iconName = 
+            effect === 'flash' ? 'flash' :
+            effect === 'shake' ? 'vibration' : '';
+            
+          return (
+            <Icon 
+              key={effect}
+              name={iconName as any}
+              size={12}
+              color={isActive ? '#fff' : alert.enabled ? '#999' : '#333'}
+              style={styles.effectIcon}
+            />
+          );
+        })}
+      </View>
+    );
+  };
+
+  // Fonction pour arrêter le son et les effets
+  const handleStopAll = () => {
+    stopSound();
+    
+    // Arrêter les vibrations
+    if (Platform.OS !== 'web') {
+      Vibration.cancel();
+    }
+    
+    // Notifier le parent pour arrêter les effets visuels
+    if (onStopEffects) {
+      onStopEffects();
+    }
+  };
+
   return (
     <View style={styles.alertItemContainer}>
       <View style={styles.alertIconContainer}>
@@ -92,9 +162,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle }: AlertIconProps
               styles.alertIcon,
               !alert.enabled && styles.alertIconDisabled,
               isActive && styles.alertIconActive,
-              alert.effect === 'flash' && flashAnimation,
-              alert.effect === 'pulse' && pulseAnimation,
-              alert.effect === 'shake' && shakeAnimation,
+              alert.effects.includes('shake') && shakeAnimation,
             ]}
           >
             <Icon 
@@ -105,17 +173,19 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle }: AlertIconProps
             <Text style={[
               styles.alertTime,
               !alert.enabled && styles.alertTimeDisabled,
-              isActive && styles.alertTimeActive
+              isActive && styles.alertTimeActive,
+              timeColor && { color: timeColor }
             ]}>
               {getAlertTimeText()}
             </Text>
+            {renderEffectIcons()}
           </AnimatedView>
         </Pressable>
         {isPlaying && (
           <View style={styles.stopSoundButtonContainer}>
             <Pressable 
               style={styles.stopSoundButton}
-              onPress={stopSound}
+              onPress={handleStopAll}
             >
               <Icon 
                 name="volume-off"

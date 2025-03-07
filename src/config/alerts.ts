@@ -4,7 +4,7 @@ type SoundConfig = {
   id: AlertSound;
   name: string;
   icon: string;
-  url: string;
+  url: string | number;
 };
 
 type EffectConfig = {
@@ -44,12 +44,7 @@ export const effects: EffectConfig[] = [
   {
     id: 'flash',
     name: 'Flash',
-    icon: 'bolt',
-  },
-  {
-    id: 'pulse',
-    name: 'Pulsation',
-    icon: 'target',
+    icon: 'flash',
   },
   {
     id: 'shake',

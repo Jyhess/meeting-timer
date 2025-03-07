@@ -1,0 +1,222 @@
+import { StyleSheet, Platform } from 'react-native';
+
+export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+  },
+  container: {
+    flex: 1,
+  },
+  header: {
+    padding: 20,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#eee',
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  section: {
+    marginBottom: 24,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    overflow: 'hidden',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#eee',
+    marginBottom: 8,
+  },
+  sectionDescription: {
+    fontSize: 14,
+    color: '#aaa',
+    marginBottom: 16,
+  },
+  durationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  durationInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flex: 1,
+    marginRight: 16,
+  },
+  durationInput: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#eee',
+    fontFamily: Platform.OS === 'web' ? 'monospace' : undefined,
+    minWidth: 40,
+    textAlign: 'center',
+  },
+  durationUnit: {
+    fontSize: 16,
+    color: '#aaa',
+    marginLeft: 8,
+  },
+  durationControls: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  durationButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  testButtonActive: {
+    backgroundColor: '#f44336',
+  },
+  testButtonText: {
+    color: '#eee',
+    fontWeight: '500',
+  },
+  vibrationProgressContainer: {
+    marginTop: 16,
+  },
+  vibrationProgressBar: {
+    height: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  vibrationProgressFill: {
+    height: '100%',
+    backgroundColor: '#f44336',
+  },
+  vibrationProgressText: {
+    color: '#aaa',
+    fontSize: 12,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  alertItem: { 
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  alertInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  alertTextContainer: {
+    marginLeft: 12,
+  },
+  alertName: {
+    fontSize: 16,
+    color: '#eee',
+    fontWeight: '500',
+  },
+  alertDetail: {
+    fontSize: 14,
+    color: '#aaa',
+    marginTop: 2,
+  },
+  alertControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  editButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hiddenCamera: {
+    width: 1,
+    height: 1,
+    opacity: 0,
+    position: 'absolute',
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  emptyStateText: {
+    color: '#aaa',
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 12,
+  },
+  emptyStateSubtext: {
+    color: '#888',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  soundsList: {
+    maxHeight: 200,
+  },
+  soundsListContent: {
+    paddingVertical: 8,
+  },
+  soundItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+  },
+  soundInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  soundName: {
+    color: '#eee',
+    fontSize: 14,
+    marginLeft: 12,
+    flex: 1,
+  },
+  deleteButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addSoundButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 12,
+  },
+  addSoundButtonText: {
+    color: '#eee',
+    fontSize: 14,
+    fontWeight: '500',
+    marginLeft: 8,
+  },
+});
