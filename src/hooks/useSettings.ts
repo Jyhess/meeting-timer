@@ -63,53 +63,10 @@ export const useSettings = () => {
           
           if (settings.defaultAlertDuration) {
             setDefaultAlertDuration(settings.defaultAlertDuration);
-          } else if (settings.defaultVibrationDuration || settings.defaultEffectDuration) {
-            // Migration: utiliser la plus grande des deux valeurs précédentes
-            const duration = Math.max(
-              settings.defaultVibrationDuration || 0,
-              settings.defaultEffectDuration || 0
-            );
-            setDefaultAlertDuration(duration > 0 ? duration : DEFAULT_ALERT_DURATION);
           }
           
           if (settings.defaultAlerts) {
-            // Migrer les anciennes alertes avec 'effect' vers le nouveau format 'effects'
-            const updatedAlerts = settings.defaultAlerts.map(alert => {
-              // Si l'alerte a déjà un tableau 'effects', l'utiliser
-              if (Array.isArray(alert.effects)) {
-                // Remplacer 'pulse' par 'flash' si présent
-                const newEffects = alert.effects.map(effect => 
-                  effect === 'pulse' ? 'flash' : effect
-                );
-                
-                return {
-                  ...alert,
-                  effects: newEffects,
-                  // Utiliser la durée d'alerte unifiée
-                  vibrationDuration: alert.effects.includes('shake') ? 
-                    settings.defaultAlertDuration || DEFAULT_ALERT_DURATION : undefined,
-                  effectDuration: alert.effects.includes('flash') ? 
-                    settings.defaultAlertDuration || DEFAULT_ALERT_DURATION : undefined
-                };
-              }
-              
-              // Sinon, convertir 'effect' en tableau 'effects'
-              let newEffect = alert.effect;
-              if (newEffect === 'pulse') {
-                newEffect = 'flash';
-              }
-              
-              return {
-                ...alert,
-                effects: newEffect ? [newEffect] : [],
-                // Utiliser la durée d'alerte unifiée
-                vibrationDuration: newEffect === 'shake' ? 
-                  settings.defaultAlertDuration || DEFAULT_ALERT_DURATION : undefined,
-                effectDuration: newEffect === 'flash' ? 
-                  settings.defaultAlertDuration || DEFAULT_ALERT_DURATION : undefined
-              };
-            });
-            setDefaultAlerts(updatedAlerts);
+            setDefaultAlerts(settings.defaultAlerts);
           }
         }
       } catch (error) {
