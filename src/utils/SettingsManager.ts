@@ -34,6 +34,15 @@ type SettingsEventType = 'defaultTimerMinutesChange' | 'defaultAlertDurationChan
 type SettingsEventListener = (data: any) => void;
 
 export class SettingsManager {
+  private static instance: SettingsManager;
+
+  public static getInstance(): SettingsManager {
+    if (!SettingsManager.instance) {
+      SettingsManager.instance = new SettingsManager();
+    }
+    return SettingsManager.instance;
+  }
+
   private defaultTimerMinutes: number = 30;
   private defaultAlertDuration: number = 5;
   private beforeAlert: Alert = { ...DEFAULT_ALERTS.before };
@@ -41,7 +50,7 @@ export class SettingsManager {
   private afterAlert: Alert = { ...DEFAULT_ALERTS.after };
   private listeners: Map<SettingsEventType, Set<SettingsEventListener>> = new Map();
 
-  constructor() {
+  private constructor() {
     console.log('[SettingsManager] 🔧 Initialisation');
     this.loadSettings();
   }

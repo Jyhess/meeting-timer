@@ -1,34 +1,5 @@
 import { Alert, TimerState, AlertEffect } from '../types/timer';
-
-const DEFAULT_ALERTS = {
-  before: {
-    id: 'before',
-    name: 'Bientôt fini',
-    enabled: true,
-    timeOffset: 5,
-    sound: 'bell',
-    effects: ['flash'] as AlertEffect[],
-    effectDuration: 5,
-  },
-  end: {
-    id: 'end',
-    name: 'Temps écoulé',
-    enabled: true,
-    timeOffset: 0,
-    sound: 'gong',
-    effects: ['flash'] as AlertEffect[],
-    effectDuration: 5,
-  },
-  after: {
-    id: 'after',
-    name: 'Temps dépassé',
-    enabled: true,
-    timeOffset: 5,
-    sound: 'alarm',
-    effects: ['shake'] as AlertEffect[],
-    vibrationDuration: 10,
-  },
-} as const;
+import { SettingsManager } from './SettingsManager';
 
 type TimerEventType = 'stateChange' | 'timeChange' | 'alert' | 'alertChange';
 type TimerEventListener = (data: any) => void;
@@ -47,13 +18,19 @@ export class TimerManager {
   private endAlert: Alert;
   private afterAlert: Alert;
 
-  constructor(duration: number) {
-    console.log(`[TimerManager] 🕒 Création avec durée: ${duration}s`);
-    this.duration = duration;
-    this.timeLeft = duration;
-    this.beforeAlert = { ...DEFAULT_ALERTS.before };
-    this.endAlert = { ...DEFAULT_ALERTS.end };
-    this.afterAlert = { ...DEFAULT_ALERTS.after };
+  constructor() {
+    const settings = SettingsManager.getInstance();
+    
+    // Utiliser la durée par défaut des paramètres
+    this.duration = settings.getDefaultTimerMinutes() * 60;
+    this.timeLeft = this.duration;
+
+    // Initialiser les alertes avec les valeurs par défaut des paramètres
+    this.beforeAlert = settings.getBeforeAlert();
+    this.endAlert = settings.getEndAlert();
+    this.afterAlert = settings.getAfterAlert();
+
+    console.log(`[TimerManager] 🕒 Création avec durée: ${this.duration}s`);
   }
 
   // Getters pour les alertes

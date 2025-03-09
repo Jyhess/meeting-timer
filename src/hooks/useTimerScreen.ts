@@ -3,16 +3,27 @@ import { useTimer } from './useTimer';
 import { usePresets } from './usePresets';
 import { Alert, TimerPreset } from '../types/timer';
 import { TimerManager } from '../utils/TimerManager';
+import React from 'react';
 
 export const useTimerScreen = (
   timerManagerRef: React.RefObject<TimerManager>,
-  initialMinutes: number = 30
+  key?: number
 ) => {
   // États locaux
-  const [minutes, setMinutes] = useState(initialMinutes);
-  const [seconds, setSeconds] = useState(0);
+  const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
+  const [minutes, setMinutes] = useState(() => Math.floor(timeLeftInSeconds / 60));
+  const [seconds, setSeconds] = useState(() => timeLeftInSeconds % 60);
   const [inputMode, setInputMode] = useState<'minutes' | 'seconds'>('minutes');
   const [inputBuffer, setInputBuffer] = useState('');
+
+  // Réinitialiser les états quand la key change
+  React.useEffect(() => {
+    const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
+    setMinutes(Math.floor(timeLeftInSeconds / 60));
+    setSeconds(timeLeftInSeconds % 60);
+    setInputMode('minutes');
+    setInputBuffer('');
+  }, [key]);
 
   // Hooks
   const { presets, addPreset } = usePresets();

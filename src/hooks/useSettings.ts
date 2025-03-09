@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert } from '../types/timer';
 import { SettingsManager } from '../utils/SettingsManager';
 
@@ -46,26 +46,24 @@ export type Settings = {
 };
 
 export const useSettings = () => {
-  const settingsManagerRef = useRef<SettingsManager>(new SettingsManager());
+  const settingsManager = SettingsManager.getInstance();
   const [defaultTimerMinutes, setDefaultTimerMinutes] = useState(
-    settingsManagerRef.current.getDefaultTimerMinutes()
+    settingsManager.getDefaultTimerMinutes()
   );
   const [defaultAlertDuration, setDefaultAlertDuration] = useState(
-    settingsManagerRef.current.getDefaultAlertDuration()
+    settingsManager.getDefaultAlertDuration()
   );
   const [beforeAlert, setBeforeAlert] = useState(
-    settingsManagerRef.current.getBeforeAlert()
+    settingsManager.getBeforeAlert()
   );
   const [endAlert, setEndAlert] = useState(
-    settingsManagerRef.current.getEndAlert()
+    settingsManager.getEndAlert()
   );
   const [afterAlert, setAfterAlert] = useState(
-    settingsManagerRef.current.getAfterAlert()
+    settingsManager.getAfterAlert()
   );
 
   useEffect(() => {
-    const manager = settingsManagerRef.current;
-
     const onDefaultTimerMinutesChange = (minutes: number) => {
       setDefaultTimerMinutes(minutes);
     };
@@ -86,19 +84,18 @@ export const useSettings = () => {
       setAfterAlert(alert);
     };
 
-    manager.addEventListener('defaultTimerMinutesChange', onDefaultTimerMinutesChange);
-    manager.addEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
-    manager.addEventListener('beforeAlertChange', onBeforeAlertChange);
-    manager.addEventListener('endAlertChange', onEndAlertChange);
-    manager.addEventListener('afterAlertChange', onAfterAlertChange);
+    settingsManager.addEventListener('defaultTimerMinutesChange', onDefaultTimerMinutesChange);
+    settingsManager.addEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
+    settingsManager.addEventListener('beforeAlertChange', onBeforeAlertChange);
+    settingsManager.addEventListener('endAlertChange', onEndAlertChange);
+    settingsManager.addEventListener('afterAlertChange', onAfterAlertChange);
 
     return () => {
-      manager.removeEventListener('defaultTimerMinutesChange', onDefaultTimerMinutesChange);
-      manager.removeEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
-      manager.removeEventListener('beforeAlertChange', onBeforeAlertChange);
-      manager.removeEventListener('endAlertChange', onEndAlertChange);
-      manager.removeEventListener('afterAlertChange', onAfterAlertChange);
-      manager.dispose();
+      settingsManager.removeEventListener('defaultTimerMinutesChange', onDefaultTimerMinutesChange);
+      settingsManager.removeEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
+      settingsManager.removeEventListener('beforeAlertChange', onBeforeAlertChange);
+      settingsManager.removeEventListener('endAlertChange', onEndAlertChange);
+      settingsManager.removeEventListener('afterAlertChange', onAfterAlertChange);
     };
   }, []);
 
@@ -107,21 +104,21 @@ export const useSettings = () => {
     defaultAlertDuration,
     defaultAlerts: [beforeAlert, endAlert, afterAlert],
     setDefaultTimerMinutes: (minutes: number) => {
-      settingsManagerRef.current.setDefaultTimerMinutes(minutes);
+      settingsManager.setDefaultTimerMinutes(minutes);
     },
     setDefaultAlertDuration: (duration: number) => {
-      settingsManagerRef.current.setDefaultAlertDuration(duration);
+      settingsManager.setDefaultAlertDuration(duration);
     },
     updateDefaultAlert: (alert: Alert) => {
       switch (alert.id) {
         case 'before':
-          settingsManagerRef.current.updateBeforeAlert(alert);
+          settingsManager.updateBeforeAlert(alert);
           break;
         case 'end':
-          settingsManagerRef.current.updateEndAlert(alert);
+          settingsManager.updateEndAlert(alert);
           break;
         case 'after':
-          settingsManagerRef.current.updateAfterAlert(alert);
+          settingsManager.updateAfterAlert(alert);
           break;
       }
     },

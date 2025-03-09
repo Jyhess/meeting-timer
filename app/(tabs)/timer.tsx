@@ -16,7 +16,7 @@ import { AlertIcon } from '../../src/components/Timer/AlertIcon';
 import { Icon } from '../../src/components/Timer/Icon';
 import { useTimerScreen } from '../../src/hooks/useTimerScreen';
 import { Alert, AlertEffect } from '../../src/types/timer';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 import { TimerManager } from '../../src/utils/TimerManager';
@@ -25,7 +25,8 @@ const AnimatedText = Animated.createAnimatedComponent(Text);
 
 const TimerScreen = React.memo(() => {
   const params = useLocalSearchParams<{ presetId?: string }>();
-  const timerManagerRef = useRef<TimerManager>(new TimerManager(0));
+  const [key, setKey] = useState(0);
+  const timerManagerRef = useRef<TimerManager>(new TimerManager());
   
   const {
     minutes,
@@ -47,7 +48,7 @@ const TimerScreen = React.memo(() => {
     resume,
     reset,
     updateAlert,
-  } = useTimerScreen(timerManagerRef);
+  } = useTimerScreen(timerManagerRef, key);
 
   // Convertir les alertes en type Alert
   const beforeAlert = beforeAlertRaw ? {
@@ -71,6 +72,19 @@ const TimerScreen = React.memo(() => {
   const flashTimerRef = useRef<NodeJS.Timeout | null>(null);
   const activeAlertTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
+  // Réinitialiser le timer avec les valeurs par défaut quand on arrive sur l'écran
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!params.presetId) {
+        // Créer un nouveau TimerManager pour avoir les valeurs par défaut
+        timerManagerRef.current = new TimerManager();
+        // Forcer un refresh du hook useTimerScreen
+        setKey(k => k + 1);
+      }
+    }, [params.presetId])
+  );
+
+  // Charger le preset si presetId est fourni
   React.useEffect(() => {
     if (params.presetId) {
       const preset = presets.find((p) => p.id === params.presetId);
