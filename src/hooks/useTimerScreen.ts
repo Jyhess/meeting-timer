@@ -11,17 +11,13 @@ export const useTimerScreen = (
 ) => {
   // États locaux
   const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
-  const [minutes, setMinutes] = useState(() => Math.floor(timeLeftInSeconds / 60));
-  const [seconds, setSeconds] = useState(() => timeLeftInSeconds % 60);
-  const [inputMode, setInputMode] = useState<'minutes' | 'seconds'>('minutes');
+  const [seconds, setSeconds] = useState(() => timeLeftInSeconds);
   const [inputBuffer, setInputBuffer] = useState('');
 
   // Réinitialiser les états quand la key change
   React.useEffect(() => {
     const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
-    setMinutes(Math.floor(timeLeftInSeconds / 60));
-    setSeconds(timeLeftInSeconds % 60);
-    setInputMode('minutes');
+    setSeconds(timeLeftInSeconds);
     setInputBuffer('');
   }, [key]);
 
@@ -29,79 +25,68 @@ export const useTimerScreen = (
   const { presets, addPreset } = usePresets();
   const { timeLeft, isRunning, state, beforeAlert, endAlert, afterAlert, actions } = useTimer(
     timerManagerRef,
-    minutes * 60 + seconds
+    seconds
   );
+
+  // Convertir le buffer en secondes totales
+  const secondsFromBuffer = useCallback((buffer: string) => {
+    setInputBuffer(buffer);
+    const digits = buffer.padStart(4, '0').split('').map(Number);
+    const mins = parseInt(digits.slice(0, 2).join(''), 10);
+    const secs = parseInt(digits.slice(2).join(''), 10);
+    if (secs < 60) {
+      setSeconds(mins * 60 + secs);
+    }
+}, []);
 
   // Sauvegarde automatique du timer
   const autoSaveTimer = useCallback(async () => {
-    const totalSeconds = minutes * 60 + seconds;
     const alerts = [beforeAlert, endAlert, afterAlert].filter(Boolean) as Alert[];
     const existingPreset = presets.find(p => 
-      p.minutes * 60 === totalSeconds && 
+      p.minutes * 60 === seconds && 
       JSON.stringify(p.alerts) === JSON.stringify(alerts)
     );
 
     if (!existingPreset) {
       const newPreset: TimerPreset = {
         id: Date.now().toString(),
-        name: `Timer ${minutes}:${seconds.toString().padStart(2, '0')}`,
-        minutes: minutes + seconds / 60,
+        name: `Timer ${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`,
+        minutes: seconds / 60,
         alerts,
         created_at: new Date().toISOString()
       };
       await addPreset(newPreset);
     }
-  }, [minutes, seconds, beforeAlert, endAlert, afterAlert, presets, addPreset]);
+  }, [seconds, beforeAlert, endAlert, afterAlert, presets, addPreset]);
 
   // Gestion du pavé numérique
   const handleNumberPress = useCallback((num: number) => {
-    if (!isRunning) {
-      if (inputMode === 'minutes' && inputBuffer.length < 2) {
-        const newBuffer = inputBuffer + num.toString();
-        setInputBuffer(newBuffer);
-        const newMinutes = parseInt(newBuffer, 10);
-        if (newMinutes <= 99) {
-          setMinutes(newMinutes);
-        }
-      } else if (inputMode === 'seconds' && inputBuffer.length < 2) {
-        const newBuffer = inputBuffer + num.toString();
-        setInputBuffer(newBuffer);
-        const newSeconds = parseInt(newBuffer, 10);
-        if (newSeconds <= 59) {
-          setSeconds(newSeconds);
-        }
-      }
+    if (!isRunning && inputBuffer.length < 4) {
+      const newBuffer = inputBuffer + num.toString();
+      secondsFromBuffer(newBuffer);
     }
-  }, [isRunning, inputMode, inputBuffer]);
+  }, [isRunning, inputBuffer, secondsFromBuffer]);
 
   const handleBackspace = useCallback(() => {
+    if (!isRunning && inputBuffer.length > 0) {
+      const newBuffer = inputBuffer.slice(0, -1);
+      secondsFromBuffer(newBuffer);
+    }
+  }, [isRunning, inputBuffer, secondsFromBuffer]);
+
+  const handleDoubleZero = useCallback(() => {
     if (!isRunning) {
-      if (inputBuffer.length > 0) {
-        const newBuffer = inputBuffer.slice(0, -1);
-        setInputBuffer(newBuffer);
-        const newValue = newBuffer.length > 0 ? parseInt(newBuffer, 10) : 0;
-        if (inputMode === 'minutes') {
-          setMinutes(newValue);
-        } else {
-          setSeconds(newValue);
-        }
+      const newBuffer = inputBuffer + '00';
+      if (newBuffer.length <= 4) {
+        secondsFromBuffer(newBuffer);
       }
     }
-  }, [isRunning, inputMode, inputBuffer]);
-
-  const handleColonPress = useCallback(() => {
-    if (!isRunning) {
-      setInputMode(prev => prev === 'minutes' ? 'seconds' : 'minutes');
-      setInputBuffer('');
-    }
-  }, [isRunning]);
+  }, [isRunning, inputBuffer, secondsFromBuffer]);
 
   // Chargement d'un preset
   const loadPreset = useCallback((preset: TimerPreset) => {
-    const mins = Math.floor(preset.minutes);
-    const secs = Math.round((preset.minutes - mins) * 60);
-    setMinutes(mins);
-    setSeconds(secs);
+    setSeconds(Math.round(preset.minutes * 60));
+    setInputBuffer('');
     preset.alerts.forEach(alert => {
       actions.updateAlert(alert);
     });
@@ -118,12 +103,11 @@ export const useTimerScreen = (
 
   return {
     // États
-    minutes,
-    seconds,
+    minutes: Math.floor(seconds / 60),
+    seconds: seconds % 60,
     timeLeft,
     isRunning,
     state,
-    inputMode,
     beforeAlert,
     endAlert,
     afterAlert,
@@ -133,7 +117,7 @@ export const useTimerScreen = (
     loadPreset,
     handleNumberPress,
     handleBackspace,
-    handleColonPress,
+    handleDoubleZero,
     ...enhancedActions,
   };
 }; 

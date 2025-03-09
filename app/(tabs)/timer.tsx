@@ -34,7 +34,6 @@ const TimerScreen = React.memo(() => {
     timeLeft,
     isRunning,
     state,
-    inputMode,
     beforeAlert: beforeAlertRaw,
     endAlert: endAlertRaw,
     afterAlert: afterAlertRaw,
@@ -42,7 +41,7 @@ const TimerScreen = React.memo(() => {
     loadPreset,
     handleNumberPress,
     handleBackspace,
-    handleColonPress,
+    handleDoubleZero,
     start,
     pause,
     resume,
@@ -235,7 +234,7 @@ const TimerScreen = React.memo(() => {
       right: 0,
       bottom: 0,
       backgroundColor: 'white',
-      opacity: flashBackground.value * 0.7, // Ajuster l'opacité pour un effet plus visible
+      opacity: flashBackground.value * 0.7,
       zIndex: 1,
     };
   });
@@ -297,12 +296,9 @@ const TimerScreen = React.memo(() => {
                 {renderKeypadButton(0)}
                 <Pressable
                   style={styles.keypadButton}
-                  onPress={handleColonPress}
+                  onPress={handleDoubleZero}
                 >
-                  <Text style={[
-                    styles.keypadButtonText,
-                    inputMode === 'seconds' && styles.keypadButtonTextActive
-                  ]}>:</Text>
+                  <Text style={styles.keypadButtonText}>00</Text>
                 </Pressable>
               </View>
             </View>
