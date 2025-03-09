@@ -84,12 +84,12 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
   controlButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    padding: 12,
+    borderRadius: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  controlButtonDisabled: {
+    opacity: 0.5,
   },
   startButton: {
     backgroundColor: '#4CAF50',

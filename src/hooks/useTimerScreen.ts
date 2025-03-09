@@ -13,13 +13,9 @@ export const useTimerScreen = (
   const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
   const [seconds, setSeconds] = useState(() => timeLeftInSeconds);
   const [inputBuffer, setInputBuffer] = useState('');
-
-  // Réinitialiser les états quand la key change
-  React.useEffect(() => {
-    const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
-    setSeconds(timeLeftInSeconds);
-    setInputBuffer('');
-  }, [key]);
+  const [isValidTime, setIsValidTime] = useState(true);
+  const [displayMinutes, setDisplayMinutes] = useState(() => Math.floor(timeLeftInSeconds / 60));
+  const [displaySeconds, setDisplaySeconds] = useState(() => timeLeftInSeconds % 60);
 
   // Hooks
   const { presets, addPreset } = usePresets();
@@ -28,16 +24,48 @@ export const useTimerScreen = (
     seconds
   );
 
+  // Vérifier si le timer est valide
+  const checkTimeValidity = useCallback((mins: number, secs: number, beforeAlertOffset?: number, isBeforeEnabled?: boolean) => {
+    // Vérifier que les secondes sont valides
+    if (secs >= 60) return false;
+
+    // Si l'alerte "before" est activée, vérifier que son offset est inférieur au temps total
+    if (beforeAlertOffset !== undefined && (isBeforeEnabled ?? beforeAlert?.enabled)) {
+      const totalSeconds = mins * 60 + secs;
+      if (totalSeconds <= beforeAlertOffset * 60) return false;
+    }
+
+    return true;
+  }, [beforeAlert]);
+
+  // Réinitialiser les états quand la key change
+  React.useEffect(() => {
+    const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
+    setSeconds(timeLeftInSeconds);
+    setInputBuffer('');
+    setIsValidTime(true);
+    setDisplayMinutes(Math.floor(timeLeftInSeconds / 60));
+    setDisplaySeconds(timeLeftInSeconds % 60);
+  }, [key]);
+
   // Convertir le buffer en secondes totales
   const secondsFromBuffer = useCallback((buffer: string) => {
     setInputBuffer(buffer);
+
     const digits = buffer.padStart(4, '0').split('').map(Number);
     const mins = parseInt(digits.slice(0, 2).join(''), 10);
     const secs = parseInt(digits.slice(2).join(''), 10);
-    if (secs < 60) {
-      setSeconds(mins * 60 + secs);
-    }
-  }, []);
+    
+    // Mettre à jour l'affichage exact
+    setDisplayMinutes(mins);
+    setDisplaySeconds(secs);
+    
+    // Toujours mettre à jour les secondes totales
+    setSeconds(mins * 60 + secs);
+    
+    // Vérifier la validité du temps
+    setIsValidTime(checkTimeValidity(mins, secs, beforeAlert?.timeOffset));
+  }, [beforeAlert, checkTimeValidity]);
 
   // Sauvegarde automatique du timer
   const autoSaveTimer = useCallback(async () => {
@@ -96,24 +124,45 @@ export const useTimerScreen = (
   const loadPreset = useCallback((preset: TimerPreset) => {
     setSeconds(preset.seconds);
     setInputBuffer('');
+    const mins = Math.floor(preset.seconds / 60);
+    const secs = preset.seconds % 60;
+    setDisplayMinutes(mins);
+    setDisplaySeconds(secs);
+    
+    // Mettre à jour les alertes
     preset.alerts.forEach(alert => {
       actions.updateAlert(alert);
     });
-  }, [actions]);
+    
+    // Vérifier la validité avec la nouvelle configuration
+    const beforeAlertFromPreset = preset.alerts.find(a => a.id === 'before');
+    setIsValidTime(checkTimeValidity(mins, secs, beforeAlertFromPreset?.timeOffset));
+  }, [actions, checkTimeValidity]);
 
   // Surcharge des actions du timer pour ajouter la sauvegarde automatique
   const enhancedActions = {
     ...actions,
     start: async () => {
+      if (!isValidTime) {
+        console.log('Impossible de démarrer : temps invalide');
+        return;
+      }
       await autoSaveTimer();
       actions.start();
+    },
+    updateAlert: (alert: Alert) => {
+      actions.updateAlert(alert);
+      // Si c'est l'alerte "before", vérifier la validité du timer
+      if (alert.id === 'before') {
+        setIsValidTime(checkTimeValidity(displayMinutes, displaySeconds, alert.timeOffset, alert.enabled));
+      }
     }
   };
 
   return {
     // États
-    minutes: Math.floor(seconds / 60),
-    seconds: seconds % 60,
+    minutes: displayMinutes,
+    seconds: displaySeconds,
     timeLeft,
     isRunning,
     state,
@@ -121,6 +170,7 @@ export const useTimerScreen = (
     endAlert,
     afterAlert,
     presets,
+    isValidTime,
 
     // Actions
     loadPreset,

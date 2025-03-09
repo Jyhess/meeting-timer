@@ -48,6 +48,7 @@ const TimerScreen = React.memo(() => {
     resume,
     reset,
     updateAlert,
+    isValidTime,
   } = useTimerScreen(timerManagerRef, key);
 
   // Convertir les alertes en type Alert
@@ -196,6 +197,9 @@ const TimerScreen = React.memo(() => {
   };
 
   const getTimeColor = () => {    
+    // Si le temps est invalide, afficher en orange
+    if (!isValidTime) return '#FF9800';
+    
     // Si le temps est négatif, afficher en rouge
     if (timeLeft < 0) return '#f44336';
     
@@ -298,8 +302,19 @@ const TimerScreen = React.memo(() => {
           <View style={styles.controls}>
             {!isRunning ? (
               <>
-                <Pressable style={styles.controlButton} onPress={start}>
-                  <Icon name="play_arrow" size={32} color="#4CAF50" />
+                <Pressable 
+                  style={[
+                    styles.controlButton,
+                    !isValidTime && styles.controlButtonDisabled
+                  ]} 
+                  onPress={start}
+                  disabled={!isValidTime}
+                >
+                  <Icon 
+                    name="play_arrow" 
+                    size={32} 
+                    color={isValidTime ? "#4CAF50" : "#666"}
+                  />
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleStop}>
                   <Icon name="close" size={32} color="#f44336" />
@@ -324,6 +339,7 @@ const TimerScreen = React.memo(() => {
                 alert={alert}
                 isActive={
                   alert.enabled &&
+                  isRunning && // Ne déclencher les alertes que si le timer tourne
                   (alert.id === 'end'
                     ? timeLeft === 0
                     : alert.id === 'before'
