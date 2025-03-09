@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { useAudio } from './useAudio';
 import { Alert, TimerState } from '../types/timer';
 
@@ -13,7 +13,9 @@ export const useTimer = (
   // États
   const [state, setState] = useState<TimerState>('idle');
   const [timeLeft, setTimeLeft] = useState(duration);
-  const [isRunning, setIsRunning] = useState(false);
+
+  // Fonction pour déterminer si le timer est en cours d'exécution
+  const isRunning = useMemo(() => state !== 'idle' && state !== 'finished', [state]);
 
   // Références pour le timer
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -83,7 +85,6 @@ export const useTimer = (
       if (newTimeLeft === 0) {
         console.log('[useTimer] ⏹️ Timer terminé');
         setState('finished');
-        setIsRunning(false);
         clearTimer();
       }
     }
@@ -104,7 +105,6 @@ export const useTimer = (
       isManualStopRef.current = false;
       startTimeRef.current = Date.now() - ((duration - timeLeft) * 1000);
       lastTickRef.current = Date.now();
-      setIsRunning(true);
       setState('running');
 
       timerRef.current = setInterval(() => {
@@ -118,7 +118,6 @@ export const useTimer = (
   // Pause du timer
   const pause = useCallback(() => {
     console.log('[useTimer] ⏸️ Mise en pause du timer');
-    setIsRunning(false);
     setState('paused');
     clearTimer();
   }, [clearTimer]);
@@ -128,7 +127,6 @@ export const useTimer = (
     console.log('[useTimer] 🔄 Réinitialisation du timer');
     isManualStopRef.current = true;
     clearTimer();
-    setIsRunning(false);
     setState('idle');
     setTimeLeft(duration);
     startTimeRef.current = null;

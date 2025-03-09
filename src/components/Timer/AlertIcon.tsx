@@ -27,7 +27,6 @@ type AlertIconProps = {
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onStopEffects }: AlertIconProps) => {
-  const { isPlaying, stopSound, playSound } = useAudio(alert.sound);
   const soundConfig = sounds.find(s => s.id === alert.sound);
   const vibrationStartTimeRef = useRef<number | null>(null);
   const { defaultAlertDuration } = useSettings();
@@ -40,9 +39,8 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
     let vibrationInterval: NodeJS.Timeout | null = null;
     
     if (isActive && alert.enabled) {
-      // Play sound
-      playSound();
-      
+      console.log(`[AlertIcon] 🔔 Alerte active et active: ${isActive} et enabled: ${alert.enabled}`);
+    
       // Configure vibration if effect includes "shake" and on mobile
       if (alert.effects.includes('shake') && Platform.OS !== 'web') {
         vibrationStartTimeRef.current = Date.now();
@@ -137,21 +135,6 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
     );
   };
 
-  // Fonction pour arrêter le son et les effets
-  const handleStopAll = () => {
-    stopSound();
-    
-    // Arrêter les vibrations
-    if (Platform.OS !== 'web') {
-      Vibration.cancel();
-    }
-    
-    // Notifier le parent pour arrêter les effets visuels
-    if (onStopEffects) {
-      onStopEffects();
-    }
-  };
-
   return (
     <View style={styles.alertItemContainer}>
       <View style={styles.alertIconContainer}>
@@ -180,20 +163,6 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
             {renderEffectIcons()}
           </AnimatedView>
         </Pressable>
-        {isPlaying && (
-          <View style={styles.stopSoundButtonContainer}>
-            <Pressable 
-              style={styles.stopSoundButton}
-              onPress={handleStopAll}
-            >
-              <Icon 
-                name="volume-off"
-                size={20}
-                color="#fff"
-              />
-            </Pressable>
-          </View>
-        )}
       </View>
       <View style={styles.sliderContainer}>
         <ToggleSlider

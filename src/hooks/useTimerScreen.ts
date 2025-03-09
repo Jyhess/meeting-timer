@@ -4,6 +4,8 @@ import { usePresets } from './usePresets';
 import { Alert, TimerPreset } from '../types/timer';
 
 export const useTimerScreen = (initialMinutes: number = 30) => {
+  console.log(`[useTimerScreen] 🕒 Initialisation du hook avec durée: ${initialMinutes}`);
+
   // États locaux
   const [minutes, setMinutes] = useState(initialMinutes);
   const [seconds, setSeconds] = useState(0);
