@@ -1,10 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTimer } from './useTimer';
 import { usePresets } from './usePresets';
 import { Alert, TimerPreset } from '../types/timer';
+import { TimerManager } from '../utils/TimerManager';
 
-export const useTimerScreen = (initialMinutes: number = 30) => {
-  console.log(`[useTimerScreen] 🕒 Initialisation du hook avec durée: ${initialMinutes}`);
+export const useTimerScreen = (
+  timerManagerRef: React.RefObject<TimerManager>,
+  initialMinutes: number = 30
+) => {
 
   // États locaux
   const [minutes, setMinutes] = useState(initialMinutes);
@@ -43,11 +46,18 @@ export const useTimerScreen = (initialMinutes: number = 30) => {
 
   // Hooks
   const { presets, addPreset } = usePresets();
+
+  // Mémoriser les alertes pour éviter la recréation du hook useTimer
+  const beforeAlert = useMemo(() => alerts.find(a => a.id === 'before'), [alerts]);
+  const endAlert = useMemo(() => alerts.find(a => a.id === 'end'), [alerts]);
+  const afterAlert = useMemo(() => alerts.find(a => a.id === 'after'), [alerts]);
+
   const { timeLeft, isRunning, state, actions } = useTimer(
-    minutes * 60,
-    alerts.find(a => a.id === 'before'),
-    alerts.find(a => a.id === 'end'),
-    alerts.find(a => a.id === 'after')
+    timerManagerRef,
+    minutes * 60 + seconds,
+    beforeAlert,
+    endAlert,
+    afterAlert
   );
 
   // Sauvegarde automatique du timer

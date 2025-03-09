@@ -19,11 +19,14 @@ import { Alert } from '../../src/types/timer';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
+import { TimerManager } from '../../src/utils/TimerManager';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
-export default function TimerScreen() {
+const TimerScreen = React.memo(() => {
   const params = useLocalSearchParams<{ presetId?: string }>();
+  const timerManagerRef = useRef<TimerManager>(new TimerManager(30 * 60));
+  
   const {
     minutes,
     seconds,
@@ -42,7 +45,7 @@ export default function TimerScreen() {
     pause,
     resume,
     reset,
-  } = useTimerScreen(30);
+  } = useTimerScreen(timerManagerRef, 30);
 
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const flashBackground = useSharedValue(0);
@@ -340,4 +343,6 @@ export default function TimerScreen() {
       </LinearGradient>
     </SafeAreaView>
   );
-}
+});
+
+export default TimerScreen;
