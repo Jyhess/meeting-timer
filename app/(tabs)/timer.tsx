@@ -21,6 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 import { TimerManager } from '../../src/utils/TimerManager';
 import { formatTime } from '../../src/utils/time';
+import { theme } from '../../src/theme';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
@@ -198,27 +199,27 @@ const TimerScreen = React.memo(() => {
 
   const getTimeColor = () => {    
     // Si le temps est invalide, afficher en orange
-    if (!isValidTime) return '#FF9800';
+    if (!isValidTime) return theme.colors.invalid;
     
     // Si le temps est négatif, afficher en rouge
-    if (timeLeft < 0) return '#f44336';
+    if (timeLeft < 0) return theme.colors.error;
     
     // Si l'alerte "bientôt fini" est activée et que le temps restant est inférieur ou égal à son seuil
     if (beforeAlert?.enabled && timeLeft <= beforeAlert.timeOffset * 60) {
-      return '#FF9800';
+      return theme.colors.secondary;
     }
     
-    return '#fff';
+    return theme.colors.white;
   };
 
   const getAlertTimeColor = (alert: Alert) => {
     // Si c'est l'alerte "bientôt fini" et que le timer total est inférieur à son seuil
     if (alert.id === 'before' && alert.enabled && !isRunning && 
         (minutes * 60 + seconds) <= alert.timeOffset * 60) {
-      return '#f44336'; // Rouge pour indiquer que l'alerte ne pourra pas se déclencher normalement
+      return theme.colors.error;
     }
     
-    return undefined; // Utiliser la couleur par défaut
+    return undefined;
   };
 
   const animatedFlashStyle = useAnimatedStyle(() => {
@@ -245,7 +246,10 @@ const TimerScreen = React.memo(() => {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <LinearGradient colors={['#1a1a1a', '#2d2d2d']} style={styles.container}>
+      <LinearGradient 
+        colors={[theme.colors.background.primary, theme.colors.background.secondary]} 
+        style={styles.container}
+      >
         <Animated.View style={animatedFlashStyle} />
         
         <BlurView intensity={50} style={styles.timerContainer}>
@@ -286,7 +290,7 @@ const TimerScreen = React.memo(() => {
                   style={styles.keypadButton}
                   onPress={handleBackspace}
                 >
-                  <Icon name="backspace" size={24} color="#fff" />
+                  <Icon name="backspace" size={24} color={theme.colors.white} />
                 </Pressable>
                 {renderKeypadButton(0)}
                 <Pressable
@@ -313,20 +317,24 @@ const TimerScreen = React.memo(() => {
                   <Icon 
                     name="play_arrow" 
                     size={32} 
-                    color={isValidTime ? "#4CAF50" : "#666"}
+                    color={isValidTime ? theme.colors.primary : theme.colors.disabled}
                   />
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleStop}>
-                  <Icon name="close" size={32} color="#f44336" />
+                  <Icon name="close" size={32} color={theme.colors.danger} />
                 </Pressable>
               </>
             ) : (
               <>
                 <Pressable style={styles.controlButton} onPress={state === 'paused' ? resume : pause}>
-                  <Icon name={state === 'paused' ? "play_arrow" : "pause"} size={32} color="#FF9800" />
+                  <Icon 
+                    name={state === 'paused' ? "play_arrow" : "pause"} 
+                    size={32} 
+                    color={theme.colors.secondary}
+                  />
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleStop}>
-                  <Icon name="stop" size={32} color="#f44336" />
+                  <Icon name="stop" size={32} color={theme.colors.danger} />
                 </Pressable>
               </>
             )}

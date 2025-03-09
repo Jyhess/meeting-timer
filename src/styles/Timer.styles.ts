@@ -1,9 +1,10 @@
 import { StyleSheet, Platform } from 'react-native';
+import { theme } from '../theme';
 
 export const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: theme.colors.background.primary,
   },
   container: {
     flex: 1,
@@ -13,8 +14,8 @@ export const styles = StyleSheet.create({
   },
   timerContainer: {
     width: '90%',
-    padding: 20,
-    borderRadius: 20,
+    padding: theme.spacing.large,
+    borderRadius: theme.borders.radius.large,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     overflow: 'hidden',
     zIndex: 2,
@@ -24,55 +25,55 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    marginBottom: 20,
+    marginBottom: theme.spacing.large,
   },
   timeDisplay: {
     alignItems: 'center',
   },
   timeText: {
-    fontSize: 48,
-    fontWeight: 'bold',
+    fontSize: theme.typography.fontSize.timer,
+    fontWeight: theme.typography.fontWeight.bold,
     fontFamily: Platform.OS === 'web' ? 'monospace' : undefined,
   },
   inputModeText: {
-    fontSize: 14,
-    color: '#888',
-    marginTop: 4,
+    fontSize: theme.typography.fontSize.small,
+    color: theme.colors.gray.light,
+    marginTop: theme.spacing.xs,
   },
   stopSoundButton: {
     position: 'absolute',
     right: 0,
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f44336',
+    borderRadius: theme.borders.radius.round,
+    backgroundColor: theme.colors.danger,
     alignItems: 'center',
     justifyContent: 'center',
   },
   keypad: {
-    marginBottom: 20,
+    marginBottom: theme.spacing.large,
   },
   keypadRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: theme.spacing.small,
   },
   keypadButton: {
-    width: 70,
-    height: 70,
-    margin: 5,
-    borderRadius: 35,
+    width: theme.layout.keypad.buttonSize,
+    height: theme.layout.keypad.buttonSize,
+    margin: theme.spacing.xs,
+    borderRadius: theme.borders.radius.round,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   keypadButtonText: {
-    fontSize: 24,
-    color: '#eee',
-    fontWeight: '500',
+    fontSize: theme.typography.fontSize.large,
+    color: theme.colors.white,
+    fontWeight: theme.typography.fontWeight.medium,
   },
   keypadButtonTextActive: {
-    color: '#4CAF50',
+    color: theme.colors.primary,
   },
   specialButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -80,37 +81,37 @@ export const styles = StyleSheet.create({
   controls: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 20,
-    marginBottom: 20,
+    gap: theme.spacing.large,
+    marginBottom: theme.spacing.large,
   },
   controlButton: {
-    padding: 12,
-    borderRadius: 8,
+    padding: theme.spacing.medium,
+    borderRadius: theme.borders.radius.medium,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   controlButtonDisabled: {
-    opacity: 0.5,
+    opacity: theme.effects.opacity.disabled,
   },
   startButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: theme.colors.primary,
   },
   stopButton: {
-    backgroundColor: '#f44336',
+    backgroundColor: theme.colors.danger,
   },
   pauseButton: {
-    backgroundColor: '#FF9800',
+    backgroundColor: theme.colors.secondary,
   },
   alertsContainer: {
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.1)',
-    paddingTop: 20,
+    paddingTop: theme.spacing.large,
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 20,
+    gap: theme.spacing.large,
   },
   alertsList: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 20,
+    gap: theme.spacing.large,
   },
 });

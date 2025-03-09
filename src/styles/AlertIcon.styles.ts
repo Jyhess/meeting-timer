@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
+import { theme } from '../theme';
 
 export const styles = StyleSheet.create({
   alertItemContainer: {
     alignItems: 'center',
-    gap: 8,
+    gap: theme.spacing.small,
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    padding: 12,
-    borderRadius: 16,
+    padding: theme.spacing.medium,
+    borderRadius: theme.borders.radius.large,
     minWidth: 100,
   },
   alertIconContainer: {
@@ -17,33 +18,33 @@ export const styles = StyleSheet.create({
   alertIcon: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
+    marginBottom: theme.spacing.xs,
   },
   alertIconActive: {
     opacity: 1,
   },
   alertIconDisabled: {
-    opacity: 0.5,
+    opacity: theme.effects.opacity.disabled,
   },
   alertTime: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#aaa',
-    marginTop: 4,
+    fontSize: theme.typography.fontSize.small,
+    fontWeight: theme.typography.fontWeight.medium,
+    color: theme.colors.gray.light,
+    marginTop: theme.spacing.xs,
     textAlign: 'center',
     letterSpacing: 0.5,
   },
   alertTimeActive: {
-    color: '#eee',
-    fontWeight: '700',
+    color: theme.colors.white,
+    fontWeight: theme.typography.fontWeight.bold,
   },
   alertTimeDisabled: {
-    color: '#555',
+    color: theme.colors.gray.dark,
   },
   sliderContainer: {
     width: 50,
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: theme.spacing.xs,
   },
   stopSoundButtonContainer: {
     position: 'absolute',
@@ -54,18 +55,18 @@ export const styles = StyleSheet.create({
   stopSoundButton: {
     width: 24,
     height: 24,
-    borderRadius: 12,
-    backgroundColor: '#f44336',
+    borderRadius: theme.borders.radius.round,
+    backgroundColor: theme.colors.danger,
     alignItems: 'center',
     justifyContent: 'center',
   },
   effectIconsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 4,
-    gap: 4,
+    marginTop: theme.spacing.xs,
+    gap: theme.spacing.xs,
   },
   effectIcon: {
-    opacity: 0.8,
+    opacity: theme.effects.opacity.disabled,
   },
 });

@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import { styles } from '../../styles/ToggleSlider.styles';
+import { theme } from '../../theme';
 
 type ToggleSliderProps = {
   value: boolean;
@@ -30,12 +31,12 @@ export const ToggleSlider = ({ value, onToggle }: ToggleSliderProps) => {
       if (shouldToggle !== value) {
         runOnJS(onToggle)(shouldToggle);
       }
-      translateX.value = withTiming(shouldToggle ? 28 : 0, { duration: 100 });
+      translateX.value = withTiming(shouldToggle ? 28 : 0, { duration: theme.animations.duration.short });
     },
   });
 
   useEffect(() => {
-    translateX.value = withTiming(value ? 28 : 0, { duration: 200 });
+    translateX.value = withTiming(value ? 28 : 0, { duration: theme.animations.duration.short });
   }, [value]);
 
   const sliderStyle = useAnimatedStyle(() => ({
@@ -44,7 +45,7 @@ export const ToggleSlider = ({ value, onToggle }: ToggleSliderProps) => {
 
   const backgroundStyle = useAnimatedStyle(() => ({
     backgroundColor: value 
-      ? 'rgba(76, 175, 80, 0.9)' 
+      ? `rgba(${parseInt(theme.colors.primary.slice(1, 3), 16)}, ${parseInt(theme.colors.primary.slice(3, 5), 16)}, ${parseInt(theme.colors.primary.slice(5, 7), 16)}, 0.9)`
       : 'rgba(255, 255, 255, 0.1)',
   }));
 

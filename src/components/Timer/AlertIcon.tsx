@@ -14,6 +14,7 @@ import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertIcon.styles';
 import { useSettings } from '../../hooks/useSettings';
+import { theme } from '../../theme';
 
 type AlertIconProps = {
   alert: Alert;
@@ -129,7 +130,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
               key={effect}
               name={iconName as any}
               size={12}
-              color={isActive ? '#fff' : localEnabled ? '#999' : '#333'}
+              color={isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light}
               style={styles.effectIcon}
             />
           );
@@ -153,12 +154,11 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
             <Icon 
               name={soundConfig?.icon as any}
               size={28}
-              color={isActive ? '#fff' : localEnabled ? '#999' : '#333'}
+              color={isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light}
             />
             <Text style={[
               styles.alertTime,
-              !localEnabled && styles.alertTimeDisabled,
-              isActive && styles.alertTimeActive,
+              { color: isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light },
               timeColor && { color: timeColor }
             ]}>
               {getAlertTimeText()}
