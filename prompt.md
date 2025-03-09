@@ -79,7 +79,6 @@ type Alert = {
   timeOffset: number;
   sound: AlertSound;
   effects: AlertEffect[]; // Tableau d'effets
-  effectDuration?: number; // Durée des effets en secondes
   lastTriggered?: number;
 };
 

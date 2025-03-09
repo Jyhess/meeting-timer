@@ -11,7 +11,6 @@ const DEFAULT_ALERTS = {
     timeOffset: 5,
     sound: 'bell',
     effects: ['flash'],
-    effectDuration: 5,
   },
   end: {
     id: 'end',
@@ -20,7 +19,6 @@ const DEFAULT_ALERTS = {
     timeOffset: 0,
     sound: 'gong',
     effects: ['flash'],
-    effectDuration: 5,
   },
   after: {
     id: 'after',
@@ -29,7 +27,6 @@ const DEFAULT_ALERTS = {
     timeOffset: 5,
     sound: 'alarm',
     effects: ['shake'],
-    vibrationDuration: 10,
   },
 } as const;
 

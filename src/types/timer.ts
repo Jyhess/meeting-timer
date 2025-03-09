@@ -8,8 +8,6 @@ export type Alert = {
   timeOffset: number;
   sound: AlertSound;
   effects: AlertEffect[];
-  lastTriggered?: number;
-  vibrationDuration?: number;
   effectDuration?: number;
 };
 

@@ -8,7 +8,6 @@ const DEFAULT_ALERTS = {
     timeOffset: 5,
     sound: 'bell',
     effects: ['flash'] as AlertEffect[],
-    effectDuration: 5,
   },
   end: {
     id: 'end',
@@ -17,7 +16,6 @@ const DEFAULT_ALERTS = {
     timeOffset: 0,
     sound: 'gong',
     effects: ['flash'] as AlertEffect[],
-    effectDuration: 5,
   },
   after: {
     id: 'after',
@@ -26,7 +24,6 @@ const DEFAULT_ALERTS = {
     timeOffset: 5,
     sound: 'alarm',
     effects: ['shake'] as AlertEffect[],
-    vibrationDuration: 10,
   },
 } as const;
 
@@ -106,13 +103,13 @@ export class SettingsManager {
     
     // Mettre à jour la durée pour toutes les alertes
     if (this.beforeAlert.effects.includes('flash')) {
-      this.updateBeforeAlert({ ...this.beforeAlert, effectDuration: duration });
+      this.updateBeforeAlert({ ...this.beforeAlert});
     }
     if (this.endAlert.effects.includes('flash')) {
-      this.updateEndAlert({ ...this.endAlert, effectDuration: duration });
+      this.updateEndAlert({ ...this.endAlert});
     }
     if (this.afterAlert.effects.includes('shake')) {
-      this.updateAfterAlert({ ...this.afterAlert, vibrationDuration: duration });
+      this.updateAfterAlert({ ...this.afterAlert});
     }
 
     this.emit('defaultAlertDurationChange', duration);

@@ -3,16 +3,11 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { TimerPreset } from '../../types/timer';
 import { Icon } from './Icon';
 import { styles } from '../../styles/PresetList.styles';
+import { formatTime } from '../../utils/time';
 
 type PresetListProps = {
   presets: TimerPreset[];
   onSelectPreset: (preset: TimerPreset) => void;
-};
-
-const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
 export const PresetList = ({ presets, onSelectPreset }: PresetListProps) => {

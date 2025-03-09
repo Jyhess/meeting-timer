@@ -8,6 +8,7 @@ export class TimerManager {
   private state: TimerState = 'idle';
   private timeLeft: number;
   private duration: number;
+  private effectDuration: number;
   private startTime: number | null = null;
   private lastTick: number | null = null;
   private isManualStop: boolean = false;
@@ -24,7 +25,7 @@ export class TimerManager {
     // Utiliser la durée par défaut des paramètres
     this.duration = settings.getDefaultTimerMinutes() * 60;
     this.timeLeft = this.duration;
-
+    this.effectDuration = settings.getDefaultAlertDuration();
     // Initialiser les alertes avec les valeurs par défaut des paramètres
     this.beforeAlert = settings.getBeforeAlert();
     this.endAlert = settings.getEndAlert();
@@ -44,6 +45,10 @@ export class TimerManager {
 
   getAfterAlert(): Alert {
     return this.afterAlert;
+  }
+
+  getEffectDuration(): number {
+    return this.effectDuration;
   }
 
   // Mise à jour des alertes

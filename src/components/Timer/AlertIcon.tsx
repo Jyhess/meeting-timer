@@ -31,9 +31,6 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
   const vibrationStartTimeRef = useRef<number | null>(null);
   const { defaultAlertDuration } = useSettings();
   
-  // Utiliser la durée de vibration spécifique à l'alerte ou la valeur par défaut
-  const vibrationDuration = alert.vibrationDuration || defaultAlertDuration || 5;
-
   // Sound and vibration effect
   useEffect(() => {
     let vibrationInterval: NodeJS.Timeout | null = null;
@@ -50,7 +47,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
           vibrationInterval = setInterval(async () => {
             // Vérifier si la durée de vibration est dépassée
             if (vibrationStartTimeRef.current && 
-                Date.now() - vibrationStartTimeRef.current >= vibrationDuration * 1000) {
+                Date.now() - vibrationStartTimeRef.current >= defaultAlertDuration * 1000) {
               if (vibrationInterval) {
                 clearInterval(vibrationInterval);
                 vibrationInterval = null;
@@ -68,7 +65,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
           // Set a timeout to stop vibration after the specified duration
           setTimeout(() => {
             Vibration.cancel();
-          }, vibrationDuration * 1000);
+          }, defaultAlertDuration * 1000);
         }
       }
     }
@@ -83,7 +80,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
       }
       vibrationStartTimeRef.current = null;
     };
-  }, [isActive, alert.enabled, alert.effects, vibrationDuration]);
+  }, [isActive, alert.enabled, alert.effects, defaultAlertDuration]);
 
   const getAlertTimeText = () => {
     if (alert.id === 'end') return 'Fin';

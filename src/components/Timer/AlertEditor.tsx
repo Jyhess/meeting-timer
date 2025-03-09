@@ -40,7 +40,6 @@ export const AlertEditor = ({
   const [modalVisible, setModalVisible] = useState(isVisible);
   const [previewingEffect, setPreviewingEffect] = useState<AlertEffect | null>(null);
   const { playSound, stopSound, isPlaying } = useAudio(editedAlert.sound);
-  const { defaultAlertDuration } = useSettings();
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -147,16 +146,8 @@ export const AlertEditor = ({
     if (isPlaying) {
       stopSound();
     }
-    
-    const finalAlert = {
-      ...editedAlert,
-      vibrationDuration: editedAlert.effects.includes('shake') ? 
-        (defaultAlertDuration || 5) : undefined,
-      effectDuration: editedAlert.effects.includes('flash') ? 
-        (defaultAlertDuration || 5) : undefined
-    };
-    
-    onSave(JSON.parse(JSON.stringify(finalAlert)));
+        
+    onSave(JSON.parse(JSON.stringify(editedAlert)));
     onClose();
   };
 

@@ -20,6 +20,7 @@ import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 import { TimerManager } from '../../src/utils/TimerManager';
+import { formatTime } from '../../src/utils/time';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
@@ -135,7 +136,6 @@ const TimerScreen = React.memo(() => {
         startFlashAnimation(flashAlert);
         
         // Set a timer to automatically stop this specific alert effect
-        const effectDuration = flashAlert.effectDuration || 5; // 5 seconds default
         const timer = setTimeout(() => {
           // Only stop if this is still the active alert
           if (activeFlashAlert.current?.id === flashAlert.id) {
@@ -144,7 +144,7 @@ const TimerScreen = React.memo(() => {
           }
           // Remove this timer from the active timers map
           activeAlertTimers.current.delete(alertKey);
-        }, effectDuration * 1000);
+        }, timerManagerRef.current.getEffectDuration() * 1000);
         
         // Store the timer reference
         activeAlertTimers.current.set(alertKey, timer);
@@ -193,15 +193,6 @@ const TimerScreen = React.memo(() => {
     activeAlertTimers.current.clear();
     
     router.replace('/');
-  };
-
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(Math.abs(seconds) / 60);
-    const secs = Math.abs(seconds) % 60;
-    const prefix = seconds < 0 ? '-' : '';
-    return `${prefix}${mins.toString().padStart(2, '0')}:${secs
-      .toString()
-      .padStart(2, '0')}`;
   };
 
   const getTimeColor = () => {    

@@ -12,12 +12,7 @@ import { usePresets } from '../../src/hooks/usePresets';
 import { Icon } from '../../src/components/Timer/Icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Home.styles';
-
-const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
-};
+import { formatTime } from '../../src/utils/time';
 
 export default function HomeScreen() {
   const { presets, isLoading, refreshPresets } = usePresets();

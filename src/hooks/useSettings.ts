@@ -2,42 +2,6 @@ import { useEffect, useState } from 'react';
 import { Alert } from '../types/timer';
 import { SettingsManager } from '../utils/SettingsManager';
 
-// Alertes par défaut
-const DEFAULT_ALERTS: Alert[] = [
-  {
-    id: 'before',
-    name: 'Bientôt fini',
-    enabled: true,
-    timeOffset: 5,
-    sound: 'bell',
-    effects: ['flash'],
-    effectDuration: 5,
-    lastTriggered: 0
-  },
-  {
-    id: 'end',
-    name: 'Temps écoulé',
-    enabled: true,
-    timeOffset: 0,
-    sound: 'gong',
-    effects: ['flash'],
-    effectDuration: 5,
-    lastTriggered: 0
-  },
-  {
-    id: 'after',
-    name: 'Temps dépassé',
-    enabled: true,
-    timeOffset: 5,
-    sound: 'alarm',
-    effects: ['shake'],
-    vibrationDuration: 10,
-    lastTriggered: 0
-  }
-];
-
-// Durée des alertes par défaut (en secondes)
-const DEFAULT_ALERT_DURATION = 5;
 
 export type Settings = {
   defaultTimerMinutes: number;
