@@ -13,9 +13,9 @@ import { Icon } from '../../src/components/Timer/Icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Home.styles';
 
-const formatTime = (minutes: number) => {
-  const mins = Math.floor(minutes);
-  const secs = Math.round((minutes - mins) * 60);
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
@@ -75,7 +75,7 @@ export default function HomeScreen() {
                 >
                   <Pressable style={styles.presetCard}>
                     <Text style={styles.presetTime}>
-                      {formatTime(preset.minutes)}
+                      {formatTime(preset.seconds)}
                     </Text>
                     <View style={styles.alertIcons}>
                       {preset.alerts

@@ -9,9 +9,9 @@ type PresetListProps = {
   onSelectPreset: (preset: TimerPreset) => void;
 };
 
-const formatTime = (minutes: number) => {
-  const mins = Math.floor(minutes);
-  const secs = Math.round((minutes - mins) * 60);
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
@@ -31,7 +31,7 @@ export const PresetList = ({ presets, onSelectPreset }: PresetListProps) => {
             style={styles.presetButton}
             onPress={() => onSelectPreset(preset)}
           >
-            <Text style={styles.presetTime}>{formatTime(preset.minutes)}</Text>
+            <Text style={styles.presetTime}>{formatTime(preset.seconds)}</Text>
             <View style={styles.alertIcons}>
               {preset.alerts.filter(a => a.enabled).map((alert) => {
                 const icon = alert.id === 'before' ? 'notifications' :

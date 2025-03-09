@@ -37,13 +37,13 @@ export const useTimerScreen = (
     if (secs < 60) {
       setSeconds(mins * 60 + secs);
     }
-}, []);
+  }, []);
 
   // Sauvegarde automatique du timer
   const autoSaveTimer = useCallback(async () => {
     const alerts = [beforeAlert, endAlert, afterAlert].filter(Boolean) as Alert[];
     const existingPreset = presets.find(p => 
-      p.minutes * 60 === seconds && 
+      p.seconds === seconds && 
       JSON.stringify(p.alerts) === JSON.stringify(alerts)
     );
 
@@ -51,7 +51,7 @@ export const useTimerScreen = (
       const newPreset: TimerPreset = {
         id: Date.now().toString(),
         name: `Timer ${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`,
-        minutes: seconds / 60,
+        seconds,
         alerts,
         created_at: new Date().toISOString()
       };
@@ -85,7 +85,7 @@ export const useTimerScreen = (
 
   // Chargement d'un preset
   const loadPreset = useCallback((preset: TimerPreset) => {
-    setSeconds(Math.round(preset.minutes * 60));
+    setSeconds(preset.seconds);
     setInputBuffer('');
     preset.alerts.forEach(alert => {
       actions.updateAlert(alert);

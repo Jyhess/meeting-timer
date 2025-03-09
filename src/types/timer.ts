@@ -16,7 +16,7 @@ export type Alert = {
 export type TimerPreset = {
   id: string;
   name: string;
-  minutes: number;
+  seconds: number;
   alerts: Alert[];
   created_at: string;
 };
