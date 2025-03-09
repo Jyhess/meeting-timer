@@ -1,10 +1,14 @@
 import { useRef, useEffect, useState } from 'react';
-import { Audio } from 'expo-av';
 import { AlertSound } from '../types/timer';
 import { sounds } from '../config/alerts';
+import { Audio, initAudio } from '../utils/audio';
 
-export const useAudio = (soundName: AlertSound, customSoundUri?: string) => {
-  const soundObjectRef = useRef<Audio.Sound | null>(null);
+// Initialiser le système audio
+initAudio();
+
+export const useAudio = (soundName: AlertSound) => {
+  const audioRef = useRef<Audio | null>(null);
+  const currentSoundRef = useRef<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,71 +25,44 @@ export const useAudio = (soundName: AlertSound, customSoundUri?: string) => {
   // Cleanup when component unmounts
   useEffect(() => {
     return () => {
-      if (soundObjectRef.current) {
-        soundObjectRef.current.unloadAsync().catch(() => {
-          // Ignore errors during cleanup
-        });
-        soundObjectRef.current = null;
+      if (audioRef.current) {
+        audioRef.current.stop();
+        audioRef.current = null;
       }
     };
   }, []);
 
-  // Preload sound
+  // Load sound
   useEffect(() => {
     const loadSound = async () => {
       try {
         if (!isMountedRef.current) return;
         
-        setError(null);
-        setIsLoaded(false);
-        
-        // Unload previous sound if necessary
-        if (soundObjectRef.current) {
-          await soundObjectRef.current.unloadAsync().catch(() => {
-            // Ignore errors during cleanup
-          });
-          soundObjectRef.current = null;
-        }
-        
-        let soundSource;
-        
-        // Si c'est un son personnalisé, utiliser l'URI fourni
-        if (soundName === 'custom' && customSoundUri) {
-          soundSource = { uri: customSoundUri };
-        } else {
-          // Sinon, utiliser un son prédéfini
-          const soundConfig = sounds.find(s => s.id === soundName);
-          if (!soundConfig) {
-            throw new Error(`Son non trouvé: ${soundName}`);
-          }
-          soundSource = soundConfig.url;
-        }
-        
-        // Create and load new sound
-        const { sound } = await Audio.Sound.createAsync(
-          soundSource,
-          { shouldPlay: false },
-          (status) => {
-            if (!isMountedRef.current) return;
-            
-            if (status.isLoaded) {
-              if (!status.isPlaying && status.didJustFinish) {
-                setIsPlaying(false);
-              }
-            }
-          }
-        );
-        
-        if (!isMountedRef.current) {
-          // If component unmounted during async operation, clean up the sound
-          sound.unloadAsync().catch(() => {
-            // Ignore errors during cleanup
-          });
+        // Si c'est le même son, pas besoin de le recharger
+        if (currentSoundRef.current === soundName) {
           return;
         }
         
-        soundObjectRef.current = sound;
+        setError(null);
+        setIsLoaded(false);
+        
+        const soundConfig = sounds.find(s => s.id === soundName);
+        if (!soundConfig) {
+          throw new Error(`Son non trouvé: ${soundName}`);
+        }
+
+        // Cleanup previous sound if different
+        if (audioRef.current) {
+          audioRef.current.stop();
+          audioRef.current = null;
+        }
+
+        // Créer une nouvelle instance audio
+        const audio = new Audio(soundConfig.id);
+        audioRef.current = audio;
+        currentSoundRef.current = soundName;
         setIsLoaded(true);
+
       } catch (error) {
         if (!isMountedRef.current) return;
         
@@ -95,18 +72,8 @@ export const useAudio = (soundName: AlertSound, customSoundUri?: string) => {
       }
     };
     
-    // Only load sound on native platforms or if we're in a web environment that supports Audio
     loadSound();
-    
-    return () => {
-      // Cleanup function when dependencies change
-      if (soundObjectRef.current) {
-        soundObjectRef.current.unloadAsync().catch(() => {
-          // Ignore errors during cleanup
-        });
-      }
-    };
-  }, [soundName, customSoundUri]);
+  }, [soundName]);
 
   const playSound = async () => {
     try {
@@ -117,10 +84,8 @@ export const useAudio = (soundName: AlertSound, customSoundUri?: string) => {
       
       setError(null);
       
-      if (soundObjectRef.current) {
-        // Make sure sound is at the beginning
-        await soundObjectRef.current.setPositionAsync(0);
-        await soundObjectRef.current.playAsync();
+      if (audioRef.current) {
+        audioRef.current.play();
         setIsPlaying(true);
       }
     } catch (error) {
@@ -131,12 +96,10 @@ export const useAudio = (soundName: AlertSound, customSoundUri?: string) => {
 
   const stopSound = async () => {
     try {
-      if (soundObjectRef.current) {
-        await soundObjectRef.current.stopAsync().catch(() => {
-          // Ignore errors during stop
-        });
-        setIsPlaying(false);
+      if (audioRef.current) {
+        audioRef.current.stop();
       }
+      setIsPlaying(false);
     } catch (error) {
       console.error("Error stopping sound:", error);
       setError('Erreur lors de l\'arrêt du son');

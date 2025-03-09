@@ -17,7 +17,6 @@ import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { Alert } from '../../src/types/timer';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
-import { useCustomSounds } from '../../src/hooks/useCustomSounds';
 import { CustomSoundSelector } from '../../src/components/Timer/CustomSoundSelector';
 
 export default function SettingsScreen() {
@@ -30,9 +29,7 @@ export default function SettingsScreen() {
     setDefaultAlertDuration,
     saveSettings
   } = useSettings();
-  
-  const { customSounds, pickAudioFile, removeCustomSound } = useCustomSounds();
-  
+    
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const [minutes, setMinutes] = useState(defaultTimerMinutes.toString());
   const [alertDuration, setAlertDuration] = useState(defaultAlertDuration.toString());
@@ -95,10 +92,6 @@ export default function SettingsScreen() {
       // Réinitialiser à la valeur précédente si invalide
       setAlertDuration(defaultAlertDuration.toString());
     }
-  };
-
-  const handleAddCustomSound = async () => {
-    await pickAudioFile();
   };
 
   const handleAlertEdit = (alert: Alert) => {
@@ -234,74 +227,7 @@ export default function SettingsScreen() {
               </Pressable>
             )}
           </View>
-          
-          {Platform.OS !== 'web' && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Sons personnalisés</Text>
-              <Text style={styles.sectionDescription}>
-                Gérez vos sons personnalisés pour les alertes
-              </Text>
-              
-              {customSounds.length === 0 ? (
-                <View style={styles.emptyState}>
-                  <Icon name="music_note" size={36} color="#888" />
-                  <Text style={styles.emptyStateText}>Aucun son personnalisé</Text>
-                  <Text style={styles.emptyStateSubtext}>
-                    Ajoutez des sons personnalisés pour les utiliser dans vos alertes
-                  </Text>
-                </View>
-              ) : (
-                <FlatList
-                  data={customSounds}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <View style={styles.soundItem}>
-                      <View style={styles.soundInfo}>
-                        <Icon name="music_note" size={24} color="#aaa" />
-                        <Text style={styles.soundName} numberOfLines={1} ellipsizeMode="middle">
-                          {item.name}
-                        </Text>
-                      </View>
-                      <Pressable
-                        style={styles.deleteButton}
-                        onPress={() => removeCustomSound(item.id)}
-                      >
-                        <Icon name="close" size={20} color="#f44336" />
-                      </Pressable>
-                    </View>
-                  )}
-                  style={styles.soundsList}
-                  contentContainerStyle={styles.soundsListContent}
-                />
-              )}
-              
-              <Pressable
-                style={styles.addSoundButton}
-                onPress={handleAddCustomSound}
-              >
-                <Icon name="add" size={20} color="#eee" />
-                <Text style={styles.addSoundButtonText}>Ajouter un son</Text>
-              </Pressable>
-            </View>
-          )}
-          
-          {Platform.OS === 'web' && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Sons personnalisés</Text>
-              <Text style={styles.sectionDescription}>
-                Les sons personnalisés ne sont pas disponibles sur la version web
-              </Text>
-              
-              <View style={styles.emptyState}>
-                <Icon name="music_note" size={36} color="#888" />
-                <Text style={styles.emptyStateText}>Fonctionnalité non disponible</Text>
-                <Text style={styles.emptyStateSubtext}>
-                  Cette fonctionnalité est uniquement disponible sur les applications mobiles
-                </Text>
-              </View>
-            </View>
-          )}
-          
+                    
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Alertes par défaut</Text>
             <Text style={styles.sectionDescription}>
@@ -357,15 +283,6 @@ export default function SettingsScreen() {
           />
         )}
         
-        {showCustomSoundSelector && Platform.OS !== 'web' && (
-          <CustomSoundSelector
-            isVisible={showCustomSoundSelector}
-            onClose={() => setShowCustomSoundSelector(false)}
-            onSelect={() => {}}
-            onAddNew={handleAddCustomSound}
-            selectedUri=""
-          />
-        )}
       </LinearGradient>
     </SafeAreaView>
   );

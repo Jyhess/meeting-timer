@@ -11,7 +11,6 @@ export type Alert = {
   lastTriggered?: number;
   vibrationDuration?: number; // Durée de vibration en secondes
   effectDuration?: number; // Durée des effets visuels en secondes
-  customSoundUri?: string; // URI du son personnalisé
 };
 
 export type TimerPreset = {

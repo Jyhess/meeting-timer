@@ -1,36 +1,12 @@
 import { useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { Icon } from '../../src/components/Timer/Icon';
-import { Platform } from 'react-native';
-import { Audio } from 'expo-av';
+import { initAudio } from '../../src/utils/audio';
 
 export default function TabLayout() {
   // Initialize audio session on component mount
   useEffect(() => {
-    const setupAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          playsInSilentModeIOS: true,
-          staysActiveInBackground: true,
-          shouldDuckAndroid: true,
-        });
-      } catch (error) {
-        console.error('Error setting up audio mode:', error);
-      }
-    };
-    
-    setupAudio();
-    
-    return () => {
-      // Clean up audio session on unmount if needed
-      Audio.setAudioModeAsync({
-        playsInSilentModeIOS: false,
-        staysActiveInBackground: false,
-        shouldDuckAndroid: false,
-      }).catch(error => {
-        console.error('Error cleaning up audio mode:', error);
-      });
-    };
+    initAudio();
   }, []);
 
   return (
@@ -43,8 +19,6 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: '#666',
-        // Improve performance by not re-rendering screens when switching tabs
-        unmountOnBlur: false,
       }}
     >
       <Tabs.Screen

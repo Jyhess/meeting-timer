@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, Modal, Vibration, Platform, ScrollView } from 'react-native';
+import { View, Text, Pressable, Modal, Vibration, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { BlurView } from 'expo-blur';
 import Animated, {
   useAnimatedStyle,
@@ -17,8 +17,7 @@ import { sounds, effects } from '../../config/alerts';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertEditor.styles';
 import { useSettings } from '../../hooks/useSettings';
-import { useCustomSounds } from '../../hooks/useCustomSounds';
-import { CustomSoundSelector } from './CustomSoundSelector';
+import { AlertIcon } from './AlertIcon';
 
 type AlertEditorProps = {
   alert: Alert;
@@ -39,16 +38,9 @@ export const AlertEditor = ({
   // Créer une copie profonde de l'alerte pour éviter les références partagées
   const [editedAlert, setEditedAlert] = useState<Alert>(JSON.parse(JSON.stringify(alert)));
   const [modalVisible, setModalVisible] = useState(isVisible);
-  const [previewingEffect, setPreviewingEffect] = useState<AlertEffect | null>(
-    null
-  );
-  const [showCustomSoundSelector, setShowCustomSoundSelector] = useState(false);
-  const { playSound, stopSound, isPlaying } = useAudio(
-    editedAlert.sound, 
-    editedAlert.customSoundUri
-  );
+  const [previewingEffect, setPreviewingEffect] = useState<AlertEffect | null>(null);
+  const { playSound, stopSound, isPlaying } = useAudio(editedAlert.sound);
   const { defaultAlertDuration } = useSettings();
-  const { customSounds } = useCustomSounds();
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -117,62 +109,28 @@ export const AlertEditor = ({
     }
   }, [isVisible, alert]);
 
-  const handleSoundSelect = (sound: AlertSound) => {
-    if (sound === 'custom') {
-      if (Platform.OS !== 'web' && customSounds.length > 0) {
-        setShowCustomSoundSelector(true);
-      } else if (Platform.OS !== 'web' && customSounds.length === 0) {
-        // Informer l'utilisateur qu'il doit d'abord ajouter des sons personnalisés dans les paramètres
-        console.log('Aucun son personnalisé disponible. Ajoutez-en dans les paramètres.');
-      } else {
-        // Sur le web, ne pas permettre la sélection de sons personnalisés
-        console.log('Sons personnalisés non disponibles sur le web');
-      }
-    } else {
-      setEditedAlert((prev) => ({ 
-        ...prev, 
-        sound,
-        // Si on sélectionne un son prédéfini, supprimer l'URI du son personnalisé
-        customSoundUri: undefined
-      }));
-    }
+  const handleSoundSelect = (soundId: AlertSound) => {
+    setEditedAlert(prev => ({
+      ...prev,
+      sound: soundId,
+    }));
   };
 
-  const handleCustomSoundSelect = async (customSoundUri?: string) => {
-    setShowCustomSoundSelector(false);
-    
-    if (customSoundUri) {
-      setEditedAlert((prev) => ({ 
-        ...prev, 
-        sound: 'custom',
-        customSoundUri
-      }));
-    }
-  };
+  const handleEffectToggle = (effectId: AlertEffect) => {
+    setEditedAlert(prev => {
+      const newEffects = prev.effects.includes(effectId)
+        ? prev.effects.filter(e => e !== effectId)
+        : [...prev.effects, effectId];
 
-  const handleEffectToggle = (effect: AlertEffect) => {
-    setEditedAlert((prev) => {
-      // Vérifier si l'effet est déjà dans le tableau
-      const effectIndex = prev.effects.indexOf(effect);
-      let newEffects: AlertEffect[];
-      
-      if (effectIndex !== -1) {
-        // Si l'effet est déjà présent, le retirer
-        newEffects = [...prev.effects];
-        newEffects.splice(effectIndex, 1);
-      } else {
-        // Sinon, l'ajouter
-        newEffects = [...prev.effects, effect];
-      }
-      
-      return { ...prev, effects: newEffects };
+      return {
+        ...prev,
+        effects: newEffects,
+      };
     });
     
-    // Prévisualiser l'effet
-    setPreviewingEffect(effect);
+    setPreviewingEffect(effectId);
     
-    // Prévisualiser l'effet de vibration sur les appareils mobiles
-    if (effect === 'shake' && Platform.OS !== 'web') {
+    if (effectId === 'shake' && Platform.OS !== 'web') {
       if (Platform.OS === 'ios') {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       } else {
@@ -190,44 +148,27 @@ export const AlertEditor = ({
       stopSound();
     }
     
-    // S'assurer que les durées sont correctement définies
     const finalAlert = {
       ...editedAlert,
       vibrationDuration: editedAlert.effects.includes('shake') ? 
         (defaultAlertDuration || 5) : undefined,
-      // Utiliser les durées des paramètres
       effectDuration: editedAlert.effects.includes('flash') ? 
         (defaultAlertDuration || 5) : undefined
     };
     
-    // Appeler onSave avec une copie profonde pour éviter les références partagées
     onSave(JSON.parse(JSON.stringify(finalAlert)));
     onClose();
   };
 
-  const isEffectSelected = (effect: AlertEffect) => {
-    return editedAlert.effects.includes(effect);
+  const isEffectSelected = (effectId: AlertEffect) => {
+    return editedAlert.effects.includes(effectId);
   };
 
-  // Obtenir le nom du son personnalisé à partir de l'URI
-  const getCustomSoundName = () => {
-    if (!editedAlert.customSoundUri) return "Son personnalisé";
-    
-    const customSound = customSounds.find(s => s.uri === editedAlert.customSoundUri);
-    if (customSound) return customSound.name;
-    
-    // Extraire le nom du fichier de l'URI
-    const uriParts = editedAlert.customSoundUri.split('/');
-    const fileName = uriParts[uriParts.length - 1];
-    
-    // Enlever l'extension et les caractères spéciaux
-    return fileName.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
+  const getSoundName = () => {
+    const soundConfig = sounds.find(s => s.id === editedAlert.sound);
+    return soundConfig ? soundConfig.name : "Son inconnu";
   };
 
-  // Vérifier si l'option "custom" doit être affichée
-  const shouldShowCustomOption = Platform.OS !== 'web' && customSounds.length > 0;
-
-  // Fonction pour arrêter le son et l'effet de prévisualisation
   const handleStopAll = () => {
     stopSound();
     setPreviewingEffect(null);
@@ -244,7 +185,6 @@ export const AlertEditor = ({
         <AnimatedBlurView
           intensity={50}
           style={[styles.modalContent, animatedStyle]}
-          onAnimatedValueUpdate={handleModalHide}
         >
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.modalTitle}>Configurer l'alerte</Text>
@@ -297,18 +237,21 @@ export const AlertEditor = ({
               </View>
               <View style={styles.optionsGrid}>
                 {sounds.map((sound) => (
-                  <Pressable
+                  <TouchableOpacity
                     key={sound.id}
                     style={[
                       styles.optionButton,
                       editedAlert.sound === sound.id && styles.optionButtonActive,
                     ]}
-                    onPress={() => handleSoundSelect(sound.id)}
+                    onPress={() => handleSoundSelect(sound.id as AlertSound)}
                   >
-                    <Icon
-                      name={sound.icon as any}
-                      size={24}
-                      color={editedAlert.sound === sound.id ? '#fff' : '#666'}
+                    <AlertIcon
+                      alert={{ ...editedAlert, sound: sound.id as AlertSound }}
+                      isActive={false}
+                      onPress={() => {}}
+                      onToggle={() => {}}
+                      timeColor="#fff"
+                      onStopEffects={() => {}}
                     />
                     <Text
                       style={[
@@ -318,58 +261,8 @@ export const AlertEditor = ({
                     >
                       {sound.name}
                     </Text>
-                    <Pressable style={styles.playButton} onPress={playSound}>
-                      <Icon
-                        name="play-circle"
-                        size={20}
-                        color={editedAlert.sound === sound.id ? '#fff' : '#666'}
-                      />
-                    </Pressable>
-                  </Pressable>
+                  </TouchableOpacity>
                 ))}
-                
-                {/* Option pour son personnalisé - uniquement sur mobile et si des sons personnalisés existent */}
-                {shouldShowCustomOption && (
-                  <Pressable
-                    style={[
-                      styles.optionButton,
-                      editedAlert.sound === 'custom' && styles.optionButtonActive,
-                    ]}
-                    onPress={() => handleSoundSelect('custom')}
-                  >
-                    <Icon
-                      name="music_note"
-                      size={24}
-                      color={editedAlert.sound === 'custom' ? '#fff' : '#666'}
-                    />
-                    <Text
-                      style={[
-                        styles.optionText,
-                        editedAlert.sound === 'custom' && styles.optionTextActive,
-                      ]}
-                    >
-                      {editedAlert.sound === 'custom' ? getCustomSoundName() : 'Personnalisé'}
-                    </Text>
-                    {editedAlert.sound === 'custom' && editedAlert.customSoundUri && (
-                      <Pressable style={styles.playButton} onPress={playSound}>
-                        <Icon
-                          name="play-circle"
-                          size={20}
-                          color="#fff"
-                        />
-                      </Pressable>
-                    )}
-                  </Pressable>
-                )}
-                
-                {/* Message informatif si aucun son personnalisé n'est disponible */}
-                {Platform.OS !== 'web' && customSounds.length === 0 && (
-                  <View style={styles.infoMessage}>
-                    <Text style={styles.infoMessageText}>
-                      Pour utiliser des sons personnalisés, ajoutez-les d'abord dans les paramètres.
-                    </Text>
-                  </View>
-                )}
               </View>
             </View>
 
@@ -377,30 +270,23 @@ export const AlertEditor = ({
               <Text style={styles.sectionTitle}>Effets</Text>
               <View style={styles.optionsGrid}>
                 {effects.map((effect) => (
-                  <Pressable
+                  <TouchableOpacity
                     key={effect.id}
                     style={[
                       styles.optionButton,
-                      isEffectSelected(effect.id) && styles.optionButtonActive,
+                      isEffectSelected(effect.id as AlertEffect) && styles.optionButtonActive,
                     ]}
-                    onPress={() => handleEffectToggle(effect.id)}
+                    onPress={() => handleEffectToggle(effect.id as AlertEffect)}
                   >
-                    <AnimatedView
-                      style={[
-                        styles.effectIconContainer,
-                        previewingEffect === effect.id && previewAnimatedStyle,
-                      ]}
-                    >
-                      <Icon
-                        name={effect.icon as any}
-                        size={24}
-                        color={isEffectSelected(effect.id) ? '#fff' : '#666'}
-                      />
-                    </AnimatedView>
+                    <Icon
+                      name={effect.icon as any}
+                      size={24}
+                      color={isEffectSelected(effect.id as AlertEffect) ? '#fff' : '#666'}
+                    />
                     <Text
                       style={[
                         styles.optionText,
-                        isEffectSelected(effect.id) && styles.optionTextActive,
+                        isEffectSelected(effect.id as AlertEffect) && styles.optionTextActive,
                       ]}
                     >
                       {effect.name}
@@ -408,37 +294,27 @@ export const AlertEditor = ({
                         <Text style={styles.effectNote}> (+ vibration)</Text>
                       )}
                     </Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>
 
             <View style={styles.modalButtons}>
-              <Pressable style={styles.modalButton} onPress={onClose}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={onClose}
+              >
                 <Text style={styles.modalButtonText}>Annuler</Text>
-              </Pressable>
-              <Pressable
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={[styles.modalButton, styles.modalButtonPrimary]}
                 onPress={handleSave}
               >
                 <Text style={styles.modalButtonText}>Enregistrer</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </ScrollView>
         </AnimatedBlurView>
-        
-        {showCustomSoundSelector && Platform.OS !== 'web' && (
-          <CustomSoundSelector
-            isVisible={showCustomSoundSelector}
-            onClose={() => setShowCustomSoundSelector(false)}
-            onSelect={handleCustomSoundSelect}
-            onAddNew={() => {
-              // Fermer le sélecteur sans ajouter de nouveau son
-              setShowCustomSoundSelector(false);
-            }}
-            selectedUri={editedAlert.customSoundUri}
-          />
-        )}
       </View>
     </Modal>
   );

@@ -110,25 +110,11 @@ export const useTimer = (initialMinutes: number) => {
           return updatedAlert;
         }
         
-        // Sinon, convertir 'effect' en tableau 'effects'
-        let newEffect = alert.effect;
-        if (newEffect === 'pulse') {
-          newEffect = 'flash';
-        }
-        
+        // Sinon, créer un tableau 'effects' vide
         const updatedAlert = {
           ...alert,
-          effects: newEffect ? [newEffect] : [],
+          effects: [],
         };
-        
-        // Mettre à jour les durées spécifiques en fonction des effets
-        if (newEffect === 'flash') {
-          updatedAlert.effectDuration = defaultAlertDuration;
-        }
-        
-        if (newEffect === 'shake') {
-          updatedAlert.vibrationDuration = defaultAlertDuration;
-        }
         
         return updatedAlert;
       });
@@ -143,17 +129,14 @@ export const useTimer = (initialMinutes: number) => {
   }, [isLoaded, defaultTimerMinutes, defaultAlerts, defaultAlertDuration, isRunning]);
 
   // Créer des hooks audio pour chaque type d'alerte
-  const beforeAlertSound = useAudio(alerts.find(a => a.id === 'before')?.sound || 'bell', 
-                                   alerts.find(a => a.id === 'before')?.customSoundUri);
-  const endAlertSound = useAudio(alerts.find(a => a.id === 'end')?.sound || 'gong',
-                                alerts.find(a => a.id === 'end')?.customSoundUri);
-  const afterAlertSound = useAudio(alerts.find(a => a.id === 'after')?.sound || 'alarm',
-                                  alerts.find(a => a.id === 'after')?.customSoundUri);
+  const { playSound: playBeforeSound, stopSound: stopBeforeSound } = useAudio(alerts.find(a => a.id === 'before')?.sound || 'bell');
+  const { playSound: playEndSound, stopSound: stopEndSound } = useAudio(alerts.find(a => a.id === 'end')?.sound || 'gong');
+  const { playSound: playAfterSound, stopSound: stopAfterSound } = useAudio(alerts.find(a => a.id === 'after')?.sound || 'alarm');
 
   const audioHooks = {
-    before: beforeAlertSound,
-    end: endAlertSound,
-    after: afterAlertSound,
+    before: { playSound: playBeforeSound, stopSound: stopBeforeSound },
+    end: { playSound: playEndSound, stopSound: stopEndSound },
+    after: { playSound: playAfterSound, stopSound: stopAfterSound },
   };
 
   // Mettre à jour les hooks audio quand les alertes changent
@@ -202,7 +185,7 @@ export const useTimer = (initialMinutes: number) => {
       const effectsEqual = Array.isArray(alert1.effects) && Array.isArray(alert2.effects) 
         ? alert1.effects.length === alert2.effects.length && 
           alert1.effects.every(e => alert2.effects.includes(e))
-        : alert1.effect === alert2.effect; // Compatibilité avec l'ancien format
+        : false; // Si l'un des deux n'a pas d'effects, ils ne sont pas égaux
       
       return (
         alert1.enabled === alert2.enabled &&
@@ -257,9 +240,9 @@ export const useTimer = (initialMinutes: number) => {
     const migratedAlerts = preset.alerts.map(alert => {
       // Si l'alerte a déjà un tableau 'effects', l'utiliser
       if (Array.isArray(alert.effects)) {
-        // Remplacer 'pulse' par 'flash' si présent
+        // Remplacer 'flash' par 'flash' si présent (anciennement 'pulse')
         const newEffects = alert.effects.map(effect => 
-          effect === 'pulse' ? 'flash' : effect
+          effect === 'flash' ? 'flash' : effect
         );
         
         // Appliquer la durée d'alerte unifiée
@@ -280,25 +263,11 @@ export const useTimer = (initialMinutes: number) => {
         return updatedAlert;
       }
       
-      // Sinon, convertir 'effect' en tableau 'effects'
-      let newEffect = alert.effect;
-      if (newEffect === 'pulse') {
-        newEffect = 'flash';
-      }
-      
+      // Sinon, créer un tableau 'effects' vide
       const updatedAlert = {
         ...alert,
-        effects: newEffect ? [newEffect] : [],
+        effects: [],
       };
-      
-      // Mettre à jour les durées spécifiques en fonction des effets
-      if (newEffect === 'flash') {
-        updatedAlert.effectDuration = defaultAlertDuration;
-      }
-      
-      if (newEffect === 'shake') {
-        updatedAlert.vibrationDuration = defaultAlertDuration;
-      }
       
       return updatedAlert;
     });

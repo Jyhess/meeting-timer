@@ -1,13 +1,14 @@
 import { AlertSound, AlertEffect } from '../types/timer';
+import { getSoundUrl } from '../utils/audio';
 
 type SoundConfig = {
   id: AlertSound;
   name: string;
   icon: string;
-  url: string | number;
+  url: string;
 };
 
-type EffectConfig = {
+export type EffectConfig = {
   id: AlertEffect;
   name: string;
   icon: string;
@@ -18,25 +19,25 @@ export const sounds: SoundConfig[] = [
     id: 'gong',
     name: 'Gong',
     icon: 'gong',
-    url: require('../../assets/sounds/asian-gong.mp3'),
+    url: getSoundUrl('asian-gong.mp3'),
   },
   {
     id: 'bell',
     name: 'Cloche',
     icon: 'notifications',
-    url: require('../../assets/sounds/bell-ringing.mp3'),
+    url: getSoundUrl('bell-ringing.mp3'),
   },
   {
     id: 'chime',
     name: 'Carillon',
     icon: 'doorbell',
-    url: require('../../assets/sounds/chime-and-chomp.mp3'),
+    url: getSoundUrl('chime-and-chomp.mp3'),
   },
   {
     id: 'alarm',
     name: 'Alarme',
     icon: 'siren',
-    url: require('../../assets/sounds/alert-sound-loop.mp3'),
+    url: getSoundUrl('alert-sound-loop.mp3'),
   },
 ];
 

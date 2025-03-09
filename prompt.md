@@ -23,37 +23,35 @@ Je souhaite créer une application mobile appelée "CoachTimer" - un outil profe
    - Cloche
    - Carillon
    - Alarme
-   - Sons personnalisés (importés par l'utilisateur)
 
 4. **Effets visuels**
    - Flash
-   - Pulsation
    - Vibration
 
 5. **Sauvegarde des configurations**
    - Enregistrement automatique des derniers timers utilisés
    - Affichage des timers récents sur l'écran d'accueil
+   - Les timers sont triés dans l'ordre d'utilisation. Les plus récents d'abord
 
-6. **Paramètres avancés**
+6. **Paramètres**
    - Durée par défaut des timers
-   - Durée des vibrations
+   - Configuration par défaut des alertes
    - Durée des effets visuels
-   - Gestion des sons personnalisés
 
 ## Spécifications techniques
 
 - Utiliser React Native avec Expo (SDK 52+)
-- Expo Router pour la navigation
+- react-navigation pour la navigation
 - Structure à trois onglets:
   - Onglet "Timers" pour afficher les configurations sauvegardées
   - Onglet "Nouveau" pour créer/configurer un nouveau timer
   - Onglet "Préférences" pour les paramètres globaux
 - Utiliser React Native Reanimated pour les animations
 - Utiliser AsyncStorage pour la persistance des données
-- Utiliser Expo AV pour la gestion des sons
-- Utiliser Expo Document Picker pour l'importation de sons personnalisés
+- Utiliser react-native-sound et react-native-web-sound pour la gestion des sons
 - Utiliser des icônes PNG personnalisées (pas de bibliothèque d'icônes)
 - Styles dans des fichiers séparés
+- Tous les commentaies doivent être en anglais
 
 ## Design
 
@@ -70,8 +68,8 @@ Je souhaite créer une application mobile appelée "CoachTimer" - un outil profe
 
 ```typescript
 // Types pour les alertes
-type AlertEffect = 'flash' | 'pulse' | 'shake';
-type AlertSound = 'gong' | 'bell' | 'chime' | 'alarm' | 'custom';
+type AlertEffect = 'flash' | 'shake';
+type AlertSound = 'gong' | 'bell' | 'chime' | 'alarm';
 
 // Structure d'une alerte
 type Alert = {
@@ -81,9 +79,7 @@ type Alert = {
   timeOffset: number;
   sound: AlertSound;
   effects: AlertEffect[]; // Tableau d'effets
-  vibrationDuration?: number; // Durée de vibration en secondes
-  effectDuration?: number; // Durée des effets visuels en secondes
-  customSoundUri?: string; // URI du son personnalisé
+  effectDuration?: number; // Durée des effets en secondes
   lastTriggered?: number;
 };
 
@@ -93,15 +89,7 @@ type TimerPreset = {
   name: string;
   minutes: number;
   alerts: Alert[];
-  created_at: string;
-};
-
-// Structure d'un son personnalisé
-type CustomSound = {
-  id: string;
-  name: string;
-  uri: string;
-  type: string;
+  last_used: string;
 };
 ```
 
@@ -129,8 +117,7 @@ type CustomSound = {
 2. Implémenter la logique de minuterie avec les contrôles de base
 3. Ajouter le système d'alertes avec sons et effets visuels
 4. Implémenter la sauvegarde et le chargement des configurations
-5. Ajouter la gestion des sons personnalisés
-6. Peaufiner l'interface utilisateur et les animations
-7. Optimiser pour différentes plateformes
+5. Peaufiner l'interface utilisateur et les animations
+6. Optimiser pour différentes plateformes
 
 Merci de développer cette application en suivant ces spécifications tout en gardant le code propre, bien organisé et maintenable.

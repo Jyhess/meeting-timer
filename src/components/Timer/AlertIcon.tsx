@@ -27,7 +27,7 @@ type AlertIconProps = {
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onStopEffects }: AlertIconProps) => {
-  const { isPlaying, stopSound, playSound } = useAudio(alert.sound, alert.customSoundUri);
+  const { isPlaying, stopSound, playSound } = useAudio(alert.sound);
   const soundConfig = sounds.find(s => s.id === alert.sound);
   const vibrationStartTimeRef = useRef<number | null>(null);
   const { defaultAlertDuration } = useSettings();
