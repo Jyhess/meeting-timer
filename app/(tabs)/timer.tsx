@@ -299,7 +299,7 @@ const TimerScreen = React.memo(() => {
             {!isRunning ? (
               <>
                 <Pressable style={styles.controlButton} onPress={start}>
-                  <Icon name="play-arrow" size={32} color="#4CAF50" />
+                  <Icon name="play_arrow" size={32} color="#4CAF50" />
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleStop}>
                   <Icon name="close" size={32} color="#f44336" />
@@ -308,7 +308,7 @@ const TimerScreen = React.memo(() => {
             ) : (
               <>
                 <Pressable style={styles.controlButton} onPress={state === 'paused' ? resume : pause}>
-                  <Icon name={state === 'paused' ? "play-arrow" : "pause"} size={32} color="#FF9800" />
+                  <Icon name={state === 'paused' ? "play_arrow" : "pause"} size={32} color="#FF9800" />
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleStop}>
                   <Icon name="stop" size={32} color="#f44336" />

@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Icon } from '../../src/components/Timer/Icon';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
-import { Alert } from '../../src/types/timer';
+import { Alert, ALERT_SOUNDS } from '../../src/types/timer';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
 
@@ -198,17 +198,9 @@ export default function SettingsScreen() {
               <View key={alert.id} style={styles.alertItem}>
                 <View style={styles.alertInfo}>
                   <Icon
-                    name={
-                      alert.sound === 'gong'
-                        ? 'gong'
-                        : alert.sound === 'bell'
-                        ? 'notifications'
-                        : alert.sound === 'chime'
-                        ? 'doorbell'
-                        : 'siren'
-                    }
+                    name={ALERT_SOUNDS[alert.sound].iconName}
                     size={24}
-                    color="#aaa"
+                    color="#fff"
                   />
                   <View style={styles.alertTextContainer}>
                     <Text style={styles.alertName}>{alert.name}</Text>

@@ -1,7 +1,7 @@
-import { AlertSound, AlertEffect } from '../types/timer';
+import { AlertSoundId, AlertEffect } from '../types/timer';
 
 type SoundConfig = {
-  id: AlertSound;
+  id: AlertSoundId;
   name: string;
   icon: string;
 };
@@ -42,7 +42,7 @@ export const sounds: SoundConfig[] = [
   {
     id: 'success',
     name: 'Succès',
-    icon: 'celebration',
+    icon: 'check_circle',
   },
   {
     id: 'transition',
@@ -62,17 +62,17 @@ export const sounds: SoundConfig[] = [
   {
     id: 'ringing',
     name: 'Sonnerie',
-    icon: 'ring_volume',
+    icon: 'notifications_active',
   },
   {
     id: 'titou',
     name: 'Titou',
-    icon: 'pets',
+    icon: 'celebration',
   },
   {
     id: 'foghorn',
     name: 'Corne de brume',
-    icon: 'foggy',
+    icon: 'volume_up',
   },
   {
     id: 'bingbong',
@@ -82,7 +82,7 @@ export const sounds: SoundConfig[] = [
   {
     id: 'bigben',
     name: 'Big Ben',
-    icon: 'watch',
+    icon: 'schedule',
   },
   {
     id: 'bell2',

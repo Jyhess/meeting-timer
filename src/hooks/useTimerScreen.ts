@@ -41,7 +41,16 @@ export const useTimerScreen = (
 
   // Sauvegarde automatique du timer
   const autoSaveTimer = useCallback(async () => {
-    const alerts = [beforeAlert, endAlert, afterAlert].filter(Boolean) as Alert[];
+    // Récupérer les alertes actuelles directement du TimerManager
+    const alerts = [
+      timerManagerRef.current?.getBeforeAlert(),
+      timerManagerRef.current?.getEndAlert(),
+      timerManagerRef.current?.getAfterAlert()
+    ].filter(Boolean) as Alert[];
+
+    console.log('Alertes à sauvegarder:', alerts);
+
+    // Vérifier si un preset similaire existe déjà
     const existingPreset = presets.find(p => 
       p.seconds === seconds && 
       JSON.stringify(p.alerts) === JSON.stringify(alerts)
@@ -57,7 +66,7 @@ export const useTimerScreen = (
       };
       await addPreset(newPreset);
     }
-  }, [seconds, beforeAlert, endAlert, afterAlert, presets, addPreset]);
+  }, [seconds, presets, addPreset]);
 
   // Gestion du pavé numérique
   const handleNumberPress = useCallback((num: number) => {

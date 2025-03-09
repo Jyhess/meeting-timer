@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, Vibration, Platform } from 'react-native';
 import Animated, { 
   useAnimatedStyle, 
@@ -30,7 +30,13 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
   const soundConfig = sounds.find(s => s.id === alert.sound);
   const vibrationStartTimeRef = useRef<number | null>(null);
   const { defaultAlertDuration } = useSettings();
+  const [localEnabled, setLocalEnabled] = useState(alert.enabled);
   
+  // Synchroniser l'état local avec l'état de l'alerte
+  useEffect(() => {
+    setLocalEnabled(alert.enabled);
+  }, [alert.enabled]);
+
   // Sound and vibration effect
   useEffect(() => {
     let vibrationInterval: NodeJS.Timeout | null = null;
@@ -123,7 +129,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
               key={effect}
               name={iconName as any}
               size={12}
-              color={isActive ? '#fff' : alert.enabled ? '#999' : '#333'}
+              color={isActive ? '#fff' : localEnabled ? '#999' : '#333'}
               style={styles.effectIcon}
             />
           );
@@ -139,7 +145,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
           <AnimatedView 
             style={[
               styles.alertIcon,
-              !alert.enabled && styles.alertIconDisabled,
+              !localEnabled && styles.alertIconDisabled,
               isActive && styles.alertIconActive,
               alert.effects.includes('shake') && shakeAnimation,
             ]}
@@ -147,11 +153,11 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
             <Icon 
               name={soundConfig?.icon as any}
               size={28}
-              color={isActive ? '#fff' : alert.enabled ? '#999' : '#333'}
+              color={isActive ? '#fff' : localEnabled ? '#999' : '#333'}
             />
             <Text style={[
               styles.alertTime,
-              !alert.enabled && styles.alertTimeDisabled,
+              !localEnabled && styles.alertTimeDisabled,
               isActive && styles.alertTimeActive,
               timeColor && { color: timeColor }
             ]}>
@@ -163,8 +169,11 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
       </View>
       <View style={styles.sliderContainer}>
         <ToggleSlider
-          value={alert.enabled}
-          onToggle={onToggle}
+          value={localEnabled}
+          onToggle={(enabled) => {
+            setLocalEnabled(enabled);
+            onToggle(enabled);
+          }}
         />
       </View>
     </View>

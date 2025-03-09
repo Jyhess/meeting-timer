@@ -11,7 +11,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { Alert, AlertEffect, AlertSound } from '../../types/timer';
+import { Alert, AlertEffect, AlertSoundId } from '../../types/timer';
 import { useAudio } from '../../hooks/useAudio';
 import { sounds, effects } from '../../config/alerts';
 import { Icon } from './Icon';
@@ -108,7 +108,7 @@ export const AlertEditor = ({
     }
   }, [isVisible, alert]);
 
-  const handleSoundSelect = (soundId: AlertSound) => {
+  const handleSoundSelect = (soundId: AlertSoundId) => {
     setEditedAlert(prev => ({
       ...prev,
       sound: soundId,
@@ -222,7 +222,7 @@ export const AlertEditor = ({
                 <Text style={styles.sectionTitle}>Son</Text>
                 {isPlaying && (
                   <Pressable style={styles.stopSoundButton} onPress={handleStopAll}>
-                    <Icon name="volume-off" size={20} color="#fff" />
+                    <Icon name="volume_off" size={20} color="#fff" />
                   </Pressable>
                 )}
               </View>
@@ -234,7 +234,7 @@ export const AlertEditor = ({
                       styles.optionButton,
                       editedAlert.sound === sound.id && styles.optionButtonActive,
                     ]}
-                    onPress={() => handleSoundSelect(sound.id as AlertSound)}
+                    onPress={() => handleSoundSelect(sound.id as AlertSoundId)}
                   >
                     <Icon 
                       name={sound?.icon as any}

@@ -10,9 +10,11 @@ import { Link, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { usePresets } from '../../src/hooks/usePresets';
 import { Icon } from '../../src/components/Timer/Icon';
+import { PresetCard } from '../../src/components/Timer/PresetCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Home.styles';
 import { formatTime } from '../../src/utils/time';
+import { ALERT_SOUNDS } from '../../src/types/timer';
 
 export default function HomeScreen() {
   const { presets, isLoading, refreshPresets } = usePresets();
@@ -51,7 +53,7 @@ export default function HomeScreen() {
             </View>
           ) : presets.length === 0 ? (
             <View style={styles.emptyState}>
-              <Icon name="alarm-add" size={48} color="#888" />
+              <Icon name="alarm_add" size={48} color="#888" />
               <Text style={styles.emptyStateText}>Aucun timer enregistré</Text>
               <Text style={styles.emptyStateSubtext}>
                 Créez votre premier timer en cliquant sur "Nouveau Timer"
@@ -69,28 +71,13 @@ export default function HomeScreen() {
                   asChild
                 >
                   <Pressable style={styles.presetCard}>
-                    <Text style={styles.presetTime}>
-                      {formatTime(preset.seconds)}
-                    </Text>
-                    <View style={styles.alertIcons}>
-                      {preset.alerts
-                        .filter((a) => a.enabled)
-                        .map((alert) => (
-                          <Icon
-                            key={alert.id}
-                            name={
-                              alert.sound === 'gong'
-                                ? 'gong'
-                                : alert.sound === 'bell'
-                                ? 'notifications'
-                                : 'crisis_alert'
-                            }
-                            size={20}
-                            color="#888"
-                            style={styles.alertIcon}
-                          />
-                        ))}
-                    </View>
+                    <PresetCard
+                      preset={preset}
+                      style={styles.presetCardInner}
+                      timeStyle={styles.presetTime}
+                      iconColor="#fff"
+                      iconSize={20}
+                    />
                   </Pressable>
                 </Link>
               ))}

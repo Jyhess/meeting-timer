@@ -1,8 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { TimerPreset } from '../types/timer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const STORAGE_KEY = '@timer_presets';
+import { loadPresets as loadPresetsFromStorage, savePresets as savePresetsToStorage } from '../lib/storage';
 
 export const usePresets = () => {
   const [presets, setPresets] = useState<TimerPreset[]>([]);
@@ -12,9 +10,9 @@ export const usePresets = () => {
   // Charger les presets depuis le stockage
   const loadPresets = useCallback(async () => {
     try {
-      const storedPresets = await AsyncStorage.getItem(STORAGE_KEY);
-      if (storedPresets && isMountedRef.current) {
-        setPresets(JSON.parse(storedPresets));
+      const storedPresets = await loadPresetsFromStorage();
+      if (isMountedRef.current) {
+        setPresets(storedPresets);
       }
     } catch (error) {
       console.error('Erreur lors du chargement des presets:', error);
@@ -25,10 +23,15 @@ export const usePresets = () => {
     }
   }, []);
 
+  // Charger les presets au montage initial
+  useEffect(() => {
+    loadPresets();
+  }, [loadPresets]);
+
   // Sauvegarder les presets
   const savePresets = useCallback(async (newPresets: TimerPreset[]) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newPresets));
+      await savePresetsToStorage(newPresets);
       if (isMountedRef.current) {
         setPresets(newPresets);
       }
@@ -54,13 +57,12 @@ export const usePresets = () => {
     return loadPresets();
   }, [loadPresets]);
 
-  // Effet de montage/démontage
+  // Cleanup lors du démontage
   useEffect(() => {
-    loadPresets();
     return () => {
       isMountedRef.current = false;
     };
-  }, [loadPresets]);
+  }, []);
 
   return {
     presets,
