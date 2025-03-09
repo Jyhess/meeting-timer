@@ -15,7 +15,7 @@ import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { AlertIcon } from '../../src/components/Timer/AlertIcon';
 import { Icon } from '../../src/components/Timer/Icon';
 import { useTimerScreen } from '../../src/hooks/useTimerScreen';
-import { Alert } from '../../src/types/timer';
+import { Alert, AlertEffect } from '../../src/types/timer';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
@@ -25,7 +25,7 @@ const AnimatedText = Animated.createAnimatedComponent(Text);
 
 const TimerScreen = React.memo(() => {
   const params = useLocalSearchParams<{ presetId?: string }>();
-  const timerManagerRef = useRef<TimerManager>(new TimerManager(30 * 60));
+  const timerManagerRef = useRef<TimerManager>(new TimerManager(0));
   
   const {
     minutes,
@@ -34,9 +34,10 @@ const TimerScreen = React.memo(() => {
     isRunning,
     state,
     inputMode,
-    alerts,
+    beforeAlert: beforeAlertRaw,
+    endAlert: endAlertRaw,
+    afterAlert: afterAlertRaw,
     presets,
-    setAlerts,
     loadPreset,
     handleNumberPress,
     handleBackspace,
@@ -45,7 +46,24 @@ const TimerScreen = React.memo(() => {
     pause,
     resume,
     reset,
-  } = useTimerScreen(timerManagerRef, 30);
+    updateAlert,
+  } = useTimerScreen(timerManagerRef);
+
+  // Convertir les alertes en type Alert
+  const beforeAlert = beforeAlertRaw ? {
+    ...beforeAlertRaw,
+    effects: [...beforeAlertRaw.effects] as AlertEffect[]
+  } : null;
+  
+  const endAlert = endAlertRaw ? {
+    ...endAlertRaw,
+    effects: [...endAlertRaw.effects] as AlertEffect[]
+  } : null;
+  
+  const afterAlert = afterAlertRaw ? {
+    ...afterAlertRaw,
+    effects: [...afterAlertRaw.effects] as AlertEffect[]
+  } : null;
 
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const flashBackground = useSharedValue(0);
@@ -87,8 +105,8 @@ const TimerScreen = React.memo(() => {
     }
 
     // Vérifier si une alerte avec effet de flash est active
-    const flashAlert = alerts.find(
-      alert => alert.enabled && alert.effects.includes('flash') && (
+    const flashAlert = [beforeAlert, endAlert, afterAlert].find(
+      alert => alert?.enabled && alert.effects.includes('flash') && (
         (alert.id === 'end' && timeLeft === 0) ||
         (alert.id === 'before' && timeLeft <= alert.timeOffset * 60 && timeLeft > 0) ||
         (alert.id === 'after' && timeLeft < 0 && Math.abs(timeLeft) >= alert.timeOffset * 60)
@@ -123,7 +141,7 @@ const TimerScreen = React.memo(() => {
     return () => {
       // No cleanup here - we'll handle it in the component unmount
     };
-  }, [timeLeft, state, alerts]);
+  }, [timeLeft, state, beforeAlert, endAlert, afterAlert]);
 
   const startFlashAnimation = (alert: Alert) => {
     // Arrêter toute animation précédente
@@ -173,14 +191,12 @@ const TimerScreen = React.memo(() => {
       .padStart(2, '0')}`;
   };
 
-  const getTimeColor = () => {
-    const beforeAlert = alerts.find((a) => a.id === 'before' && a.enabled);
-    
+  const getTimeColor = () => {    
     // Si le temps est négatif, afficher en rouge
     if (timeLeft < 0) return '#f44336';
     
     // Si l'alerte "bientôt fini" est activée et que le temps restant est inférieur ou égal à son seuil
-    if (beforeAlert && beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset * 60) {
+    if (beforeAlert?.enabled && timeLeft <= beforeAlert.timeOffset * 60) {
       return '#FF9800';
     }
     
@@ -301,7 +317,7 @@ const TimerScreen = React.memo(() => {
           </View>
 
           <View style={styles.alertsContainer}>
-            {alerts.map((alert) => (
+            {[beforeAlert, endAlert, afterAlert].map((alert) => alert && (
               <AlertIcon
                 key={alert.id}
                 alert={alert}
@@ -316,9 +332,8 @@ const TimerScreen = React.memo(() => {
                 }
                 onPress={() => setEditingAlert(alert)}
                 onToggle={(enabled) => {
-                  setAlerts((prev) =>
-                    prev.map((a) => (a.id === alert.id ? { ...a, enabled } : a))
-                  );
+                  const updatedAlert = { ...alert, enabled };
+                  updateAlert(updatedAlert);
                 }}
                 timeColor={getAlertTimeColor(alert)}
                 onStopEffects={stopFlashAnimation}
@@ -333,9 +348,7 @@ const TimerScreen = React.memo(() => {
             isVisible={true}
             onClose={() => setEditingAlert(null)}
             onSave={(updatedAlert) => {
-              setAlerts((prev) =>
-                prev.map((a) => (a.id === updatedAlert.id ? updatedAlert : a))
-              );
+              updateAlert(updatedAlert);
               setEditingAlert(null);
             }}
           />

@@ -1,6 +1,36 @@
-import { Alert, TimerState } from '../types/timer';
+import { Alert, TimerState, AlertEffect } from '../types/timer';
 
-type TimerEventType = 'stateChange' | 'timeChange' | 'alert';
+const DEFAULT_ALERTS = {
+  before: {
+    id: 'before',
+    name: 'Bientôt fini',
+    enabled: true,
+    timeOffset: 5,
+    sound: 'bell',
+    effects: ['flash'] as AlertEffect[],
+    effectDuration: 5,
+  },
+  end: {
+    id: 'end',
+    name: 'Temps écoulé',
+    enabled: true,
+    timeOffset: 0,
+    sound: 'gong',
+    effects: ['flash'] as AlertEffect[],
+    effectDuration: 5,
+  },
+  after: {
+    id: 'after',
+    name: 'Temps dépassé',
+    enabled: true,
+    timeOffset: 5,
+    sound: 'alarm',
+    effects: ['shake'] as AlertEffect[],
+    vibrationDuration: 10,
+  },
+} as const;
+
+type TimerEventType = 'stateChange' | 'timeChange' | 'alert' | 'alertChange';
 type TimerEventListener = (data: any) => void;
 
 export class TimerManager {
@@ -11,32 +41,52 @@ export class TimerManager {
   private lastTick: number | null = null;
   private isManualStop: boolean = false;
   private listeners: Map<TimerEventType, Set<TimerEventListener>> = new Map();
-  private beforeAlert?: Alert;
-  private endAlert?: Alert;
-  private afterAlert?: Alert;
   private timer: number | null = null;
 
-  constructor(
-    duration: number,
-    beforeAlert?: Alert,
-    endAlert?: Alert,
-    afterAlert?: Alert
-  ) {
+  private beforeAlert: Alert;
+  private endAlert: Alert;
+  private afterAlert: Alert;
+
+  constructor(duration: number) {
     console.log(`[TimerManager] 🕒 Création avec durée: ${duration}s`);
     this.duration = duration;
     this.timeLeft = duration;
-    this.beforeAlert = beforeAlert;
-    this.endAlert = endAlert;
-    this.afterAlert = afterAlert;
+    this.beforeAlert = { ...DEFAULT_ALERTS.before };
+    this.endAlert = { ...DEFAULT_ALERTS.end };
+    this.afterAlert = { ...DEFAULT_ALERTS.after };
+  }
+
+  // Getters pour les alertes
+  getBeforeAlert(): Alert {
+    return this.beforeAlert;
+  }
+
+  getEndAlert(): Alert {
+    return this.endAlert;
+  }
+
+  getAfterAlert(): Alert {
+    return this.afterAlert;
+  }
+
+  // Mise à jour des alertes
+  updateAlert(alert: Alert) {
+    switch (alert.id) {
+      case 'before':
+        this.beforeAlert = alert;
+        break;
+      case 'end':
+        this.endAlert = alert;
+        break;
+      case 'after':
+        this.afterAlert = alert;
+        break;
+    }
+    this.emit('alertChange', { id: alert.id, alert });
   }
 
   // Mise à jour de la configuration
-  updateConfig(
-    newDuration: number,
-    newBeforeAlert?: Alert,
-    newEndAlert?: Alert,
-    newAfterAlert?: Alert
-  ) {
+  updateConfig(newDuration: number) {
     console.log(`[TimerManager] 🔄 Mise à jour de la configuration - nouvelle durée: ${newDuration}s`);
     const wasRunning = this.state === 'running';
     
@@ -47,9 +97,6 @@ export class TimerManager {
 
     // Mise à jour de la configuration
     this.duration = newDuration;
-    this.beforeAlert = newBeforeAlert;
-    this.endAlert = newEndAlert;
-    this.afterAlert = newAfterAlert;
 
     // Mise à jour du temps restant si le timer n'est pas en cours
     if (!this.isRunning()) {
@@ -175,13 +222,13 @@ export class TimerManager {
 
       // Gestion des alertes
       if (this.state === 'running') {
-        if (this.beforeAlert?.enabled && newTimeLeft === this.beforeAlert.timeOffset) {
+        if (this.beforeAlert.enabled && newTimeLeft === this.beforeAlert.timeOffset * 60) {
           this.emit('alert', { type: 'before', sound: this.beforeAlert.sound });
         }
-        if (this.endAlert?.enabled && newTimeLeft === 0 && !this.isManualStop) {
+        if (this.endAlert.enabled && newTimeLeft === 0 && !this.isManualStop) {
           this.emit('alert', { type: 'end', sound: this.endAlert.sound });
         }
-        if (this.afterAlert?.enabled && newTimeLeft === this.afterAlert.timeOffset) {
+        if (this.afterAlert.enabled && newTimeLeft < 0 && Math.abs(newTimeLeft) === this.afterAlert.timeOffset * 60) {
           this.emit('alert', { type: 'after', sound: this.afterAlert.sound });
         }
       }

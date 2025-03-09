@@ -3,20 +3,47 @@ import { useAudio } from './useAudio';
 import { Alert, TimerState } from '../types/timer';
 import { TimerManager } from '../utils/TimerManager';
 
+const DEFAULT_ALERTS = {
+  before: {
+    id: 'before',
+    name: 'Bientôt fini',
+    enabled: true,
+    timeOffset: 5,
+    sound: 'bell',
+    effects: ['flash'],
+    effectDuration: 5,
+  },
+  end: {
+    id: 'end',
+    name: 'Temps écoulé',
+    enabled: true,
+    timeOffset: 0,
+    sound: 'gong',
+    effects: ['flash'],
+    effectDuration: 5,
+  },
+  after: {
+    id: 'after',
+    name: 'Temps dépassé',
+    enabled: true,
+    timeOffset: 5,
+    sound: 'alarm',
+    effects: ['shake'],
+    vibrationDuration: 10,
+  },
+} as const;
+
 export const useTimer = (
   timerManagerRef: React.RefObject<TimerManager>,
-  duration: number,
-  beforeAlert?: Alert,
-  endAlert?: Alert,
-  afterAlert?: Alert
+  duration: number
 ) => {
   const [state, setState] = useState<TimerState>('idle');
   const [timeLeft, setTimeLeft] = useState(duration);
 
-  // Hooks audio
-  const beforeAlertSound = useAudio(beforeAlert?.sound || 'bell');
-  const endAlertSound = useAudio(endAlert?.sound || 'gong');
-  const afterAlertSound = useAudio(afterAlert?.sound || 'alarm');
+  // Hooks audio pour les différents types d'alertes
+  const beforeAlertSound = useAudio('bell');
+  const endAlertSound = useAudio('gong');
+  const afterAlertSound = useAudio('alarm');
 
   // Configuration des écouteurs d'événements
   useEffect(() => {
@@ -49,14 +76,14 @@ export const useTimer = (
         timerManagerRef.current.removeEventListener('alert', onAlert);
       }
     };
-  }, [beforeAlertSound, endAlertSound, afterAlertSound]);
+  }, [beforeAlertSound, endAlertSound, afterAlertSound, timerManagerRef]);
 
   // Synchronisation des changements de configuration
   useEffect(() => {
     if (timerManagerRef.current) {
-      timerManagerRef.current.updateConfig(duration, beforeAlert, endAlert, afterAlert);
+      timerManagerRef.current.updateConfig(duration);
     }
-  }, [duration, beforeAlert, endAlert, afterAlert]);
+  }, [duration]);
 
   // Actions
   const start = useCallback(() => {
@@ -79,16 +106,24 @@ export const useTimer = (
     timerManagerRef.current?.setTimeLeft(newTime);
   }, []);
 
+  const updateAlert = useCallback((alert: Alert) => {
+    timerManagerRef.current?.updateAlert(alert);
+  }, []);
+
   return {
     timeLeft,
     isRunning: state !== 'idle' && state !== 'finished',
     state,
+    beforeAlert: timerManagerRef.current?.getBeforeAlert() ?? DEFAULT_ALERTS.before,
+    endAlert: timerManagerRef.current?.getEndAlert() ?? DEFAULT_ALERTS.end,
+    afterAlert: timerManagerRef.current?.getAfterAlert() ?? DEFAULT_ALERTS.after,
     actions: {
       start,
       pause,
       resume,
       reset,
       setTimeLeft: updateTime,
+      updateAlert,
     },
   };
 };

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { useTimer } from './useTimer';
 import { usePresets } from './usePresets';
 import { Alert, TimerPreset } from '../types/timer';
@@ -8,61 +8,23 @@ export const useTimerScreen = (
   timerManagerRef: React.RefObject<TimerManager>,
   initialMinutes: number = 30
 ) => {
-
   // États locaux
   const [minutes, setMinutes] = useState(initialMinutes);
   const [seconds, setSeconds] = useState(0);
   const [inputMode, setInputMode] = useState<'minutes' | 'seconds'>('minutes');
   const [inputBuffer, setInputBuffer] = useState('');
-  const [alerts, setAlerts] = useState<Alert[]>([
-    {
-      id: 'before',
-      name: 'Bientôt fini',
-      enabled: true,
-      timeOffset: 5,
-      sound: 'bell',
-      effects: ['flash'],
-      effectDuration: 5,
-    },
-    {
-      id: 'end',
-      name: 'Temps écoulé',
-      enabled: true,
-      timeOffset: 0,
-      sound: 'gong',
-      effects: ['flash'],
-      effectDuration: 5,
-    },
-    {
-      id: 'after',
-      name: 'Temps dépassé',
-      enabled: true,
-      timeOffset: 5,
-      sound: 'alarm',
-      effects: ['shake'],
-      vibrationDuration: 10,
-    },
-  ]);
 
   // Hooks
   const { presets, addPreset } = usePresets();
-
-  // Mémoriser les alertes pour éviter la recréation du hook useTimer
-  const beforeAlert = useMemo(() => alerts.find(a => a.id === 'before'), [alerts]);
-  const endAlert = useMemo(() => alerts.find(a => a.id === 'end'), [alerts]);
-  const afterAlert = useMemo(() => alerts.find(a => a.id === 'after'), [alerts]);
-
-  const { timeLeft, isRunning, state, actions } = useTimer(
+  const { timeLeft, isRunning, state, beforeAlert, endAlert, afterAlert, actions } = useTimer(
     timerManagerRef,
-    minutes * 60 + seconds,
-    beforeAlert,
-    endAlert,
-    afterAlert
+    minutes * 60 + seconds
   );
 
   // Sauvegarde automatique du timer
   const autoSaveTimer = useCallback(async () => {
     const totalSeconds = minutes * 60 + seconds;
+    const alerts = [beforeAlert, endAlert, afterAlert].filter(Boolean) as Alert[];
     const existingPreset = presets.find(p => 
       p.minutes * 60 === totalSeconds && 
       JSON.stringify(p.alerts) === JSON.stringify(alerts)
@@ -73,12 +35,12 @@ export const useTimerScreen = (
         id: Date.now().toString(),
         name: `Timer ${minutes}:${seconds.toString().padStart(2, '0')}`,
         minutes: minutes + seconds / 60,
-        alerts: JSON.parse(JSON.stringify(alerts)),
+        alerts,
         created_at: new Date().toISOString()
       };
       await addPreset(newPreset);
     }
-  }, [minutes, seconds, alerts, presets, addPreset]);
+  }, [minutes, seconds, beforeAlert, endAlert, afterAlert, presets, addPreset]);
 
   // Gestion du pavé numérique
   const handleNumberPress = useCallback((num: number) => {
@@ -129,8 +91,10 @@ export const useTimerScreen = (
     const secs = Math.round((preset.minutes - mins) * 60);
     setMinutes(mins);
     setSeconds(secs);
-    setAlerts(preset.alerts);
-  }, []);
+    preset.alerts.forEach(alert => {
+      actions.updateAlert(alert);
+    });
+  }, [actions]);
 
   // Surcharge des actions du timer pour ajouter la sauvegarde automatique
   const enhancedActions = {
@@ -149,11 +113,12 @@ export const useTimerScreen = (
     isRunning,
     state,
     inputMode,
-    alerts,
+    beforeAlert,
+    endAlert,
+    afterAlert,
     presets,
 
     // Actions
-    setAlerts,
     loadPreset,
     handleNumberPress,
     handleBackspace,
