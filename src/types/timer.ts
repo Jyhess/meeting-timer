@@ -1,5 +1,5 @@
 export type AlertEffect = 'flash' | 'shake';
-export type AlertSound = 'gong' | 'bell' | 'chime' | 'alarm' | 'custom';
+export type AlertSound = 'bell' | 'gong' | 'chime' | 'alarm' | 'attention' | 'success' | 'transition' | 'meditation' | 'flute' | 'ringing' | 'titou' | 'foghorn' | 'bingbong' | 'bigben' | 'bell2' | 'churchbell';
 
 export type Alert = {
   id: string;
@@ -7,10 +7,10 @@ export type Alert = {
   enabled: boolean;
   timeOffset: number;
   sound: AlertSound;
-  effects: AlertEffect[]; // Changé de 'effect' à 'effects' (tableau)
+  effects: AlertEffect[];
   lastTriggered?: number;
-  vibrationDuration?: number; // Durée de vibration en secondes
-  effectDuration?: number; // Durée des effets visuels en secondes
+  vibrationDuration?: number;
+  effectDuration?: number;
 };
 
 export type TimerPreset = {
@@ -20,6 +20,8 @@ export type TimerPreset = {
   alerts: Alert[];
   created_at: string;
 };
+
+export type TimerState = 'idle' | 'running' | 'paused' | 'finished';
 
 export type CustomSound = {
   id: string;

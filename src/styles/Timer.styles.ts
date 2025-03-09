@@ -71,6 +71,9 @@ export const styles = StyleSheet.create({
     color: '#eee',
     fontWeight: '500',
   },
+  keypadButtonTextActive: {
+    color: '#4CAF50',
+  },
   specialButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
   },
@@ -80,10 +83,11 @@ export const styles = StyleSheet.create({
     gap: 20,
     marginBottom: 20,
   },
-  button: {
+  controlButton: {
     width: 60,
     height: 60,
     borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -100,6 +104,9 @@ export const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.1)',
     paddingTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 20,
   },
   alertsList: {
     flexDirection: 'row',

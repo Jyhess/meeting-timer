@@ -4,10 +4,11 @@ import {
   Text,
   Pressable,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { Link, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTimer } from '../../src/hooks/useTimer';
+import { usePresets } from '../../src/hooks/usePresets';
 import { Icon } from '../../src/components/Timer/Icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Home.styles';
@@ -19,7 +20,7 @@ const formatTime = (minutes: number) => {
 };
 
 export default function HomeScreen() {
-  const { presets, refreshPresets } = useTimer(30);
+  const { presets, isLoading, refreshPresets } = usePresets();
 
   // Use useCallback to prevent unnecessary re-renders
   const loadPresets = useCallback(async () => {
@@ -49,7 +50,11 @@ export default function HomeScreen() {
         </View>
 
         <ScrollView style={styles.presetList}>
-          {presets.length === 0 ? (
+          {isLoading ? (
+            <View style={styles.emptyState}>
+              <ActivityIndicator size="large" color="#888" />
+            </View>
+          ) : presets.length === 0 ? (
             <View style={styles.emptyState}>
               <Icon name="alarm-add" size={48} color="#888" />
               <Text style={styles.emptyStateText}>Aucun timer enregistré</Text>

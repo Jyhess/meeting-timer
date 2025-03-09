@@ -1,8 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet, Platform, AppState, AppStateStatus } from 'react-native';
+import { StyleSheet, Platform, AppState, AppStateStatus, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 declare global {
@@ -33,14 +32,17 @@ export default function RootLayout() {
     };
   }, [handleAppStateChange]);
 
+  // On web, nous n'avons pas besoin de GestureHandlerRootView
+  const Container = Platform.OS === 'web' ? View : require('react-native-gesture-handler').GestureHandlerRootView;
+
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView style={styles.container}>
+      <Container style={styles.container}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
-      </GestureHandlerRootView>
+      </Container>
     </SafeAreaProvider>
   );
 }

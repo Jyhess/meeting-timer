@@ -14,7 +14,7 @@ import Animated, {
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { AlertIcon } from '../../src/components/Timer/AlertIcon';
 import { Icon } from '../../src/components/Timer/Icon';
-import { useTimer } from '../../src/hooks/useTimer';
+import { useTimerScreen } from '../../src/hooks/useTimerScreen';
 import { Alert } from '../../src/types/timer';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,24 +27,21 @@ export default function TimerScreen() {
   const {
     minutes,
     seconds,
-    isRunning,
-    isPaused,
     timeLeft,
+    isRunning,
+    state,
+    inputMode,
     alerts,
-    setAlerts,
-    activeSound,
-    stopActiveSound,
     presets,
+    setAlerts,
     loadPreset,
-    startTimer,
-    pauseTimer,
-    resumeTimer,
-    stopTimer,
     handleNumberPress,
     handleBackspace,
     handleColonPress,
-    inputMode,
-  } = useTimer(30);
+    start,
+    pause,
+    reset,
+  } = useTimerScreen(30);
 
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const flashBackground = useSharedValue(0);
@@ -76,7 +73,7 @@ export default function TimerScreen() {
   // Gérer l'effet de flash
   useEffect(() => {
     // Clear previous alert timers when timer state changes
-    if (!isRunning || isPaused) {
+    if (state !== 'running') {
       activeAlertTimers.current.forEach((timer) => {
         clearTimeout(timer);
       });
@@ -94,7 +91,7 @@ export default function TimerScreen() {
       )
     );
 
-    if (flashAlert && isRunning && !isPaused) {
+    if (flashAlert && state === 'running') {
       // Check if we already have a timer for this alert
       const alertKey = `${flashAlert.id}_${Math.floor(timeLeft)}`;
       if (!activeAlertTimers.current.has(alertKey)) {
@@ -122,7 +119,7 @@ export default function TimerScreen() {
     return () => {
       // No cleanup here - we'll handle it in the component unmount
     };
-  }, [timeLeft, isRunning, isPaused, alerts]);
+  }, [timeLeft, state, alerts]);
 
   const startFlashAnimation = (alert: Alert) => {
     // Arrêter toute animation précédente
@@ -151,7 +148,7 @@ export default function TimerScreen() {
   };
 
   const handleStop = () => {
-    stopTimer();
+    reset();
     stopFlashAnimation();
     
     // Clear all active alert timers
@@ -218,18 +215,6 @@ export default function TimerScreen() {
     </Pressable>
   );
 
-  // Fonction pour arrêter tous les effets (son et visuel)
-  const handleStopAllEffects = () => {
-    stopActiveSound();
-    stopFlashAnimation();
-    
-    // Clear all active alert timers
-    activeAlertTimers.current.forEach((timer) => {
-      clearTimeout(timer);
-    });
-    activeAlertTimers.current.clear();
-  };
-
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <LinearGradient colors={['#1a1a1a', '#2d2d2d']} style={styles.container}>
@@ -248,20 +233,10 @@ export default function TimerScreen() {
                       .padStart(2, '0')}`
                   : formatTime(timeLeft)}
               </AnimatedText>
-              {!isRunning && (
-                <Text style={styles.inputModeText}>
-                  {inputMode === 'minutes' ? 'Minutes' : 'Secondes'}
-                </Text>
-              )}
             </View>
-            {activeSound && (
-              <Pressable style={styles.stopSoundButton} onPress={handleStopAllEffects}>
-                <Icon name="no_sound" size={24} color="#fff" />
-              </Pressable>
-            )}
           </View>
 
-          {!isRunning && (
+          {!isRunning ? (
             <View style={styles.keypad}>
               <View style={styles.keypadRow}>
                 {renderKeypadButton(1)}
@@ -280,80 +255,71 @@ export default function TimerScreen() {
               </View>
               <View style={styles.keypadRow}>
                 <Pressable
-                  style={[styles.keypadButton, styles.specialButton]}
+                  style={styles.keypadButton}
                   onPress={handleBackspace}
                 >
-                  <Icon name="backspace" size={24} color="#eee" />
+                  <Icon name="backspace" size={24} color="#fff" />
                 </Pressable>
                 {renderKeypadButton(0)}
                 <Pressable
-                  style={[styles.keypadButton, styles.specialButton]}
+                  style={styles.keypadButton}
                   onPress={handleColonPress}
                 >
-                  <Text style={[styles.keypadButtonText, { fontSize: 32 }]}>
-                    :
-                  </Text>
+                  <Text style={[
+                    styles.keypadButtonText,
+                    inputMode === 'seconds' && styles.keypadButtonTextActive
+                  ]}>:</Text>
                 </Pressable>
               </View>
             </View>
-          )}
+          ) : null}
 
           <View style={styles.controls}>
             {!isRunning ? (
-              <Pressable
-                style={[styles.button, styles.startButton]}
-                onPress={startTimer}
-              >
-                <Icon name="play-arrow" size={24} color="#fff" />
-              </Pressable>
+              <>
+                <Pressable style={styles.controlButton} onPress={start}>
+                  <Icon name="play-arrow" size={32} color="#4CAF50" />
+                </Pressable>
+                <Pressable style={styles.controlButton} onPress={handleStop}>
+                  <Icon name="close" size={32} color="#f44336" />
+                </Pressable>
+              </>
             ) : (
               <>
-                <Pressable
-                  style={[styles.button, styles.stopButton]}
-                  onPress={handleStop}
-                >
-                  <Icon name="stop" size={24} color="#fff" />
+                <Pressable style={styles.controlButton} onPress={pause}>
+                  <Icon name="pause" size={32} color="#FF9800" />
                 </Pressable>
-                <Pressable
-                  style={[styles.button, styles.pauseButton]}
-                  onPress={isPaused ? resumeTimer : pauseTimer}
-                >
-                  <Icon
-                    name={isPaused ? "resume" : "pause"}
-                    size={24}
-                    color="#fff"
-                  />
+                <Pressable style={styles.controlButton} onPress={handleStop}>
+                  <Icon name="stop" size={32} color="#f44336" />
                 </Pressable>
               </>
             )}
           </View>
 
           <View style={styles.alertsContainer}>
-            <View style={styles.alertsList}>
-              {alerts.map((alert) => (
-                <AlertIcon
-                  key={alert.id}
-                  alert={alert}
-                  isActive={
-                    alert.enabled &&
-                    (alert.id === 'end'
-                      ? timeLeft === 0
-                      : alert.id === 'before'
-                      ? timeLeft <= alert.timeOffset * 60 && timeLeft > 0
-                      : timeLeft < 0 &&
-                        Math.abs(timeLeft) >= alert.timeOffset * 60)
-                  }
-                  onPress={() => setEditingAlert(alert)}
-                  onToggle={(enabled) => {
-                    setAlerts((prev) =>
-                      prev.map((a) => (a.id === alert.id ? { ...a, enabled } : a))
-                    );
-                  }}
-                  timeColor={getAlertTimeColor(alert)}
-                  onStopEffects={stopFlashAnimation}
-                />
-              ))}
-            </View>
+            {alerts.map((alert) => (
+              <AlertIcon
+                key={alert.id}
+                alert={alert}
+                isActive={
+                  alert.enabled &&
+                  (alert.id === 'end'
+                    ? timeLeft === 0
+                    : alert.id === 'before'
+                    ? timeLeft <= alert.timeOffset * 60 && timeLeft > 0
+                    : timeLeft < 0 &&
+                      Math.abs(timeLeft) >= alert.timeOffset * 60)
+                }
+                onPress={() => setEditingAlert(alert)}
+                onToggle={(enabled) => {
+                  setAlerts((prev) =>
+                    prev.map((a) => (a.id === alert.id ? { ...a, enabled } : a))
+                  );
+                }}
+                timeColor={getAlertTimeColor(alert)}
+                onStopEffects={stopFlashAnimation}
+              />
+            ))}
           </View>
         </BlurView>
 
@@ -364,9 +330,7 @@ export default function TimerScreen() {
             onClose={() => setEditingAlert(null)}
             onSave={(updatedAlert) => {
               setAlerts((prev) =>
-                prev.map((alert) =>
-                  alert.id === updatedAlert.id ? updatedAlert : alert
-                )
+                prev.map((a) => (a.id === updatedAlert.id ? updatedAlert : a))
               );
               setEditingAlert(null);
             }}

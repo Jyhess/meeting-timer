@@ -245,13 +245,10 @@ export const AlertEditor = ({
                     ]}
                     onPress={() => handleSoundSelect(sound.id as AlertSound)}
                   >
-                    <AlertIcon
-                      alert={{ ...editedAlert, sound: sound.id as AlertSound }}
-                      isActive={false}
-                      onPress={() => {}}
-                      onToggle={() => {}}
-                      timeColor="#fff"
-                      onStopEffects={() => {}}
+                    <Icon 
+                      name={sound?.icon as any}
+                      size={28}
+                      color={'#fff'}
                     />
                     <Text
                       style={[

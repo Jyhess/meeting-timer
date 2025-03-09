@@ -52,7 +52,7 @@ export class Audio {
     
     // Configurer les événements
     audio.addEventListener('canplaythrough', () => {
-      console.log(`[Audio.web] Son ${name} chargé avec succès`);
+      console.debug(`[Audio.web] Son ${name} chargé avec succès`);
     });
 
     audio.addEventListener('error', (error) => {
