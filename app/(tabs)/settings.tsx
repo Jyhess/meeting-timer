@@ -7,7 +7,6 @@ import {
   Platform,
   TextInput,
   Vibration,
-  FlatList,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,23 +16,20 @@ import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { Alert } from '../../src/types/timer';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
-import { CustomSoundSelector } from '../../src/components/Timer/CustomSoundSelector';
 
 export default function SettingsScreen() {
   const { 
     defaultTimerMinutes, 
     setDefaultTimerMinutes,
     defaultAlerts,
-    setDefaultAlerts,
     defaultAlertDuration,
     setDefaultAlertDuration,
-    saveSettings
+    updateDefaultAlert,
   } = useSettings();
     
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const [minutes, setMinutes] = useState(defaultTimerMinutes.toString());
   const [alertDuration, setAlertDuration] = useState(defaultAlertDuration.toString());
-  const [showCustomSoundSelector, setShowCustomSoundSelector] = useState(false);
   
   useEffect(() => {
     setMinutes(defaultTimerMinutes.toString());
@@ -50,7 +46,6 @@ export default function SettingsScreen() {
     const numValue = parseInt(minutes, 10);
     if (!isNaN(numValue) && numValue > 0 && numValue <= 99) {
       setDefaultTimerMinutes(numValue);
-      saveSettings();
     } else {
       // Réinitialiser à la valeur précédente si invalide
       setMinutes(defaultTimerMinutes.toString());
@@ -67,27 +62,6 @@ export default function SettingsScreen() {
     const numValue = parseInt(alertDuration, 10);
     if (!isNaN(numValue) && numValue > 0) {
       setDefaultAlertDuration(numValue);
-      
-      // Mettre à jour la durée pour toutes les alertes
-      setDefaultAlerts(prev => 
-        prev.map(alert => {
-          const updatedAlert = { ...alert };
-          
-          // Mettre à jour la durée de vibration pour les alertes avec effet "shake"
-          if (alert.effects.includes('shake')) {
-            updatedAlert.vibrationDuration = numValue;
-          }
-          
-          // Mettre à jour la durée des effets pour les alertes avec effets visuels
-          if (alert.effects.includes('flash')) {
-            updatedAlert.effectDuration = numValue;
-          }
-          
-          return updatedAlert;
-        })
-      );
-      
-      saveSettings();
     } else {
       // Réinitialiser à la valeur précédente si invalide
       setAlertDuration(defaultAlertDuration.toString());
@@ -96,16 +70,6 @@ export default function SettingsScreen() {
 
   const handleAlertEdit = (alert: Alert) => {
     setEditingAlert(alert);
-  };
-
-  const handleAlertSave = (updatedAlert: Alert) => {
-    setDefaultAlerts(prev => 
-      prev.map(alert => 
-        alert.id === updatedAlert.id ? updatedAlert : alert
-      )
-    );
-    saveSettings();
-    setEditingAlert(null);
   };
 
   return (
@@ -142,7 +106,6 @@ export default function SettingsScreen() {
                     const newValue = Math.max(1, parseInt(minutes, 10) - 1);
                     setMinutes(newValue.toString());
                     setDefaultTimerMinutes(newValue);
-                    saveSettings();
                   }}
                 >
                   <Icon name="remove" size={24} color="#eee" />
@@ -154,7 +117,6 @@ export default function SettingsScreen() {
                     const newValue = Math.min(99, parseInt(minutes, 10) + 1);
                     setMinutes(newValue.toString());
                     setDefaultTimerMinutes(newValue);
-                    saveSettings();
                   }}
                 >
                   <Icon name="add" size={24} color="#eee" />
@@ -189,7 +151,6 @@ export default function SettingsScreen() {
                     const newValue = Math.max(1, parseInt(alertDuration, 10) - 1);
                     setAlertDuration(newValue.toString());
                     setDefaultAlertDuration(newValue);
-                    saveSettings();
                   }}
                 >
                   <Icon name="remove" size={24} color="#eee" />
@@ -201,7 +162,6 @@ export default function SettingsScreen() {
                     const newValue = Math.min(30, parseInt(alertDuration, 10) + 1);
                     setAlertDuration(newValue.toString());
                     setDefaultAlertDuration(newValue);
-                    saveSettings();
                   }}
                 >
                   <Icon name="add" size={24} color="#eee" />
@@ -279,7 +239,10 @@ export default function SettingsScreen() {
             alert={editingAlert}
             isVisible={true}
             onClose={() => setEditingAlert(null)}
-            onSave={handleAlertSave}
+            onSave={(updatedAlert) => {
+              updateDefaultAlert(updatedAlert);
+              setEditingAlert(null);
+            }}
           />
         )}
         

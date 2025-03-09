@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Alert } from '../types/timer';
-import { loadSettings, saveSettings as saveSettingsToStorage } from '../lib/storage';
+import { SettingsManager } from '../utils/SettingsManager';
 
 // Alertes par défaut
 const DEFAULT_ALERTS: Alert[] = [
@@ -46,68 +46,84 @@ export type Settings = {
 };
 
 export const useSettings = () => {
-  const [defaultTimerMinutes, setDefaultTimerMinutes] = useState<number>(30);
-  const [defaultAlerts, setDefaultAlerts] = useState<Alert[]>(DEFAULT_ALERTS);
-  const [defaultAlertDuration, setDefaultAlertDuration] = useState<number>(DEFAULT_ALERT_DURATION);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const settingsManagerRef = useRef<SettingsManager>(new SettingsManager());
+  const [defaultTimerMinutes, setDefaultTimerMinutes] = useState(
+    settingsManagerRef.current.getDefaultTimerMinutes()
+  );
+  const [defaultAlertDuration, setDefaultAlertDuration] = useState(
+    settingsManagerRef.current.getDefaultAlertDuration()
+  );
+  const [beforeAlert, setBeforeAlert] = useState(
+    settingsManagerRef.current.getBeforeAlert()
+  );
+  const [endAlert, setEndAlert] = useState(
+    settingsManagerRef.current.getEndAlert()
+  );
+  const [afterAlert, setAfterAlert] = useState(
+    settingsManagerRef.current.getAfterAlert()
+  );
 
-  // Charger les paramètres au démarrage
   useEffect(() => {
-    const loadUserSettings = async () => {
-      try {
-        const settings = await loadSettings();
-        if (settings) {
-          if (settings.defaultTimerMinutes) {
-            setDefaultTimerMinutes(settings.defaultTimerMinutes);
-          }
-          
-          if (settings.defaultAlertDuration) {
-            setDefaultAlertDuration(settings.defaultAlertDuration);
-          }
-          
-          if (settings.defaultAlerts) {
-            setDefaultAlerts(settings.defaultAlerts);
-          }
-        }
-      } catch (error) {
-        console.error('Erreur lors du chargement des paramètres:', error);
-      } finally {
-        setIsLoaded(true);
-      }
+    const manager = settingsManagerRef.current;
+
+    const onDefaultTimerMinutesChange = (minutes: number) => {
+      setDefaultTimerMinutes(minutes);
     };
 
-    loadUserSettings();
+    const onDefaultAlertDurationChange = (duration: number) => {
+      setDefaultAlertDuration(duration);
+    };
+
+    const onBeforeAlertChange = (alert: Alert) => {
+      setBeforeAlert(alert);
+    };
+
+    const onEndAlertChange = (alert: Alert) => {
+      setEndAlert(alert);
+    };
+
+    const onAfterAlertChange = (alert: Alert) => {
+      setAfterAlert(alert);
+    };
+
+    manager.addEventListener('defaultTimerMinutesChange', onDefaultTimerMinutesChange);
+    manager.addEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
+    manager.addEventListener('beforeAlertChange', onBeforeAlertChange);
+    manager.addEventListener('endAlertChange', onEndAlertChange);
+    manager.addEventListener('afterAlertChange', onAfterAlertChange);
+
+    return () => {
+      manager.removeEventListener('defaultTimerMinutesChange', onDefaultTimerMinutesChange);
+      manager.removeEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
+      manager.removeEventListener('beforeAlertChange', onBeforeAlertChange);
+      manager.removeEventListener('endAlertChange', onEndAlertChange);
+      manager.removeEventListener('afterAlertChange', onAfterAlertChange);
+      manager.dispose();
+    };
   }, []);
-
-  // Sauvegarder les paramètres
-  const saveSettings = async () => {
-    try {
-      const settings: Settings = {
-        defaultTimerMinutes,
-        defaultAlerts,
-        defaultAlertDuration,
-      };
-      await saveSettingsToStorage(settings);
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde des paramètres:', error);
-    }
-  };
-
-  // Effet pour sauvegarder automatiquement les paramètres lorsqu'ils changent
-  useEffect(() => {
-    if (isLoaded) {
-      saveSettings();
-    }
-  }, [defaultAlerts, defaultTimerMinutes, defaultAlertDuration, isLoaded]);
 
   return {
     defaultTimerMinutes,
-    setDefaultTimerMinutes,
-    defaultAlerts,
-    setDefaultAlerts,
     defaultAlertDuration,
-    setDefaultAlertDuration,
-    isLoaded,
-    saveSettings,
+    defaultAlerts: [beforeAlert, endAlert, afterAlert],
+    setDefaultTimerMinutes: (minutes: number) => {
+      settingsManagerRef.current.setDefaultTimerMinutes(minutes);
+    },
+    setDefaultAlertDuration: (duration: number) => {
+      settingsManagerRef.current.setDefaultAlertDuration(duration);
+    },
+    updateDefaultAlert: (alert: Alert) => {
+      switch (alert.id) {
+        case 'before':
+          settingsManagerRef.current.updateBeforeAlert(alert);
+          break;
+        case 'end':
+          settingsManagerRef.current.updateEndAlert(alert);
+          break;
+        case 'after':
+          settingsManagerRef.current.updateAfterAlert(alert);
+          break;
+      }
+    },
   };
 };
