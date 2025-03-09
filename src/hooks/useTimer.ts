@@ -100,7 +100,7 @@ export const useTimer = (
       setState('idle');
     }
 
-    if (!isRunning) {
+    if (state !== 'running') {
       console.log('[useTimer] ⏱️ Configuration du timer');
       isManualStopRef.current = false;
       startTimeRef.current = Date.now() - ((duration - timeLeft) * 1000);
@@ -121,6 +121,13 @@ export const useTimer = (
     setState('paused');
     clearTimer();
   }, [clearTimer]);
+
+  // Reprendre le timer
+  const resume = useCallback(() => {
+    console.log('[useTimer] ▶️ Reprendre le timer');
+    setState('running');
+    start();
+  }, [start]);
 
   // Réinitialisation du timer
   const reset = useCallback(() => {
@@ -149,6 +156,7 @@ export const useTimer = (
     actions: {
       start,
       pause,
+      resume,
       reset,
       setTimeLeft: setTimeLeftWithTracking,
     },

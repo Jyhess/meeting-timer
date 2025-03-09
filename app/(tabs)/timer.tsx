@@ -40,6 +40,7 @@ export default function TimerScreen() {
     handleColonPress,
     start,
     pause,
+    resume,
     reset,
   } = useTimerScreen(30);
 
@@ -286,8 +287,8 @@ export default function TimerScreen() {
               </>
             ) : (
               <>
-                <Pressable style={styles.controlButton} onPress={pause}>
-                  <Icon name="pause" size={32} color="#FF9800" />
+                <Pressable style={styles.controlButton} onPress={state === 'paused' ? resume : pause}>
+                  <Icon name={state === 'paused' ? "play-arrow" : "pause"} size={32} color="#FF9800" />
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleStop}>
                   <Icon name="stop" size={32} color="#f44336" />
