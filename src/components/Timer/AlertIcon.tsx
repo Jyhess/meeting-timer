@@ -9,7 +9,6 @@ import Animated, {
 import * as Haptics from 'expo-haptics';
 import { Alert } from '../../types/timer';
 import { ToggleSlider } from './ToggleSlider';
-import { useAudio } from '../../hooks/useAudio';
 import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertIcon.styles';
@@ -43,7 +42,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onSto
     let vibrationInterval: NodeJS.Timeout | null = null;
     
     if (isActive && alert.enabled) {
-      console.log(`[AlertIcon] 🔔 Alerte active et active: ${isActive} et enabled: ${alert.enabled}`);
+      console.log(`[AlertIcon] 🔔 Alerte active: ${isActive} et enabled: ${alert.enabled}`);
     
       // Configure vibration if effect includes "shake" and on mobile
       if (alert.effects.includes('shake') && Platform.OS !== 'web') {

@@ -13,8 +13,6 @@ import { Icon } from '../../src/components/Timer/Icon';
 import { PresetCard } from '../../src/components/Timer/PresetCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Home.styles';
-import { formatTime } from '../../src/utils/time';
-import { ALERT_SOUNDS } from '../../src/types/timer';
 
 export default function HomeScreen() {
   const { presets, isLoading, refreshPresets } = usePresets();

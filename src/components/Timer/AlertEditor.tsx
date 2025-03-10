@@ -16,8 +16,6 @@ import { useAudio } from '../../hooks/useAudio';
 import { sounds, effects } from '../../config/alerts';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertEditor.styles';
-import { useSettings } from '../../hooks/useSettings';
-import { AlertIcon } from './AlertIcon';
 
 type AlertEditorProps = {
   alert: Alert;
@@ -27,7 +25,6 @@ type AlertEditorProps = {
 };
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
-const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const AlertEditor = ({
   alert,
@@ -39,7 +36,7 @@ export const AlertEditor = ({
   const [editedAlert, setEditedAlert] = useState<Alert>(JSON.parse(JSON.stringify(alert)));
   const [modalVisible, setModalVisible] = useState(isVisible);
   const [previewingEffect, setPreviewingEffect] = useState<AlertEffect | null>(null);
-  const { playSound, stopSound, isPlaying } = useAudio(editedAlert.sound);
+  const { stopSound, isPlaying } = useAudio(editedAlert.sound);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -92,12 +89,6 @@ export const AlertEditor = ({
 
     return {};
   });
-
-  const handleModalHide = () => {
-    if (!isVisible) {
-      runOnJS(setModalVisible)(false);
-    }
-  };
 
   // Réinitialiser l'état édité à chaque ouverture du modal
   useEffect(() => {

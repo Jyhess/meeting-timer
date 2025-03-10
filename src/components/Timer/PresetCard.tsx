@@ -29,7 +29,7 @@ export const PresetCard = ({
           .map((alert) => (
             <Icon
               key={alert.id}
-              name={ALERT_SOUNDS[alert.sound].iconName}
+              name={ALERT_SOUNDS[alert.sound].iconName as any}
               size={iconSize}
               color={alert.enabled ? iconColor : "#777"}
             />
