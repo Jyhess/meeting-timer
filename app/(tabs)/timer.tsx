@@ -45,6 +45,7 @@ export default function TimerScreen() {
     pause,
     resume,
     reset,
+    restart,
     updateAlert,
     isValidTime,
   } = useTimerScreen(timerManagerRef, key);
@@ -315,6 +316,9 @@ export default function TimerScreen() {
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleStop}>
                   <Icon name="stop" size={32} color={theme.colors.danger} />
+                </Pressable>
+                <Pressable style={styles.controlButton} onPress={restart}>
+                  <Icon name="restart" size={32} color={theme.colors.primary} />
                 </Pressable>
               </>
             )}

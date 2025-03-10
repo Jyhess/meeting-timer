@@ -11,3 +11,6 @@
 * traduction
 * ajout temps supplémentaire
 * ajout tests unitaires
+* Preset nommés en couleur
+* Vue du temps en camembert
+* Bloquer le passage en veille

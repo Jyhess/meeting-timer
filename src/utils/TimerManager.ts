@@ -171,6 +171,22 @@ export class TimerManager {
     this.emit('timeChange', this.timeLeft);
   }
 
+  restart() {
+    console.log('[TimerManager] 🔄 Redémarrage du timer');
+    this.clearTimer();
+    this.timeLeft = this.duration;
+    this.startTime = Date.now();
+    this.lastTick = Date.now();
+    this.state = 'running';
+    this.emit('stateChange', this.state);
+    this.emit('timeChange', this.timeLeft);
+
+    // Démarrer l'intervalle
+    if (!this.timer) {
+      this.timer = window.setInterval(() => { this.updateTimeLeft() }, 100);
+    }
+  }
+
   setTimeLeft(newTime: number) {
     console.log(`[TimerManager] ⌨️ Mise à jour manuelle: ${newTime}s`);
     this.timeLeft = newTime;

@@ -96,6 +96,10 @@ export const useTimer = (
     timerManagerRef.current?.reset();
   }, []);
 
+  const restart = useCallback(() => {
+    timerManagerRef.current?.restart();
+  }, []);
+
   const updateTime = useCallback((newTime: number) => {
     timerManagerRef.current?.setTimeLeft(newTime);
   }, []);
@@ -113,6 +117,7 @@ export const useTimer = (
       pause,
       resume,
       reset,
+      restart,
       setTimeLeft: updateTime,
       updateAlert,
     },
