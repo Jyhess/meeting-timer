@@ -18,7 +18,7 @@ export const useTimerScreen = (
   const [displaySeconds, setDisplaySeconds] = useState(() => timeLeftInSeconds % 60);
 
   // Hooks
-  const { presets, addPreset } = usePresets();
+  const { presets, savePreset } = usePresets();
   const { timeLeft, isRunning, state, beforeAlert, endAlert, afterAlert, actions } = useTimer(
     timerManagerRef,
     seconds
@@ -76,13 +76,13 @@ export const useTimerScreen = (
       timerManagerRef.current?.getAfterAlert()
     ].filter(Boolean) as Alert[];
 
-    console.log('Alertes à sauvegarder:', alerts);
-
     // Vérifier si un preset similaire existe déjà
     const existingPreset = presets.find(p => 
       p.seconds === seconds && 
       JSON.stringify(p.alerts) === JSON.stringify(alerts)
     );
+
+    const now = new Date().toISOString();
 
     if (!existingPreset) {
       const newPreset: TimerPreset = {
@@ -90,11 +90,20 @@ export const useTimerScreen = (
         name: `Timer ${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`,
         seconds,
         alerts,
-        created_at: new Date().toISOString()
+        created_at: now,
+        last_used: now,
       };
-      await addPreset(newPreset);
+      console.log('[useTimerScreen] Création d\'un nouveau preset', newPreset);
+      await savePreset(newPreset);
+    } else {
+      const updatedPreset = {
+        ...existingPreset,
+        last_used: now,
+      };
+      console.log('[useTimerScreen] Mise à jour du preset existant', updatedPreset);
+      await savePreset(updatedPreset);
     }
-  }, [seconds, presets, addPreset]);
+  }, [seconds, presets, savePreset]);
 
   // Gestion du pavé numérique
   const handleNumberPress = useCallback((num: number) => {

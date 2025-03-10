@@ -9,3 +9,6 @@
 * Plus de son, activable/désactivables dans les préférences
 * sons custom
 * tests android
+* remplacement composants expo par du react native
+* traduction
+* ajout temps supplémentaire

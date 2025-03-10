@@ -141,6 +141,7 @@ export type TimerPreset = {
   seconds: number;
   alerts: Alert[];
   created_at: string;
+  last_used?: string;
 };
 
 export type TimerState = 'idle' | 'running' | 'paused' | 'finished';

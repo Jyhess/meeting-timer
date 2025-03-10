@@ -41,8 +41,32 @@ export const usePresets = () => {
   }, []);
 
   // Ajouter un preset
-  const addPreset = useCallback(async (preset: TimerPreset) => {
-    const newPresets = [preset, ...presets].slice(0, 6); // Garder les 6 plus récents
+  const savePreset = useCallback(async (preset: TimerPreset) => {
+    console.log('[usePresets] addPreset', preset);
+    // Supprimer le preset existant s'il existe
+    const updatedPreset = {
+      ...preset,
+      last_used: new Date().toISOString()
+    };
+    const existingPresetIndex = presets.findIndex(p => p.id === updatedPreset.id);
+    let newPresets = [...presets];
+    
+    if (existingPresetIndex !== -1) {
+      console.log('[usePresets] Suppression du preset existant', existingPresetIndex);
+      // supprimer le preset existant et le remplacer par le nouveau
+      newPresets.splice(existingPresetIndex, 1);
+    }
+    // Ajouter le nouveau preset et trier par last_used
+    newPresets = [updatedPreset, ...newPresets]
+      .sort((a, b) => {
+        const aDate = a.last_used || a.created_at;
+        const bDate = b.last_used || b.created_at;
+        return new Date(bDate).getTime() - new Date(aDate).getTime();
+      })
+      .slice(0, 6); // Garder les 6 plus récents
+      
+    console.log('[usePresets] newPresets', newPresets);
+    
     await savePresets(newPresets);
   }, [presets, savePresets]);
 
@@ -67,7 +91,7 @@ export const usePresets = () => {
   return {
     presets,
     isLoading,
-    addPreset,
+    savePreset,
     removePreset,
     refreshPresets,
   };
