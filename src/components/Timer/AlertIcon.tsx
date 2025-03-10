@@ -1,18 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, Vibration, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Pressable } from 'react-native';
 import Animated, { 
   useAnimatedStyle, 
   withRepeat, 
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
 import { Alert } from '../../types/timer';
 import { ToggleSlider } from './ToggleSlider';
 import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertIcon.styles';
-import { useSettings } from '../../hooks/useSettings';
 import { theme } from '../../theme';
 
 type AlertIconProps = {
@@ -27,8 +25,6 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: AlertIconProps) => {
   const soundConfig = sounds.find(s => s.id === alert.sound);
-  const vibrationStartTimeRef = useRef<number | null>(null);
-  const { defaultAlertDuration } = useSettings();
   const [localEnabled, setLocalEnabled] = useState(alert.enabled);
   
   // Synchroniser l'état local avec l'état de l'alerte
@@ -36,64 +32,13 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: Ale
     setLocalEnabled(alert.enabled);
   }, [alert.enabled]);
 
-  // Sound and vibration effect
-  useEffect(() => {
-    let vibrationInterval: NodeJS.Timeout | null = null;
-    
-    if (isActive && alert.enabled) {
-      console.log(`[AlertIcon] 🔔 Alerte active: ${isActive} et enabled: ${alert.enabled}`);
-    
-      // Configure vibration if effect includes "shake" and on mobile
-      if (alert.effects.includes('shake') && Platform.OS !== 'web') {
-        vibrationStartTimeRef.current = Date.now();
-        
-        if (Platform.OS === 'ios') {
-          // For iOS, use Haptics with an interval
-          vibrationInterval = setInterval(async () => {
-            // Vérifier si la durée de vibration est dépassée
-            if (vibrationStartTimeRef.current && 
-                Date.now() - vibrationStartTimeRef.current >= defaultAlertDuration * 1000) {
-              if (vibrationInterval) {
-                clearInterval(vibrationInterval);
-                vibrationInterval = null;
-              }
-              return;
-            }
-            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          }, 500);
-        } else {
-          // For Android, use Vibration API with a pattern that will repeat
-          // for the specified duration
-          const pattern = [0, 300, 150, 300, 150, 300];
-          Vibration.vibrate(pattern, true);
-          
-          // Set a timeout to stop vibration after the specified duration
-          setTimeout(() => {
-            Vibration.cancel();
-          }, defaultAlertDuration * 1000);
-        }
-      }
-    }
-    
-    return () => {
-      // Clean up vibration
-      if (vibrationInterval) {
-        clearInterval(vibrationInterval);
-      }
-      if (Platform.OS !== 'web') {
-        Vibration.cancel();
-      }
-      vibrationStartTimeRef.current = null;
-    };
-  }, [isActive, alert.enabled, alert.effects, defaultAlertDuration]);
-
   const getAlertTimeText = () => {
     if (alert.id === 'end') return 'Fin';
     if (alert.id === 'before') return `-${alert.timeOffset} min`;
     return `+${alert.timeOffset} min`;
   };
 
-  // Suppression de l'animation de pulsation
+  // Animation de secousse
   const shakeAnimation = useAnimatedStyle(() => {
     if (isActive && alert.effects.includes('shake')) {
       return {

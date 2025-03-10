@@ -36,9 +36,6 @@ export default function TimerScreen() {
     timeLeft,
     isRunning,
     state,
-    beforeAlert: beforeAlertRaw,
-    endAlert: endAlertRaw,
-    afterAlert: afterAlertRaw,
     presets,
     loadPreset,
     handleNumberPress,
@@ -53,21 +50,10 @@ export default function TimerScreen() {
   } = useTimerScreen(timerManagerRef, key);
 
   // Convertir les alertes en type Alert
-  const beforeAlert = beforeAlertRaw ? {
-    ...beforeAlertRaw,
-    effects: [...beforeAlertRaw.effects] as AlertEffect[]
-  } : null;
+  const beforeAlert = timerManagerRef.current?.getBeforeAlert();
+  const endAlert = timerManagerRef.current?.getEndAlert();
+  const afterAlert = timerManagerRef.current?.getAfterAlert();
   
-  const endAlert = endAlertRaw ? {
-    ...endAlertRaw,
-    effects: [...endAlertRaw.effects] as AlertEffect[]
-  } : null;
-  
-  const afterAlert = afterAlertRaw ? {
-    ...afterAlertRaw,
-    effects: [...afterAlertRaw.effects] as AlertEffect[]
-  } : null;
-
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const flashBackground = useSharedValue(0);
   const activeFlashAlert = useRef<Alert | null>(null);
@@ -186,8 +172,9 @@ export default function TimerScreen() {
     stopFlashAnimation();
     
     startedAlerts.current.clear();
-    
-    router.replace('/');
+    if(state === 'idle') {
+      router.replace('/');
+    }
   };
 
   const getTimeColor = () => {    
@@ -342,9 +329,9 @@ export default function TimerScreen() {
                   alert.enabled &&
                   isRunning && // Ne déclencher les alertes que si le timer tourne
                   (alert.id === 'end'
-                    ? timeLeft === 0
+                    ? timeLeft <= 0
                     : alert.id === 'before'
-                    ? timeLeft <= alert.timeOffset * 60 && timeLeft > 0
+                    ? timeLeft <= alert.timeOffset * 60
                     : timeLeft < 0 &&
                       Math.abs(timeLeft) >= alert.timeOffset * 60)
                 }

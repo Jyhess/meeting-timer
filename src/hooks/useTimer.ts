@@ -1,34 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAudio } from './useAudio';
+import { useVibration } from './useVibration';
 import { Alert, TimerState } from '../types/timer';
 import { TimerManager } from '../utils/TimerManager';
-
-const DEFAULT_ALERTS = {
-  before: {
-    id: 'before',
-    name: 'Bientôt fini',
-    enabled: true,
-    timeOffset: 5,
-    sound: 'bell',
-    effects: ['flash'],
-  },
-  end: {
-    id: 'end',
-    name: 'Temps écoulé',
-    enabled: true,
-    timeOffset: 0,
-    sound: 'gong',
-    effects: ['flash'],
-  },
-  after: {
-    id: 'after',
-    name: 'Temps dépassé',
-    enabled: true,
-    timeOffset: 5,
-    sound: 'alarm',
-    effects: ['shake'],
-  },
-} as const;
 
 export const useTimer = (
   timerManagerRef: React.RefObject<TimerManager>,
@@ -36,11 +10,19 @@ export const useTimer = (
 ) => {
   const [state, setState] = useState<TimerState>('idle');
   const [timeLeft, setTimeLeft] = useState(duration);
+  const [activeAlert, setActiveAlert] = useState<Alert | null>(null);
 
   // Hooks audio pour les différents types d'alertes
   const beforeAlertSound = useAudio('bell');
   const endAlertSound = useAudio('gong');
   const afterAlertSound = useAudio('alarm');
+
+  // Hook de vibration
+  const shouldVibrate = activeAlert?.effects.includes('shake') ?? false;
+  useVibration(
+    shouldVibrate && state === 'running',
+    timerManagerRef.current?.getEffectDuration() ?? 0
+  );
 
   // Configuration des écouteurs d'événements
   useEffect(() => {
@@ -49,17 +31,32 @@ export const useTimer = (
     const onStateChange = (newState: TimerState) => {
       console.log('[useTimer] ⚡ État du timer modifié:', newState);
       setState(newState);
+      if (newState !== 'running') {
+        setActiveAlert(null);
+      }
     };
 
     const onTimeChange = (newTime: number) => setTimeLeft(newTime);
     const onAlert = ({ type, sound }: { type: string; sound: string }) => {
-      const audioPlayer = {
-        before: beforeAlertSound,
-        end: endAlertSound,
-        after: afterAlertSound
+      const alert = {
+        before: timerManagerRef.current?.getBeforeAlert(),
+        end: timerManagerRef.current?.getEndAlert(),
+        after: timerManagerRef.current?.getAfterAlert()
       }[type];
-      
-      audioPlayer?.playSound();
+
+      if (alert && alert.enabled) {
+        setActiveAlert(alert);
+        const audioPlayer = {
+          before: beforeAlertSound,
+          end: endAlertSound,
+          after: afterAlertSound
+        }[type];
+        
+        audioPlayer?.playSound();
+      }
+      else {
+        setActiveAlert(null);
+      }
     };
 
     timerManagerRef.current.addEventListener('stateChange', onStateChange);
@@ -111,9 +108,6 @@ export const useTimer = (
     timeLeft,
     isRunning: state !== 'idle' && state !== 'finished',
     state,
-    beforeAlert: timerManagerRef.current?.getBeforeAlert() ?? DEFAULT_ALERTS.before,
-    endAlert: timerManagerRef.current?.getEndAlert() ?? DEFAULT_ALERTS.end,
-    afterAlert: timerManagerRef.current?.getAfterAlert() ?? DEFAULT_ALERTS.after,
     actions: {
       start,
       pause,

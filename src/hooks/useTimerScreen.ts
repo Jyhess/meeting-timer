@@ -12,6 +12,10 @@ export const useTimerScreen = (
 ) => {
   // États locaux
   const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
+  const beforeAlert = timerManagerRef.current?.getBeforeAlert();
+  const endAlert = timerManagerRef.current?.getEndAlert();
+  const afterAlert = timerManagerRef.current?.getAfterAlert();
+
   const [seconds, setSeconds] = useState(() => timeLeftInSeconds);
   const [inputBuffer, setInputBuffer] = useState('');
   const [isValidTime, setIsValidTime] = useState(true);
@@ -20,7 +24,7 @@ export const useTimerScreen = (
 
   // Hooks
   const { presets, savePreset } = usePresets();
-  const { timeLeft, isRunning, state, beforeAlert, endAlert, afterAlert, actions } = useTimer(
+  const { timeLeft, isRunning, state, actions } = useTimer(
     timerManagerRef,
     seconds
   );
@@ -158,9 +162,6 @@ export const useTimerScreen = (
     timeLeft,
     isRunning,
     state,
-    beforeAlert,
-    endAlert,
-    afterAlert,
     presets,
     isValidTime,
 

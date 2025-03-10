@@ -1,9 +1,8 @@
 = TODO list
 
+* Arret du shake comme le flash
+* Bug edition alarme d'un preset ne change pas si activation d'une alerte
 * bouton d'arret des alertes
-* Arret des animation après le temps imparti
-* pas de retour à l'édition quand un timer arrive à échéance
-* tests android
 * Saise des alertes avec les secondes (alertes et prefs)
 * Plus de son, activable/désactivables dans les préférences
 * sons custom

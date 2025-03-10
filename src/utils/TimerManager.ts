@@ -1,4 +1,4 @@
-import { Alert, TimerState, AlertEffect } from '../types/timer';
+import { Alert, TimerState } from '../types/timer';
 import { SettingsManager } from './SettingsManager';
 
 type TimerEventType = 'stateChange' | 'timeChange' | 'alert' | 'alertChange';
@@ -194,7 +194,7 @@ export class TimerManager {
 
     const now = Date.now();
     const elapsed = now - this.startTime;
-    const newTimeLeft = Math.max(0, this.duration - Math.floor(elapsed / 1000));
+    const newTimeLeft = this.duration - Math.floor(elapsed / 1000);
 
     if (newTimeLeft !== this.timeLeft) {
       console.log(`[TimerManager] 🕒 updateTimeLeft: ${elapsed} -> ${newTimeLeft}s`);
@@ -213,11 +213,6 @@ export class TimerManager {
         if (this.afterAlert.enabled && newTimeLeft < 0 && Math.abs(newTimeLeft) === this.afterAlert.timeOffset * 60) {
           this.emit('alert', { type: 'after', sound: this.afterAlert.sound });
         }
-      }
-
-      if (newTimeLeft === 0) {
-        this.state = 'finished';
-        this.emit('stateChange', this.state);
       }
     }
   }
