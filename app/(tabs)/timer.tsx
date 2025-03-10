@@ -25,7 +25,7 @@ import { theme } from '../../src/theme';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
-const TimerScreen = React.memo(() => {
+export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string }>();
   const [key, setKey] = useState(0);
   const timerManagerRef = useRef<TimerManager>(new TimerManager());
@@ -361,26 +361,26 @@ const TimerScreen = React.memo(() => {
                   updateAlert(updatedAlert);
                 }}
                 timeColor={getAlertTimeColor(alert)}
-                onStopEffects={stopFlashAnimation}
               />
             ))}
           </View>
         </BlurView>
 
         {editingAlert && (
-          <AlertEditor
-            alert={editingAlert}
-            isVisible={true}
-            onClose={() => setEditingAlert(null)}
-            onSave={(updatedAlert) => {
+          <View>
+            <AlertEditor
+              alert={editingAlert}
+              isVisible={true}
+              onClose={() => setEditingAlert(null)}
+              onSave={(updatedAlert) => {
               updateAlert(updatedAlert);
               setEditingAlert(null);
             }}
           />
+          </View>
         )}
       </LinearGradient>
-    </SafeAreaView>
+    </SafeAreaView>    
   );
-});
+}
 
-export default TimerScreen;

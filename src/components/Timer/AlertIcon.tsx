@@ -21,12 +21,11 @@ type AlertIconProps = {
   onPress: () => void;
   onToggle: (enabled: boolean) => void;
   timeColor?: string;
-  onStopEffects?: () => void;
 };
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, onStopEffects }: AlertIconProps) => {
+export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: AlertIconProps) => {
   const soundConfig = sounds.find(s => s.id === alert.sound);
   const vibrationStartTimeRef = useRef<number | null>(null);
   const { defaultAlertDuration } = useSettings();

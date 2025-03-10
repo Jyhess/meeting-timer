@@ -1,19 +1,20 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   modalContent: {
     backgroundColor: '#1a1a1a',
     borderRadius: 12,
     padding: 20,
-    width: '100%',
-    maxWidth: 500,
+    width: Math.min(screenWidth - 40, 500),
+    maxWidth: '95%',
     maxHeight: '90%',
   },
   modalTitle: {
