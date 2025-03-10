@@ -72,7 +72,7 @@ export default function TimerScreen() {
   const flashBackground = useSharedValue(0);
   const activeFlashAlert = useRef<Alert | null>(null);
   const flashTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const activeAlertTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const startedAlerts = useRef<Set<string>>(new Set());
 
   // Réinitialiser le timer avec les valeurs par défaut quand on arrive sur l'écran
   useFocusEffect(
@@ -100,61 +100,58 @@ export default function TimerScreen() {
   useEffect(() => {
     return () => {
       stopFlashAnimation();
-      // Clear all active alert timers
-      activeAlertTimers.current.forEach((timer) => {
-        clearTimeout(timer);
-      });
-      activeAlertTimers.current.clear();
     };
   }, []);
 
-  // Gérer l'effet de flash
+  // Réinitialiser les alertes déclenchées quand le timer s'arrête
   useEffect(() => {
-    // Clear previous alert timers when timer state changes
     if (state !== 'running') {
-      activeAlertTimers.current.forEach((timer) => {
-        clearTimeout(timer);
-      });
-      activeAlertTimers.current.clear();
+      startedAlerts.current.clear();
+    }
+  }, [state]);
+
+  // Gérer l'effet de flash
+  const handleAlertEffect = (alert: Alert | null) => {
+    if (!alert?.enabled || !alert.effects.includes('flash')) return;
+
+    const shouldStart = (
+      (alert.id === 'end' && timeLeft === 0) ||
+      (alert.id === 'before' && timeLeft === alert.timeOffset * 60) ||
+      (alert.id === 'after' && timeLeft === -alert.timeOffset * 60)
+    );
+
+    const alertKey = `${alert.id}`;
+
+    // Si l'alerte doit démarrer et n'est pas déjà démarrée
+    if (shouldStart && !startedAlerts.current.has(alertKey)) {
+      startedAlerts.current.add(alertKey);
+      activeFlashAlert.current = alert;
+      startFlashAnimation(alert);
+
+      setTimeout(() => {
+        if (activeFlashAlert.current?.id === alert.id) {
+          stopFlashAnimation();
+          activeFlashAlert.current = null;
+        }
+      }, timerManagerRef.current.getEffectDuration() * 1000);
+    }
+  };
+
+  useEffect(() => {
+    // Si le timer n'est pas en cours, tout arrêter
+    if (state !== 'running') {
+      startedAlerts.current.clear();
       stopFlashAnimation();
       return;
     }
 
-    // Vérifier si une alerte avec effet de flash est active
-    const flashAlert = [beforeAlert, endAlert, afterAlert].find(
-      alert => alert?.enabled && alert.effects.includes('flash') && (
-        (alert.id === 'end' && timeLeft === 0) ||
-        (alert.id === 'before' && timeLeft <= alert.timeOffset * 60 && timeLeft > 0) ||
-        (alert.id === 'after' && timeLeft < 0 && Math.abs(timeLeft) >= alert.timeOffset * 60)
-      )
-    );
-
-    if (flashAlert && state === 'running') {
-      // Check if we already have a timer for this alert
-      const alertKey = `${flashAlert.id}_${Math.floor(timeLeft)}`;
-      if (!activeAlertTimers.current.has(alertKey)) {
-        // Démarrer l'animation de flash
-        activeFlashAlert.current = flashAlert;
-        startFlashAnimation(flashAlert);
-        
-        // Set a timer to automatically stop this specific alert effect
-        const timer = setTimeout(() => {
-          // Only stop if this is still the active alert
-          if (activeFlashAlert.current?.id === flashAlert.id) {
-            stopFlashAnimation();
-            activeFlashAlert.current = null;
-          }
-          // Remove this timer from the active timers map
-          activeAlertTimers.current.delete(alertKey);
-        }, timerManagerRef.current.getEffectDuration() * 1000);
-        
-        // Store the timer reference
-        activeAlertTimers.current.set(alertKey, timer);
-      }
-    }
+    // Vérifier chaque alerte individuellement
+    handleAlertEffect(beforeAlert);
+    handleAlertEffect(endAlert);
+    handleAlertEffect(afterAlert);
 
     return () => {
-      // No cleanup here - we'll handle it in the component unmount
+      // Cleanup géré dans le unmount du composant
     };
   }, [timeLeft, state, beforeAlert, endAlert, afterAlert]);
 
@@ -188,11 +185,7 @@ export default function TimerScreen() {
     reset();
     stopFlashAnimation();
     
-    // Clear all active alert timers
-    activeAlertTimers.current.forEach((timer) => {
-      clearTimeout(timer);
-    });
-    activeAlertTimers.current.clear();
+    startedAlerts.current.clear();
     
     router.replace('/');
   };
