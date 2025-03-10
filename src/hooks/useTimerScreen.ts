@@ -4,6 +4,7 @@ import { usePresets } from './usePresets';
 import { Alert, TimerPreset } from '../types/timer';
 import { TimerManager } from '../utils/TimerManager';
 import React from 'react';
+import { PresetManager } from '../utils/PresetManager';
 
 export const useTimerScreen = (
   timerManagerRef: React.RefObject<TimerManager>,
@@ -77,33 +78,15 @@ export const useTimerScreen = (
     ].filter(Boolean) as Alert[];
 
     // Vérifier si un preset similaire existe déjà
-    const existingPreset = presets.find(p => 
-      p.seconds === seconds && 
-      JSON.stringify(p.alerts) === JSON.stringify(alerts)
-    );
-
-    const now = new Date().toISOString();
+    const presetManager = PresetManager.getInstance();
+    const existingPreset = presetManager.findSimilarPreset(seconds, alerts);
 
     if (!existingPreset) {
-      const newPreset: TimerPreset = {
-        id: Date.now().toString(),
-        name: `Timer ${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`,
-        seconds,
-        alerts,
-        created_at: now,
-        last_used: now,
-      };
-      console.log('[useTimerScreen] Création d\'un nouveau preset', newPreset);
-      await savePreset(newPreset);
+      await presetManager.createPreset(seconds, alerts);
     } else {
-      const updatedPreset = {
-        ...existingPreset,
-        last_used: now,
-      };
-      console.log('[useTimerScreen] Mise à jour du preset existant', updatedPreset);
-      await savePreset(updatedPreset);
+      await presetManager.savePreset(existingPreset);
     }
-  }, [seconds, presets, savePreset]);
+  }, [seconds]);
 
   // Gestion du pavé numérique
   const handleNumberPress = useCallback((num: number) => {
