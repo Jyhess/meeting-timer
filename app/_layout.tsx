@@ -1,8 +1,10 @@
+import 'react-native-gesture-handler';
 import { useEffect, useCallback } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Platform, AppState, AppStateStatus, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 declare global {
   interface Window {
@@ -33,15 +35,15 @@ export default function RootLayout() {
   }, [handleAppStateChange]);
 
   // On web, nous n'avons pas besoin de GestureHandlerRootView
-  const Container = Platform.OS === 'web' ? View : require('react-native-gesture-handler').GestureHandlerRootView;
+  const Container = Platform.OS === 'web' ? View : GestureHandlerRootView;
 
   return (
     <SafeAreaProvider>
+      <StatusBar style="light" />
       <Container style={styles.container}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
-        <StatusBar style="auto" />
       </Container>
     </SafeAreaProvider>
   );

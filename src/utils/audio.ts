@@ -30,7 +30,7 @@ export const initAudio = () => {
 /**
  * Récupère l'URL d'un fichier son
  */
-export const getSoundUrl = (fileName: SoundName): string => {
+export const getSoundUrl = (fileName: SoundName): number => {
   console.log(`[Audio.web] Récupération de l'URL pour le fichier: ${fileName}`);
   return soundMap[fileName];
 };
@@ -49,8 +49,8 @@ export class Audio {
     
     // Créer l'élément audio
     const audio = new window.Audio(getSoundUrl(name));
-    
-    // Configurer les événements
+      
+      // Configurer les événements
     audio.addEventListener('canplaythrough', () => {
       console.debug(`[Audio.web] Son ${name} chargé avec succès`);
     });

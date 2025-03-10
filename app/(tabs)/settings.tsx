@@ -4,13 +4,10 @@ import {
   Text,
   Pressable,
   ScrollView,
-  Platform,
   TextInput,
-  Vibration,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
 import { Icon } from '../../src/components/Timer/Icon';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { Alert, ALERT_SOUNDS } from '../../src/types/timer';
@@ -168,24 +165,6 @@ export default function SettingsScreen() {
                 </Pressable>
               </View>
             </View>
-            
-            {Platform.OS !== 'web' && (
-              <Pressable
-                style={[
-                  styles.durationButton,
-                  { alignSelf: 'center', marginTop: 16 }
-                ]}
-                onPress={() => {
-                  if (Platform.OS === 'ios') {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                  } else {
-                    Vibration.vibrate(300);
-                  }
-                }}
-              >
-                <Text style={styles.testButtonText}>Tester</Text>
-              </Pressable>
-            )}
           </View>
                     
           <View style={styles.section}>
@@ -198,7 +177,7 @@ export default function SettingsScreen() {
               <View key={alert.id} style={styles.alertItem}>
                 <View style={styles.alertInfo}>
                   <Icon
-                    name={ALERT_SOUNDS[alert.sound].iconName}
+                    name={ALERT_SOUNDS[alert.sound].iconName as any}
                     size={24}
                     color="#fff"
                   />

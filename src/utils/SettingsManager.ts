@@ -1,4 +1,5 @@
 import { Alert, AlertEffect } from '../types/timer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DEFAULT_ALERTS = {
   before: {
@@ -143,7 +144,7 @@ export class SettingsManager {
   // Persistance
   private async loadSettings() {
     try {
-      const settings = localStorage.getItem('settings');
+      const settings = await AsyncStorage.getItem('settings');
       if (settings) {
         const { defaultTimerMinutes, defaultAlertDuration, beforeAlert, endAlert, afterAlert } = JSON.parse(settings);
         this.defaultTimerMinutes = defaultTimerMinutes ?? 30;
@@ -157,7 +158,7 @@ export class SettingsManager {
     }
   }
 
-  private saveSettings() {
+  private async saveSettings() {
     try {
       const settings = {
         defaultTimerMinutes: this.defaultTimerMinutes,
@@ -166,7 +167,7 @@ export class SettingsManager {
         endAlert: this.endAlert,
         afterAlert: this.afterAlert,
       };
-      localStorage.setItem('settings', JSON.stringify(settings));
+      await AsyncStorage.setItem('settings', JSON.stringify(settings));
     } catch (error) {
       console.error('[SettingsManager] ❌ Erreur lors de la sauvegarde des paramètres:', error);
     }
