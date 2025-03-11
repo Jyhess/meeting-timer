@@ -14,3 +14,14 @@
 * Preset nommés en couleur
 * Vue du temps en camembert
 * Bloquer le passage en veille
+
+
+== Question
+
+* Bonne approche pour les managers ?
+* Mettre les managers dans des Contextes ?
+  * Preset et Settings dans l'app
+  * TimerManager dans le timer screen ?
+* Granularité des composants ? Bonne pratiques ?
+* Gestion des thèmes / constantes des styles
+* Gestion de la traduction
