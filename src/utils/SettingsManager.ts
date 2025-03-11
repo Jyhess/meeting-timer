@@ -71,6 +71,7 @@ export class SettingsManager {
 
   // Getters
   getDefaultTimerMinutes(): number {
+    console.log(`[SettingsManager] 🔧 Durée par défaut: ${this.defaultTimerMinutes}min`);
     return this.defaultTimerMinutes;
   }
 

@@ -144,8 +144,6 @@ export type TimerPreset = {
   last_used?: string;
 };
 
-export type TimerState = 'idle' | 'running' | 'paused' | 'finished';
-
 export type CustomSound = {
   id: string;
   name: string;

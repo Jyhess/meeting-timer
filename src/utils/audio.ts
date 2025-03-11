@@ -21,16 +21,9 @@ const soundMap = {
 export type SoundName = keyof typeof soundMap;
 
 /**
- * Initialise le système audio
- */
-export const initAudio = () => {
-  console.log('[Audio.web] Initialisation du système audio');
-};
-
-/**
  * Récupère l'URL d'un fichier son
  */
-export const getSoundUrl = (fileName: SoundName): number => {
+export const getSoundUrl = (fileName: SoundName): string => {
   console.log(`[Audio.web] Récupération de l'URL pour le fichier: ${fileName}`);
   return soundMap[fileName];
 };
@@ -39,14 +32,18 @@ export const getSoundUrl = (fileName: SoundName): number => {
  * Classe de gestion audio
  */
 export class Audio {
-  private name: SoundName;
   private isPlayingState: boolean = false;
-  private audio: HTMLAudioElement;
+  private audio?: HTMLAudioElement;
 
-  constructor(name: SoundName) {
-    this.name = name;
-    console.log(`[Audio.web] Création d'une instance audio pour: ${name}`);
-    
+  constructor() {
+    console.log('[Audio.web] Initialisation du système audio');
+  }
+
+  async loadAudio(name: SoundName): Promise<void> {
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.currentTime = 0;
+    }
     // Créer l'élément audio
     const audio = new window.Audio(getSoundUrl(name));
       
@@ -70,15 +67,15 @@ export class Audio {
   /**
    * Démarre la lecture
    */
-  async play(): Promise<void> {
-    console.log(`[Audio.web] Lecture de: ${this.name}`);
+  async play(name: SoundName): Promise<void> {
+    console.log(`[Audio.web] Lecture de: ${name}`);
     try {
-      this.audio.currentTime = 0;
-      await this.audio.play();
-      console.log(`[Audio.web] Lecture réussie de: ${this.name}`);
+      await this.loadAudio(name);
+      await this.audio?.play();
+      console.log(`[Audio.web] Lecture réussie de: ${name}`);
       this.isPlayingState = true;
     } catch (error) {
-      console.error(`[Audio.web] Erreur lors de la lecture de: ${this.name}`, error);
+      console.error(`[Audio.web] Erreur lors de la lecture de: ${name}`, error);
       this.isPlayingState = false;
     }
   }
@@ -86,19 +83,18 @@ export class Audio {
   /**
    * Met en pause
    */
-  pause(): void {
-    console.log(`[Audio.web] Pause de: ${this.name}`);
-    this.audio.pause();
+  async pause(): Promise<void> {
+    console.log(`[Audio.web] Pause`);
+    this.audio?.pause();
     this.isPlayingState = false;
   }
 
   /**
    * Arrête la lecture
    */
-  stop(): void {
-    console.log(`[Audio.web] Arrêt de: ${this.name}`);
-    this.audio.pause();
-    this.audio.currentTime = 0;
+  async stop(): Promise<void> {
+    console.log(`[Audio.web] Arrêt`);
+    this.audio?.pause();
     this.isPlayingState = false;
   }
 
@@ -106,7 +102,10 @@ export class Audio {
    * Vérifie si l'audio est en cours de lecture
    */
   isPlaying(): boolean {
-    console.log(`[Audio.web] Vérification de la lecture pour: ${this.name}`);
-    return this.isPlayingState;
+    if (this.audio) {
+      console.log(`[Audio.web] Vérification de la lecture : ${this.isPlayingState}`);
+      return this.isPlayingState;
+    }
+    return false;
   }
 } 

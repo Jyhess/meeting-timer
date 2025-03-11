@@ -72,7 +72,12 @@ export class PresetManager {
       created_at: now,
       last_used: now,
     };
-    await this.savePreset(newPreset);
+    const existingPreset = this.findSimilarPreset(newPreset);
+    if (existingPreset) {
+      await this.savePreset(existingPreset);
+    } else {
+      await this.savePreset(newPreset);
+    }
   }
 
   // Supprimer un preset
@@ -92,11 +97,15 @@ export class PresetManager {
     return this.presets;
   }
 
+  getPreset(presetId: string): TimerPreset | undefined {
+    return this.presets.find(p => p.id === presetId);
+  }
+
   // Trouver un preset similaire
-  findSimilarPreset(seconds: number, alerts: any[]): TimerPreset | undefined {
+  findSimilarPreset(preset: TimerPreset): TimerPreset | undefined {
     return this.presets.find(p => 
-      p.seconds === seconds && 
-      JSON.stringify(p.alerts) === JSON.stringify(alerts)
+      p.seconds === preset.seconds && 
+      JSON.stringify(p.alerts) === JSON.stringify(preset.alerts)
     );
   }
 

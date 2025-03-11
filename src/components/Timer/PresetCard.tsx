@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { TimerPreset, ALERT_SOUNDS } from '../../types/timer';
 import { Icon } from './Icon';
-import { formatTime } from '../../utils/time';
+import { formatTimeFromSeconds } from '../../utils/time';
 
 type PresetCardProps = {
   preset: TimerPreset;
@@ -22,7 +22,7 @@ export const PresetCard = ({
   return (
     <View style={style}>
       <Text style={timeStyle}>
-        {formatTime(preset.seconds)}
+        {formatTimeFromSeconds(preset.seconds)}
       </Text>
       <View style={{ flexDirection: 'row', gap: 4, justifyContent: 'center' }}>
         {preset.alerts

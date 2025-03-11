@@ -1,52 +1,61 @@
-import { useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { Icon } from '../../src/components/Timer/Icon';
-import { initAudio } from '../../src/utils/audio';
-import { Platform } from 'react-native';
+import { Platform, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
+import { theme } from '../../src/theme';
+
+function TimerTab() {
+  const router = useRouter();
+  
+  return (
+    <Pressable 
+      onPress={() => {
+        router.push({
+          pathname: "/timer",
+          params: { seed: Math.random().toString() }
+        });
+      }}
+    >
+      <Icon name="alarm_add" size={24} color={theme.colors.white} />
+    </Pressable>
+  );
+}
 
 export default function TabLayout() {
   // Initialize audio session on component mount
-  useEffect(() => {
-    initAudio();
-  }, []);
-
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#1a1a1a',
-          borderTopWidth: 0,
+          backgroundColor: theme.colors.background.primary,
+          borderTopColor: theme.colors.background.secondary,
           height: Platform.OS === 'android' ? 60 : 50,
           paddingBottom: Platform.OS === 'android' ? 8 : 0,
         },
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.disabled,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Presets',
-          tabBarIcon: ({ color }) => (
-            <Icon name="schedule" size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Icon name="schedule" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="timer"
         options={{
           title: 'Timer',
-          tabBarIcon: ({ color }) => (
-            <Icon name="alarm_add" size={24} color={color} />
-          ),
+          tabBarIcon: () => <TimerTab />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Réglages',
-          tabBarIcon: ({ color }) => (
-            <Icon name="settings" size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Icon name="settings" size={24} color={color} />,
         }}
       />
     </Tabs>

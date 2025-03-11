@@ -36,7 +36,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <LinearGradient colors={['#1a1a1a', '#2d2d2d']} style={styles.container}>
         <View style={styles.header}>
-          <Link href="/timer" asChild>
+          <Link href={{pathname: "/timer", params: {seed: Math.random()}}} asChild>
             <Pressable style={styles.newButton}>
               <Icon name="add" size={24} color="#fff" />
               <Text style={styles.newButtonText}>Nouveau Timer</Text>
@@ -64,7 +64,10 @@ export default function HomeScreen() {
                   key={preset.id}
                   href={{
                     pathname: '/timer',
-                    params: { presetId: preset.id },
+                    params: { 
+                      presetId: preset.id,
+                      seed: Math.random().toString()
+                    },
                   }}
                   asChild
                 >
