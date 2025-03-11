@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { View, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useAnimatedStyle,
@@ -20,10 +19,9 @@ import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 import { TimerManager } from '../../src/utils/TimerManager';
-import { formatTime } from '../../src/utils/time';
 import { theme } from '../../src/theme';
-
-const AnimatedText = Animated.createAnimatedComponent(Text);
+import { TimeDisplay } from '../../src/components/Timer/TimeDisplay';
+import { Keypad } from '../../src/components/Timer/Keypad';
 
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string }>();
@@ -31,8 +29,6 @@ export default function TimerScreen() {
   const timerManagerRef = useRef<TimerManager>(new TimerManager());
   
   const {
-    minutes,
-    seconds,
     timeLeft,
     isRunning,
     state,
@@ -178,25 +174,10 @@ export default function TimerScreen() {
     }
   };
 
-  const getTimeColor = () => {    
-    // Si le temps est invalide, afficher en orange
-    if (!isValidTime) return theme.colors.invalid;
-    
-    // Si le temps est négatif, afficher en rouge
-    if (timeLeft < 0) return theme.colors.error;
-    
-    // Si l'alerte "bientôt fini" est activée et que le temps restant est inférieur ou égal à son seuil
-    if (beforeAlert?.enabled && timeLeft <= beforeAlert.timeOffset * 60) {
-      return theme.colors.secondary;
-    }
-    
-    return theme.colors.white;
-  };
-
   const getAlertTimeColor = (alert: Alert) => {
     // Si c'est l'alerte "bientôt fini" et que le timer total est inférieur à son seuil
     if (alert.id === 'before' && alert.enabled && !isRunning && 
-        (minutes * 60 + seconds) <= alert.timeOffset * 60) {
+        timeLeft <= alert.timeOffset * 60) {
       return theme.colors.error;
     }
     
@@ -216,15 +197,6 @@ export default function TimerScreen() {
     };
   });
 
-  const renderKeypadButton = (num: number) => (
-    <Pressable
-      style={styles.keypadButton}
-      onPress={() => handleNumberPress(num)}
-    >
-      <Text style={styles.keypadButtonText}>{num}</Text>
-    </Pressable>
-  );
-
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <LinearGradient 
@@ -233,56 +205,20 @@ export default function TimerScreen() {
       >
         <Animated.View style={animatedFlashStyle} />
         
-        <BlurView intensity={50} style={styles.timerContainer}>
-          <View style={styles.timeDisplayContainer}>
-            <View style={styles.timeDisplay}>
-              <AnimatedText style={[
-                styles.timeText, 
-                { color: getTimeColor() }
-              ]}>
-                {!isRunning
-                  ? `${minutes.toString().padStart(2, '0')}:${seconds
-                      .toString()
-                      .padStart(2, '0')}`
-                  : formatTime(timeLeft)}
-              </AnimatedText>
-            </View>
-          </View>
+        <View style={styles.timerContainer}>
+          <TimeDisplay
+            timeLeft={timeLeft}
+            isValidTime={isValidTime}
+            beforeAlert={beforeAlert}
+          />
 
-          {!isRunning ? (
-            <View style={styles.keypad}>
-              <View style={styles.keypadRow}>
-                {renderKeypadButton(1)}
-                {renderKeypadButton(2)}
-                {renderKeypadButton(3)}
-              </View>
-              <View style={styles.keypadRow}>
-                {renderKeypadButton(4)}
-                {renderKeypadButton(5)}
-                {renderKeypadButton(6)}
-              </View>
-              <View style={styles.keypadRow}>
-                {renderKeypadButton(7)}
-                {renderKeypadButton(8)}
-                {renderKeypadButton(9)}
-              </View>
-              <View style={styles.keypadRow}>
-                <Pressable
-                  style={styles.keypadButton}
-                  onPress={handleBackspace}
-                >
-                  <Icon name="backspace" size={24} color={theme.colors.white} />
-                </Pressable>
-                {renderKeypadButton(0)}
-                <Pressable
-                  style={styles.keypadButton}
-                  onPress={handleDoubleZero}
-                >
-                  <Text style={styles.keypadButtonText}>00</Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : null}
+          {!isRunning && (
+            <Keypad
+              onNumberPress={handleNumberPress}
+              onBackspace={handleBackspace}
+              onDoubleZero={handleDoubleZero}
+            />
+          )}
 
           <View style={styles.controls}>
             {!isRunning ? (
@@ -348,7 +284,7 @@ export default function TimerScreen() {
               />
             ))}
           </View>
-        </BlurView>
+        </View>
 
         {editingAlert && (
           <View>

@@ -13,14 +13,10 @@ export const useTimerScreen = (
   // États locaux
   const timeLeftInSeconds = timerManagerRef.current?.getTimeLeft() ?? 0;
   const beforeAlert = timerManagerRef.current?.getBeforeAlert();
-  const endAlert = timerManagerRef.current?.getEndAlert();
-  const afterAlert = timerManagerRef.current?.getAfterAlert();
 
   const [seconds, setSeconds] = useState(() => timeLeftInSeconds);
   const [inputBuffer, setInputBuffer] = useState('');
   const [isValidTime, setIsValidTime] = useState(true);
-  const [displayMinutes, setDisplayMinutes] = useState(() => Math.floor(timeLeftInSeconds / 60));
-  const [displaySeconds, setDisplaySeconds] = useState(() => timeLeftInSeconds % 60);
 
   // Hooks
   const { presets, savePreset } = usePresets();
@@ -49,8 +45,6 @@ export const useTimerScreen = (
     setSeconds(timeLeftInSeconds);
     setInputBuffer('');
     setIsValidTime(true);
-    setDisplayMinutes(Math.floor(timeLeftInSeconds / 60));
-    setDisplaySeconds(timeLeftInSeconds % 60);
   }, [key]);
 
   // Convertir le buffer en secondes totales
@@ -60,10 +54,6 @@ export const useTimerScreen = (
     const digits = buffer.padStart(4, '0').split('').map(Number);
     const mins = parseInt(digits.slice(0, 2).join(''), 10);
     const secs = parseInt(digits.slice(2).join(''), 10);
-    
-    // Mettre à jour l'affichage exact
-    setDisplayMinutes(mins);
-    setDisplaySeconds(secs);
     
     // Toujours mettre à jour les secondes totales
     setSeconds(mins * 60 + secs);
@@ -122,8 +112,6 @@ export const useTimerScreen = (
     setInputBuffer('');
     const mins = Math.floor(preset.seconds / 60);
     const secs = preset.seconds % 60;
-    setDisplayMinutes(mins);
-    setDisplaySeconds(secs);
     
     // Mettre à jour les alertes
     preset.alerts.forEach(alert => {
@@ -150,15 +138,15 @@ export const useTimerScreen = (
       actions.updateAlert(alert);
       // Si c'est l'alerte "before", vérifier la validité du timer
       if (alert.id === 'before') {
-        setIsValidTime(checkTimeValidity(displayMinutes, displaySeconds, alert.timeOffset, alert.enabled));
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        setIsValidTime(checkTimeValidity(mins, secs, alert.timeOffset, alert.enabled));
       }
     }
   };
 
   return {
     // États
-    minutes: displayMinutes,
-    seconds: displaySeconds,
     timeLeft,
     isRunning,
     state,
