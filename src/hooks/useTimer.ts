@@ -27,6 +27,7 @@ type TimerAction =
   | { type: 'RESET_FROM_DEFAULT' }
   | { type: 'LOAD_PRESET'; payload: string }
   | { type: 'UPDATE_ALERT'; payload: Alert }
+  | { type: 'ADD_TIME'; payload: number }
   | { type: 'TICK' };
 
 function getInitialState(): TimerState {
@@ -128,6 +129,12 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
           };
       }
 
+    case 'ADD_TIME':
+      return {
+        ...state,
+        timeLeft: Number(state.timeLeft) + action.payload,
+      };
+
     case 'TICK':
       if (state.state !== 'running') return state;
       const newTimeLeft = state.timeLeft - 1;
@@ -182,7 +189,7 @@ export function useTimer() {
           (alert.id === 'after' && state.timeLeft === -alert.timeOffset)
         );
 
-        if (shouldTrigger) {
+      if (shouldTrigger) {
           startedAlerts.current.add(alert.id);
           if (alert.effects.includes('flash' as AlertEffect)) {
             console.log('[useTimer] 🔔 Alerte flash active :', alert.id);
@@ -286,6 +293,10 @@ export function useTimer() {
 
     stopAlerts: useCallback(() => {
       stopAlerts();
+    }, []),
+
+    addTime: useCallback((seconds: number) => {
+      dispatch({ type: 'ADD_TIME', payload: seconds });
     }, []),
   };
 

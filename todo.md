@@ -1,7 +1,6 @@
 = TODO list
 
 * Plus de son, activable/désactivables dans les préférences
-* ajout temps supplémentaire
 * Vue du temps en camembert
 * Bloquer le passage en veille
 * sons custom

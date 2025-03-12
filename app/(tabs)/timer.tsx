@@ -19,6 +19,7 @@ export default function TimerScreen() {
   const [lastSeed, setLastSeed] = useState<string | null>(null);
   const flashViewRef = useRef<FlashViewRef>(null);
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
+  const [addingTime, setAddingTime] = useState(false);
 
   const {
     duration,
@@ -61,7 +62,8 @@ export default function TimerScreen() {
 
   const handleStop = () => {
     actions.stop();
-    
+    setAddingTime(false);
+
     if (state === 'idle') {
       router.replace('/');
     }
@@ -69,6 +71,7 @@ export default function TimerScreen() {
 
   const handleReset = () => {
     actions.reset();
+    setAddingTime(false);
   };
 
   const getAlertTimeColor = (alert: Alert) => {
@@ -84,6 +87,27 @@ export default function TimerScreen() {
     if (isValidTime) {
       actions.setDuration(duration);
     }
+  };
+
+  const [addTimeValue, setAddTimeValue] = useState<{ seconds: number; isValid: boolean }>({ seconds: 60, isValid: true });
+
+  const handleAddTimeChange = (seconds: number, isValidTime: boolean) => {
+    let newSeconds = seconds;
+    if (!isValidTime) {
+      newSeconds = addTimeValue.seconds;
+    }
+    setAddTimeValue({ seconds: newSeconds, isValid: isValidTime });
+  };
+
+  const handleAddTime = () => {
+    if (addTimeValue.isValid) {
+      actions.addTime(addTimeValue.seconds);
+      setAddingTime(false);
+    }
+  };
+
+  const handleAddTimeClose = () => {
+    setAddingTime(false);
   };
 
   return (
@@ -105,25 +129,28 @@ export default function TimerScreen() {
               timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
             />
           ) : (
-            <TimerOutput
-              timeLeft={timeLeft}
-              beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-            />
+              <TimerOutput
+                timeLeft={timeLeft}
+                beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+              />
           )}
           {isRunning && hasActiveAlert && (
-            <Pressable 
-              style={[styles.controlButton, styles.alertStopButton]} 
-              onPress={() => {
-                actions.stopAlerts();
-              }}
-            >
-              <Icon name="volume_off" size={32} color={theme.colors.danger} />
-            </Pressable>
+                <Pressable 
+                  style={[styles.controlButton, styles.alertStopButton]} 
+                  onPress={() => {
+                    actions.stopAlerts();
+                  }}
+                >
+                  <Icon name="volume_off" size={32} color={theme.colors.danger} />
+                </Pressable>
           )}
 
-          <View style={styles.controls}>
+          <View style={styles.controlsContainer}>
             {!isRunning ? (
               <>
+                <Pressable style={styles.controlButton} onPress={handleStop}>
+                  <Icon name="close" size={40} color={theme.colors.danger} />
+                </Pressable>
                 <Pressable 
                   style={[
                     styles.controlButton,
@@ -134,12 +161,9 @@ export default function TimerScreen() {
                 >
                   <Icon 
                     name="play_arrow" 
-                    size={32} 
+                    size={40} 
                     color={isValidTime ? theme.colors.primary : theme.colors.disabled}
                   />
-                </Pressable>
-                <Pressable style={styles.controlButton} onPress={handleStop}>
-                  <Icon name="close" size={32} color={theme.colors.danger} />
                 </Pressable>
               </>
             ) : (
@@ -147,20 +171,57 @@ export default function TimerScreen() {
                 <Pressable style={styles.controlButton} onPress={state === 'paused' ? actions.resume : actions.pause}>
                   <Icon 
                     name={state === 'paused' ? "play_arrow" : "pause"} 
-                    size={32} 
+                    size={40} 
                     color={theme.colors.secondary}
                   />
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleStop}>
-                  <Icon name="stop" size={32} color={theme.colors.danger} />
+                  <Icon name="stop" size={40} color={theme.colors.danger} />
                 </Pressable>
                 <Pressable style={styles.controlButton} onPress={handleReset}>
-                  <Icon name="restart" size={32} color={theme.colors.primary} />
+                  <Icon name="restart" size={40} color={theme.colors.primary} />
                 </Pressable>
+                {!addingTime && (
+                  <Pressable 
+                    style={styles.controlButton} 
+                    onPress={() => setAddingTime(true)}
+                  >
+                    <Icon name="add" size={40} color={theme.colors.primary} />
+                  </Pressable>
+                )}
               </>
             )}
           </View>
+          {isRunning && addingTime && (
+            <View style={styles.addTimeContainer}>
+              <TimeInput
+                initialSeconds={addTimeValue.seconds}
+                onTimeChange={handleAddTimeChange}
+                timeColor={theme.colors.white}
+                prefix="+"
+              />
+              <View style={styles.controlsContainer}>
+                <Pressable
+                  style={styles.controlButton}
+                  onPress={handleAddTimeClose}
+                >
+                  <Icon name="close" size={32} color={theme.colors.danger} />
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.controlButton,
+                    !addTimeValue.isValid && styles.controlButtonDisabled
+                  ]}
+                  onPress={handleAddTime}
+                  disabled={!addTimeValue.isValid}
+                >
+                  <Icon name="check" size={32} color={theme.colors.primary} />
+                </Pressable>
+              </View>
+            </View>
+          )}
 
+          {!addingTime && (
           <View style={styles.alertsContainer}>
             {[beforeAlert, endAlert, afterAlert].map((alert) => alert && (
               <AlertIcon
@@ -185,6 +246,7 @@ export default function TimerScreen() {
               />
             ))}
           </View>
+          )}
         </View>
 
         {editingAlert && (

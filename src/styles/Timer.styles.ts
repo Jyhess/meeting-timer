@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   keypad: {
-    marginBottom: theme.spacing.large,
+    marginBottom: theme.spacing.small,
   },
   keypadRow: {
     flexDirection: 'row',
@@ -70,22 +70,16 @@ export const styles = StyleSheet.create({
   keypadButtonText: {
     fontSize: theme.typography.fontSize.large,
     color: theme.colors.white,
-    fontWeight: theme.typography.fontWeight.medium,
+    fontWeight: theme.typography.fontWeight.bold,
   },
-  keypadButtonTextActive: {
-    color: theme.colors.primary,
-  },
-  specialButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  controls: {
+  controlsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: theme.spacing.large,
     marginBottom: theme.spacing.large,
   },
   controlButton: {
-    padding: theme.spacing.medium,
+    padding: theme.spacing.small,
     borderRadius: theme.borders.radius.medium,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
@@ -126,5 +120,11 @@ export const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+  },
+    addTimeContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    padding: theme.spacing.xs,
+    borderRadius: theme.borders.radius.large,
+    marginBottom: theme.spacing.small,
   },
 });
