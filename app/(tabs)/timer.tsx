@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
@@ -18,7 +18,6 @@ export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string, seed?: string }>();
   const [lastSeed, setLastSeed] = useState<string | null>(null);
   const flashViewRef = useRef<FlashViewRef>(null);
-  const startedAlerts = useRef<Set<string>>(new Set());
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
 
   const {
@@ -30,6 +29,7 @@ export default function TimerScreen() {
     endAlert,
     afterAlert,
     effectDuration,
+    shouldFlash,
     hasActiveAlert,
     actions,
   } = useTimer();
@@ -39,7 +39,7 @@ export default function TimerScreen() {
   const isValidTime = validInput && timeLeft > 0 && (!beforeAlert.enabled || timeLeft > beforeAlert.timeOffset * 60);
 
   // Réinitialiser le timer quand le seed change
-  React.useEffect(() => {
+  useEffect(() => {
     if (params.seed !== lastSeed) {
       setLastSeed(params.seed || null);
       if (params.presetId) {
@@ -50,42 +50,17 @@ export default function TimerScreen() {
     }
   }, [params.seed, params.presetId, lastSeed, actions]);
 
-  // Gérer l'effet de flash pour les alertes
-  React.useEffect(() => {
-    if (state !== 'running') {
-      flashViewRef.current?.stopAnimation();
-      startedAlerts.current.clear();
-      return;
-    }
-
-    const shouldFlash = [beforeAlert, endAlert, afterAlert].some(alert => {
-      if (!alert?.enabled || !alert.effects.includes('flash')) return false;
-
-      const shouldStart = (
-        (alert.id === 'end' && timeLeft === 0) ||
-        (alert.id === 'before' && timeLeft === alert.timeOffset * 60) ||
-        (alert.id === 'after' && timeLeft === -alert.timeOffset * 60)
-      );
-
-      const alertKey = `${alert.id}`;
-
-      if (shouldStart && !startedAlerts.current.has(alertKey)) {
-        startedAlerts.current.add(alertKey);
-        return true;
-      }
-
-      return false;
-    });
-
+  useEffect(() => {
     if (shouldFlash) {
       flashViewRef.current?.startAnimation();
     }
-  }, [state, timeLeft, beforeAlert, endAlert, afterAlert]);
+    else {
+      flashViewRef.current?.stopAnimation();
+    }
+  }, [shouldFlash]);
 
   const handleStop = () => {
     actions.stop();
-    flashViewRef.current?.stopAnimation();
-    startedAlerts.current.clear();
     
     if (state === 'idle') {
       router.replace('/');
@@ -94,8 +69,6 @@ export default function TimerScreen() {
 
   const handleReset = () => {
     actions.reset();
-    flashViewRef.current?.stopAnimation();
-    startedAlerts.current.clear();
   };
 
   const getAlertTimeColor = (alert: Alert) => {
@@ -142,8 +115,6 @@ export default function TimerScreen() {
               style={[styles.controlButton, styles.alertStopButton]} 
               onPress={() => {
                 actions.stopAlerts();
-                flashViewRef.current?.stopAnimation();
-                startedAlerts.current.clear();
               }}
             >
               <Icon name="volume_off" size={32} color={theme.colors.danger} />

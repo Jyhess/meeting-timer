@@ -1,11 +1,9 @@
 = TODO list
 
 * Rest buton reviens à d'édition
-* Arret du shake comme le flash
 * Saise des alertes avec les secondes (alertes et prefs)
 * Plus de son, activable/désactivables dans les préférences
 * sons custom
-* tests android
 * remplacement composants expo par du react native
 * traduction
 * ajout temps supplémentaire

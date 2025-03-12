@@ -22,39 +22,28 @@ export type FlashViewProps = {
 export const FlashView = forwardRef<FlashViewRef, FlashViewProps>(({ effectDuration }, ref) => {  
   const [isAnimated, setIsAnimated] = useState(false);
   const flashBackground = useSharedValue(0);
-  const flashTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useImperativeHandle(ref, () => ({
     startAnimation: () => {
-      setIsAnimated(true);
+      startFlashAnimation();
     },
     stopAnimation: () => {
-      setIsAnimated(false);
+      stopFlashAnimation();
     }
   }));
 
-  // Gérer l'effet de flash
   useEffect(() => {
-    if (!isAnimated) {
-      stopFlashAnimation();
-      return;
-    }
-
-    startFlashAnimation();
-
-    setTimeout(() => {
-        stopFlashAnimation();
-    }, effectDuration * 1000);
-
     return () => {
       stopFlashAnimation();
     };
-  }, [isAnimated, effectDuration]);
+  }, []);
 
   const startFlashAnimation = () => {
     // Arrêter toute animation précédente
-    stopFlashAnimation();
+    if(isAnimated) {return;}
 
+    stopFlashAnimation();
+    setIsAnimated(true);
     // Démarrer l'animation de flash
     flashBackground.value = withRepeat(
       withSequence(
@@ -67,14 +56,9 @@ export const FlashView = forwardRef<FlashViewRef, FlashViewProps>(({ effectDurat
 
   const stopFlashAnimation = () => {
     // Annuler l'animation
+    setIsAnimated(false);
     cancelAnimation(flashBackground);
     flashBackground.value = 0;
-
-    // Nettoyer le timer
-    if (flashTimerRef.current) {
-      clearTimeout(flashTimerRef.current);
-      flashTimerRef.current = null;
-    }
   };
 
   const animatedFlashStyle = useAnimatedStyle(() => {

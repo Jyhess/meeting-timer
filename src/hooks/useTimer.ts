@@ -4,6 +4,7 @@ import { SettingsManager } from '../utils/SettingsManager';
 import { PresetManager } from '../utils/PresetManager';
 import { useAudio } from './useAudio';
 import { useVibration } from './useVibration';
+import { AlertEffect } from '../types/alerts';
 
 interface TimerState {
   duration: number;
@@ -144,12 +145,13 @@ export function useTimer() {
   const [state, dispatch] = useReducer(timerReducer, null, getInitialState);
   const intervalRef = useRef<NodeJS.Timeout>();
   const startedAlerts = useRef<Set<string>>(new Set());
+  const [shouldFlash, setShouldFlash] = useState(false);
   const [isVibrating, setIsVibrating] = useState(false);
   const [hasActiveAlert, setHasActiveAlert] = useState(false);
-  const soundPlayer = useAudio();
+  const { playSound, stopSound: stopAudioSound } = useAudio();
+  const alertTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Utiliser useVibration avec les paramètres requis
-  useVibration(isVibrating, state.effectDuration / 1000);
+  useVibration(isVibrating, state.effectDuration * 1000);
 
   useEffect(() => {
     if (state.state === 'running') {
@@ -167,45 +169,70 @@ export function useTimer() {
     };
   }, [state.state]);
 
-  // Gérer les effets des alertes (son et vibration)
   useEffect(() => {
-    if (state.state !== 'running') {
-      startedAlerts.current.clear();
-      stopAlerts(soundPlayer);
-      return;
-    }
+    const checkAlerts = () => {
+      const alerts = [state.beforeAlert, state.endAlert, state.afterAlert];
 
-    [state.beforeAlert, state.endAlert, state.afterAlert].forEach(alert => {
-      if (!alert?.enabled) return;
+      alerts.forEach(alert => {
+        if (!alert.enabled || startedAlerts.current.has(alert.id)) return;
 
-      const shouldTrigger = (
-        (alert.id === 'end' && state.timeLeft === 0) ||
-        (alert.id === 'before' && state.timeLeft === alert.timeOffset * 60) ||
-        (alert.id === 'after' && state.timeLeft === -alert.timeOffset * 60)
-      );
+        const shouldTrigger = (
+          (alert.id === 'end' && state.timeLeft === 0) ||
+          (alert.id === 'before' && state.timeLeft === alert.timeOffset * 60) ||
+          (alert.id === 'after' && state.timeLeft === -alert.timeOffset * 60)
+        );
 
-      const alertKey = `${alert.id}`;
-      if (shouldTrigger && !startedAlerts.current.has(alertKey)) {
-        startedAlerts.current.add(alertKey);
-        setHasActiveAlert(true);
-        
-        if (alert.effects.includes('shake')) {
-          setIsVibrating(true);
-          // Arrêter la vibration après la durée de l'effet
-          setTimeout(() => {
-            setIsVibrating(false);
-          }, state.effectDuration);
+        if (shouldTrigger) {
+          startedAlerts.current.add(alert.id);
+          if (alert.effects.includes('flash' as AlertEffect)) {
+            console.log('[useTimer] 🔔 Alerte flash active :', alert.id);
+            setShouldFlash(true);
+          }
+          if (alert.sound) {
+            console.log('[useTimer] 🔔 Alerte sound active :', alert.id);
+            playSound(alert.sound);
+          }
+          if (alert.effects.includes('shake' as AlertEffect)) {
+            console.log('[useTimer] 🔔 Alerte vibration active :', alert.id);
+            setIsVibrating(true);
+          }
+          setHasActiveAlert(true);
         }
-        soundPlayer.playSound(alert.sound);
-      }
-    });
-  }, [state.state, state.timeLeft, state.beforeAlert, state.endAlert, state.afterAlert, state.effectDuration, soundPlayer]);
+      });
+    };
 
-  const stopAlerts = (soundPlayer: any) => {
+    if (state.state === 'running') {
+      checkAlerts();
+    } else {
+      setHasActiveAlert(false);
+    }
+  }, [state.timeLeft, state.state, state.beforeAlert, state.endAlert, state.afterAlert, playSound]);
+
+  useEffect(() => {
+    if (shouldFlash || isVibrating) {
+      console.log('[useTimer] 🔔 Create alert effect timeout :', shouldFlash, isVibrating, state.effectDuration);
+      alertTimerRef.current = setTimeout(() => {
+        console.log('[useTimer] 🔔 Clear alert effect timeout');
+        setShouldFlash(false);
+        setIsVibrating(false);
+        setHasActiveAlert(false);
+      }, state.effectDuration * 1000);
+    }
+    return () => {
+      if (alertTimerRef.current) {
+        clearTimeout(alertTimerRef.current);
+        alertTimerRef.current = null;
+      }
+    };
+  }, [shouldFlash, isVibrating, state.effectDuration]);
+
+  const stopAlerts = useCallback(() => {
+    stopAudioSound();
     setIsVibrating(false);
+    setShouldFlash(false);
     setHasActiveAlert(false);
-    soundPlayer.stopSound();
-  };
+    startedAlerts.current.clear();
+  }, [stopAudioSound]);
 
   const savePreset = async () => {
     console.log('[useTimer] 💾 Sauvegarde du preset');
@@ -227,6 +254,7 @@ export function useTimer() {
 
     pause: useCallback(() => {
       dispatch({ type: 'PAUSE' });
+      stopAlerts();
     }, []),
 
     resume: useCallback(() => {
@@ -235,12 +263,12 @@ export function useTimer() {
 
     stop: useCallback(() => {
       dispatch({ type: 'STOP' });
-      stopAlerts(soundPlayer);
+      stopAlerts();
     }, []),
 
     reset: useCallback(() => {
       dispatch({ type: 'RESET' });
-      stopAlerts(soundPlayer);
+      stopAlerts();
       startedAlerts.current.clear();
     }, []),
 
@@ -257,13 +285,14 @@ export function useTimer() {
     }, []),
 
     stopAlerts: useCallback(() => {
-      stopAlerts(soundPlayer);
-    }, [soundPlayer]),
+      stopAlerts();
+    }, []),
   };
 
   return {
     ...state,
     hasActiveAlert,
+    shouldFlash,
     actions,
   };
 }

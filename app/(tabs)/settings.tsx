@@ -10,9 +10,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '../../src/components/Timer/Icon';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
-import { Alert, ALERT_SOUNDS } from '../../src/types/timer';
+import { Alert } from '../../src/types/timer';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
+import { ALERT_SOUNDS } from '../../src/types/alerts';
 
 export default function SettingsScreen() {
   const { 
