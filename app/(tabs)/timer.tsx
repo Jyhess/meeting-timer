@@ -132,6 +132,18 @@ export default function TimerScreen() {
               beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
             />
           )}
+          {isRunning && hasActiveAlert && (
+            <Pressable 
+              style={[styles.controlButton, styles.alertStopButton]} 
+              onPress={() => {
+                actions.stopAlerts();
+                flashViewRef.current?.stopAnimation();
+                startedAlerts.current.clear();
+              }}
+            >
+              <Icon name="volume_off" size={32} color={theme.colors.danger} />
+            </Pressable>
+          )}
 
           <View style={styles.controls}>
             {!isRunning ? (
@@ -169,18 +181,6 @@ export default function TimerScreen() {
                 <Pressable style={styles.controlButton} onPress={actions.reset}>
                   <Icon name="restart" size={32} color={theme.colors.primary} />
                 </Pressable>
-                {hasActiveAlert && (
-                  <Pressable 
-                    style={[styles.controlButton, styles.alertStopButton]} 
-                    onPress={() => {
-                      actions.stopAlerts();
-                      flashViewRef.current?.stopAnimation();
-                      startedAlerts.current.clear();
-                    }}
-                  >
-                    <Icon name="volume_off" size={32} color={theme.colors.danger} />
-                  </Pressable>
-                )}
               </>
             )}
           </View>

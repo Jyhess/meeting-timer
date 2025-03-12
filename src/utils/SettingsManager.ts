@@ -1,4 +1,5 @@
-import { Alert, AlertEffect } from '../types/timer';
+import { Alert } from '../types/timer';
+import { AlertEffect } from '../types/alerts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DEFAULT_ALERTS = {

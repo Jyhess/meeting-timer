@@ -116,8 +116,8 @@ export const styles = StyleSheet.create({
   },
   alertStopButton: {
     position: 'absolute',
-    right: 16,
-    top: -48,
+    right: 8,
+    top: 8,
     backgroundColor: theme.colors.gray.medium,
     borderRadius: 24,
     padding: 8,

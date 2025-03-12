@@ -180,7 +180,7 @@ export function useTimer() {
     });
   }, [state.state, state.timeLeft, state.beforeAlert, state.endAlert, state.afterAlert, state.effectDuration, soundPlayer]);
 
-  const stopAlerts = (soundPlayer) => {
+  const stopAlerts = (soundPlayer: any) => {
     setIsVibrating(false);
     setHasActiveAlert(false);
     soundPlayer.stopSound();

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleProp, ViewStyle, TextStyle } from 'react-native';
-import { TimerPreset, ALERT_SOUNDS } from '../../types/timer';
+import { TimerPreset } from '../../types/timer';
+import { ALERT_SOUNDS } from '../../types/alerts';
 import { Icon } from './Icon';
 import { formatTimeFromSeconds } from '../../utils/time';
 
