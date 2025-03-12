@@ -9,7 +9,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 import { theme } from '../../src/theme';
-import { TimerInput } from '../../src/components/Timer/TimerInput';
+import { TimeInput } from '../../src/components/Timer/TimeInput';
 import { TimerOutput } from '../../src/components/Timer/TimerOutput';
 import { FlashView, FlashViewRef } from '../../src/components/Timer/FlashView';
 import { useTimer } from '../../src/hooks/useTimer';
@@ -36,7 +36,7 @@ export default function TimerScreen() {
 
   // Calculer isValidTime
   const [validInput, setValidInput] = useState(true);
-  const isValidTime = validInput && timeLeft > 0 && (!beforeAlert.enabled || timeLeft > beforeAlert.timeOffset * 60);
+  const isValidTime = validInput && timeLeft > 0 && (!beforeAlert.enabled || timeLeft > beforeAlert.timeOffset);
 
   // Réinitialiser le timer quand le seed change
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function TimerScreen() {
 
   const getAlertTimeColor = (alert: Alert) => {
     if (alert.id === 'before' && alert.enabled && state === 'idle' && 
-        timeLeft <= alert.timeOffset * 60) {
+        timeLeft <= alert.timeOffset) {
       return theme.colors.error;
     }
     return undefined;
@@ -99,10 +99,10 @@ export default function TimerScreen() {
         
         <View style={styles.timerContainer}>
           {!isRunning ? (
-            <TimerInput
-              timeLeft={timeLeft}
-              beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-              onDurationChange={handleDurationChange}
+            <TimeInput
+              initialSeconds={timeLeft}
+              onTimeChange={handleDurationChange}
+              timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
             />
           ) : (
             <TimerOutput
@@ -172,9 +172,9 @@ export default function TimerScreen() {
                   (alert.id === 'end'
                     ? timeLeft <= 0
                     : alert.id === 'before'
-                    ? timeLeft <= alert.timeOffset * 60
+                    ? timeLeft <= alert.timeOffset
                     : timeLeft < 0 &&
-                      Math.abs(timeLeft) >= alert.timeOffset * 60)
+                      Math.abs(timeLeft) >= alert.timeOffset)
                 }
                 onPress={() => setEditingAlert(alert)}
                 onToggle={(enabled) => {

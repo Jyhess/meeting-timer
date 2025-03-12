@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { theme } from '../theme';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -99,17 +100,28 @@ export const styles = StyleSheet.create({
     marginTop: 24,
   },
   modalButton: {
-    paddingVertical: 8,
+    flex: 1,
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 4,
-    backgroundColor: '#333',
+    borderRadius: 8,
+    marginHorizontal: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   modalButtonPrimary: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.colors.primary,
+  },
+  modalButtonDisabled: {
+    backgroundColor: theme.colors.disabled,
+    opacity: 0.5,
   },
   modalButtonText: {
-    color: '#fff',
-    fontSize: 14,
+    color: theme.colors.white,
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  modalButtonTextDisabled: {
+    color: theme.colors.gray.light,
   },
   stopSoundButton: {
     backgroundColor: '#333',

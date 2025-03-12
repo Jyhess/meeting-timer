@@ -1,16 +1,15 @@
 = TODO list
 
-* Rest buton reviens à d'édition
 * Saise des alertes avec les secondes (alertes et prefs)
 * Plus de son, activable/désactivables dans les préférences
+* ajout temps supplémentaire
+* Vue du temps en camembert
+* Bloquer le passage en veille
 * sons custom
 * remplacement composants expo par du react native
 * traduction
-* ajout temps supplémentaire
 * ajout tests unitaires
 * Preset nommés en couleur
-* Vue du temps en camembert
-* Bloquer le passage en veille
 
 
 == Question

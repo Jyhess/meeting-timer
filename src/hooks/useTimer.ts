@@ -178,8 +178,8 @@ export function useTimer() {
 
         const shouldTrigger = (
           (alert.id === 'end' && state.timeLeft === 0) ||
-          (alert.id === 'before' && state.timeLeft === alert.timeOffset * 60) ||
-          (alert.id === 'after' && state.timeLeft === -alert.timeOffset * 60)
+          (alert.id === 'before' && state.timeLeft === alert.timeOffset) ||
+          (alert.id === 'after' && state.timeLeft === -alert.timeOffset)
         );
 
         if (shouldTrigger) {

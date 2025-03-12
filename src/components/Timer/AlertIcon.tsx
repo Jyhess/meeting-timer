@@ -12,6 +12,7 @@ import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertIcon.styles';
 import { theme } from '../../theme';
+import { formatTimeFromSeconds } from '@/src/utils/time';
 
 type AlertIconProps = {
   alert: Alert;
@@ -34,8 +35,8 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: Ale
 
   const getAlertTimeText = () => {
     if (alert.id === 'end') return 'Fin';
-    if (alert.id === 'before') return `-${alert.timeOffset} min`;
-    return `+${alert.timeOffset} min`;
+    const prefix = alert.id === 'before' ? '-' : '+';
+    return `${prefix}${formatTimeFromSeconds(alert.timeOffset)}`;
   };
 
   // Animation de secousse

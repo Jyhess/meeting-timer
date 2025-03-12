@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Modal, Platform, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { Alert, AlertEffect, AlertSoundId } from '../../types/timer';
+import { Alert } from '../../types/timer';
 import { sounds, effects } from '../../config/alerts';
 import { Icon } from './Icon';
+import { TimeInput } from './TimeInput';
 import { styles } from '../../styles/AlertEditor.styles';
+import { theme } from '../../theme';
+import { AlertEffect, AlertSoundId } from '../../types/alerts';
 
 type AlertEditorProps = {
   alert: Alert;
@@ -21,6 +24,7 @@ export const AlertEditor = ({
 }: AlertEditorProps) => {
   const [editedAlert, setEditedAlert] = useState<Alert>(JSON.parse(JSON.stringify(alert)));
   const [modalVisible, setModalVisible] = useState(isVisible);
+  const [isValidTime, setIsValidTime] = useState(true);
 
   useEffect(() => {
     if (isVisible) {
@@ -55,9 +59,21 @@ export const AlertEditor = ({
         
   };
 
+  const handleTimeChange = (seconds: number, isValid: boolean) => {
+    setIsValidTime(isValid);
+    if (isValid) {
+      setEditedAlert(prev => ({
+        ...prev,
+        timeOffset: seconds,
+      }));
+    }
+  };
+
   const handleSave = () => {
-    onSave(JSON.parse(JSON.stringify(editedAlert)));
-    onClose();
+    if (isValidTime) {
+      onSave(JSON.parse(JSON.stringify(editedAlert)));
+      onClose();
+    }
   };
 
   const isEffectSelected = (effectId: AlertEffect) => {
@@ -76,43 +92,19 @@ export const AlertEditor = ({
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={styles.modalContent}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.modalTitle}>Configurer l'alerte</Text>
+            <Text style={styles.modalTitle}>{alert.id === 'before'
+                    ? 'Alerte avant la fin'
+                    : alert.id === 'after'
+                    ? 'Alerte après la fin'
+                    : 'Alerte à la fin'}</Text>
 
             {alert.id !== 'end' && (
-              <View style={styles.modalSection}>
-                <Text style={styles.sectionTitle}>
-                  {alert.id === 'before'
-                    ? 'Minutes avant la fin'
-                    : 'Minutes après la fin'}
-                </Text>
-                <View style={styles.timeOffsetControl}>
-                  <Pressable
-                    style={styles.timeButton}
-                    onPress={() =>
-                      setEditedAlert((prev) => ({
-                        ...prev,
-                        timeOffset: Math.max(Math.abs(prev.timeOffset) - 1, 1),
-                      }))
-                    }
-                  >
-                    <Icon name="remove" size={24} color="#fff" />
-                  </Pressable>
-                  <Text style={styles.timeOffsetText}>
-                    {Math.abs(editedAlert.timeOffset)}
-                  </Text>
-                  <Pressable
-                    style={styles.timeButton}
-                    onPress={() =>
-                      setEditedAlert((prev) => ({
-                        ...prev,
-                        timeOffset: Math.min(Math.abs(prev.timeOffset) + 1, 60),
-                      }))
-                    }
-                  >
-                    <Icon name="add" size={24} color="#fff" />
-                  </Pressable>
-                </View>
-              </View>
+                <TimeInput
+                  initialSeconds={editedAlert.timeOffset}
+                  onTimeChange={handleTimeChange}
+                  timeColor={isValidTime ? theme.colors.white : theme.colors.error}
+                  prefix={alert.id === 'before' ? '-' : '+'}
+                />
             )}
 
             <View style={styles.modalSection}>
@@ -186,10 +178,20 @@ export const AlertEditor = ({
               <Text style={styles.modalButtonText}>Annuler</Text>
             </Pressable>
             <Pressable 
-              style={[styles.modalButton, styles.modalButtonPrimary]} 
+              style={[
+                styles.modalButton,
+                styles.modalButtonPrimary,
+                !isValidTime && styles.modalButtonDisabled
+              ]} 
               onPress={handleSave}
+              disabled={!isValidTime}
             >
-              <Text style={styles.modalButtonText}>Enregistrer</Text>
+              <Text style={[
+                styles.modalButtonText,
+                !isValidTime && styles.modalButtonTextDisabled
+              ]}>
+                Enregistrer
+              </Text>
             </Pressable>
           </View>
         </View>

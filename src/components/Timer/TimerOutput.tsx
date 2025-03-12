@@ -16,7 +16,7 @@ export const TimerOutput: React.FC<TimerOutputProps> = ({
     if (timeLeft < 0) {
       return theme.colors.error;
     }
-    if (beforeAlertOffset && timeLeft <= beforeAlertOffset * 60) {
+    if (beforeAlertOffset && timeLeft <= beforeAlertOffset) {
       return theme.colors.secondary;
     }
     return theme.colors.white;

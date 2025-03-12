@@ -14,6 +14,7 @@ import { Alert } from '../../src/types/timer';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
 import { ALERT_SOUNDS } from '../../src/types/alerts';
+import { formatTimeFromSeconds } from '../../src/utils/time';
 
 export default function SettingsScreen() {
   const { 
@@ -186,10 +187,10 @@ export default function SettingsScreen() {
                     <Text style={styles.alertName}>{alert.name}</Text>
                     <Text style={styles.alertDetail}>
                       {alert.id === 'before'
-                        ? `${alert.timeOffset} min avant la fin`
+                        ? `${formatTimeFromSeconds(alert.timeOffset)} avant la fin`
                         : alert.id === 'end'
                         ? 'À la fin du timer'
-                        : `${alert.timeOffset} min après la fin`}
+                        : `${formatTimeFromSeconds(alert.timeOffset)} après la fin`}
                     </Text>
                   </View>
                 </View>
