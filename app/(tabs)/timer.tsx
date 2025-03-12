@@ -30,6 +30,7 @@ export default function TimerScreen() {
     endAlert,
     afterAlert,
     effectDuration,
+    hasActiveAlert,
     actions,
   } = useTimer();
 
@@ -83,6 +84,7 @@ export default function TimerScreen() {
 
   const handleStop = () => {
     actions.reset();
+    actions.stopAlerts();
     flashViewRef.current?.stopAnimation();
     startedAlerts.current.clear();
     
@@ -167,6 +169,18 @@ export default function TimerScreen() {
                 <Pressable style={styles.controlButton} onPress={actions.reset}>
                   <Icon name="restart" size={32} color={theme.colors.primary} />
                 </Pressable>
+                {hasActiveAlert && (
+                  <Pressable 
+                    style={[styles.controlButton, styles.alertStopButton]} 
+                    onPress={() => {
+                      actions.stopAlerts();
+                      flashViewRef.current?.stopAnimation();
+                      startedAlerts.current.clear();
+                    }}
+                  >
+                    <Icon name="volume_off" size={32} color={theme.colors.danger} />
+                  </Pressable>
+                )}
               </>
             )}
           </View>

@@ -10,7 +10,6 @@ export const useAudio = () => {
     audioRef.current = new Audio();
   }
 
-
   const playSound = async (sound: SoundName) => {
     console.log(`[useAudio] ▶️ Demande de lecture pour: ${sound}`);
     try {

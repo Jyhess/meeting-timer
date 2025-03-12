@@ -124,6 +124,7 @@ export function useTimer() {
   const intervalRef = useRef<NodeJS.Timeout>();
   const startedAlerts = useRef<Set<string>>(new Set());
   const [isVibrating, setIsVibrating] = useState(false);
+  const [hasActiveAlert, setHasActiveAlert] = useState(false);
   const soundPlayer = useAudio();
 
   // Utiliser useVibration avec les paramètres requis
@@ -149,8 +150,7 @@ export function useTimer() {
   useEffect(() => {
     if (state.state !== 'running') {
       startedAlerts.current.clear();
-      setIsVibrating(false);
-      soundPlayer.stopSound();
+      stopAlerts(soundPlayer);
       return;
     }
 
@@ -166,7 +166,7 @@ export function useTimer() {
       const alertKey = `${alert.id}`;
       if (shouldTrigger && !startedAlerts.current.has(alertKey)) {
         startedAlerts.current.add(alertKey);
-        console.log('[useTimer] startedAlerts', startedAlerts.current);
+        setHasActiveAlert(true);
         
         if (alert.effects.includes('shake')) {
           setIsVibrating(true);
@@ -179,6 +179,12 @@ export function useTimer() {
       }
     });
   }, [state.state, state.timeLeft, state.beforeAlert, state.endAlert, state.afterAlert, state.effectDuration, soundPlayer]);
+
+  const stopAlerts = (soundPlayer) => {
+    setIsVibrating(false);
+    setHasActiveAlert(false);
+    soundPlayer.stopSound();
+  };
 
   const savePreset = async () => {
     console.log('[useTimer] 💾 Sauvegarde du preset');
@@ -221,10 +227,15 @@ export function useTimer() {
     updateAlert: useCallback((alert: Alert) => {
       dispatch({ type: 'UPDATE_ALERT', payload: alert });
     }, []),
+
+    stopAlerts: useCallback(() => {
+      stopAlerts(soundPlayer);
+    }, [soundPlayer]),
   };
 
   return {
     ...state,
+    hasActiveAlert,
     actions,
   };
 }

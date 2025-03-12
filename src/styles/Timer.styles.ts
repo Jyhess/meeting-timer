@@ -114,4 +114,17 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: theme.spacing.large,
   },
+  alertStopButton: {
+    position: 'absolute',
+    right: 16,
+    top: -48,
+    backgroundColor: theme.colors.gray.medium,
+    borderRadius: 24,
+    padding: 8,
+    elevation: 4,
+    shadowColor: theme.colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
 });

@@ -1,8 +1,6 @@
 = TODO list
 
 * Arret du shake comme le flash
-* Bug edition alarme d'un preset ne change pas si activation d'une alerte
-* bouton d'arret des alertes
 * Saise des alertes avec les secondes (alertes et prefs)
 * Plus de son, activable/désactivables dans les préférences
 * sons custom
@@ -25,3 +23,7 @@
 * Granularité des composants ? Bonne pratiques ?
 * Gestion des thèmes / constantes des styles
 * Gestion de la traduction
+* Check organisation des fichiers
+  * Orga par onglet plutot que par type de composant ?
+  * Utilisation de Context API ?
+  * Utilisation de Redux pour la gestion des etats ?
