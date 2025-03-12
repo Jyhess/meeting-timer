@@ -109,11 +109,23 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
       };
 
     case 'UPDATE_ALERT':
-      const alertId = action.payload.id as keyof Pick<TimerState, 'beforeAlert' | 'endAlert' | 'afterAlert'>;
-      return {
-        ...state,
-        [alertId]: action.payload,
-      };
+      switch (action.payload.id) {
+        case 'before':
+          return {
+            ...state,
+            beforeAlert: action.payload,
+          };
+        case 'end':
+          return {
+            ...state,
+            endAlert: action.payload,
+          };
+        case 'after':
+          return {
+            ...state,
+            afterAlert: action.payload,
+          };
+      }
 
     case 'TICK':
       if (state.state !== 'running') return state;
