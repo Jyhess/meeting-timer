@@ -4,15 +4,15 @@ import { SettingsManager } from '../utils/SettingsManager';
 
 
 export type Settings = {
-  defaultTimerMinutes: number;
+  defaultDurationSeconds: number;
   defaultAlerts: Alert[];
   defaultAlertDuration: number;
 };
 
 export const useSettings = () => {
   const settingsManager = SettingsManager.getInstance();
-  const [defaultTimerMinutes, setDefaultTimerMinutes] = useState(
-    settingsManager.getDefaultTimerMinutes()
+  const [defaultDurationSeconds, setDefaultDurationSeconds] = useState(
+    settingsManager.getDefaultDurationSeconds()
   );
   const [defaultAlertDuration, setDefaultAlertDuration] = useState(
     settingsManager.getDefaultAlertDuration()
@@ -28,8 +28,8 @@ export const useSettings = () => {
   );
 
   useEffect(() => {
-    const onDefaultTimerMinutesChange = (minutes: number) => {
-      setDefaultTimerMinutes(minutes);
+    const onDefaultDurationSecondsChange = (seconds: number) => {
+      setDefaultDurationSeconds(seconds);
     };
 
     const onDefaultAlertDurationChange = (duration: number) => {
@@ -48,14 +48,14 @@ export const useSettings = () => {
       setAfterAlert(alert);
     };
 
-    settingsManager.addEventListener('defaultTimerMinutesChange', onDefaultTimerMinutesChange);
+    settingsManager.addEventListener('defaultDurationSecondsChange', onDefaultDurationSecondsChange);
     settingsManager.addEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
     settingsManager.addEventListener('beforeAlertChange', onBeforeAlertChange);
     settingsManager.addEventListener('endAlertChange', onEndAlertChange);
     settingsManager.addEventListener('afterAlertChange', onAfterAlertChange);
 
     return () => {
-      settingsManager.removeEventListener('defaultTimerMinutesChange', onDefaultTimerMinutesChange);
+      settingsManager.removeEventListener('defaultDurationSecondsChange', onDefaultDurationSecondsChange);
       settingsManager.removeEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
       settingsManager.removeEventListener('beforeAlertChange', onBeforeAlertChange);
       settingsManager.removeEventListener('endAlertChange', onEndAlertChange);
@@ -64,11 +64,11 @@ export const useSettings = () => {
   }, []);
 
   return {
-    defaultTimerMinutes,
+    defaultDurationSeconds,
     defaultAlertDuration,
     defaultAlerts: [beforeAlert, endAlert, afterAlert],
-    setDefaultTimerMinutes: (minutes: number) => {
-      settingsManager.setDefaultTimerMinutes(minutes);
+    setDefaultDurationSeconds: (seconds: number) => {
+      settingsManager.setDefaultDurationSeconds(seconds);
     },
     setDefaultAlertDuration: (duration: number) => {
       settingsManager.setDefaultAlertDuration(duration);

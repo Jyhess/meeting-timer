@@ -4,7 +4,7 @@ export const colors = {
   primary: '#4CAF50',    // Vert pour le bouton play
   secondary: '#FF9800',  // Orange pour les alertes et le bouton pause
   danger: '#f44336',     // Rouge pour les erreurs et le bouton stop
-  white: '#fff',
+  white: '#eee',
   black: '#000',
   
   // Nuances de gris

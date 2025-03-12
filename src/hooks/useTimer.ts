@@ -31,7 +31,7 @@ type TimerAction =
 
 function getInitialState(): TimerState {
   const settings = SettingsManager.getInstance();
-  const defaultDuration = settings.getDefaultTimerMinutes() * 60;
+  const defaultDuration = settings.getDefaultDurationSeconds();
 
   return {
     duration: defaultDuration,

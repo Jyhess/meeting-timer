@@ -29,7 +29,7 @@ const DEFAULT_ALERTS = {
   },
 } as const;
 
-type SettingsEventType = 'defaultTimerMinutesChange' | 'defaultAlertDurationChange' | 'beforeAlertChange' | 'endAlertChange' | 'afterAlertChange';
+type SettingsEventType = 'defaultDurationSecondsChange' | 'defaultAlertDurationChange' | 'beforeAlertChange' | 'endAlertChange' | 'afterAlertChange';
 type SettingsEventListener = (data: any) => void;
 
 export class SettingsManager {
@@ -42,7 +42,7 @@ export class SettingsManager {
     return SettingsManager.instance;
   }
 
-  private defaultTimerMinutes: number = 30;
+  private defaultDurationSeconds: number = 1800; // 30 minutes en secondes
   private defaultAlertDuration: number = 5;
   private beforeAlert: Alert = { ...DEFAULT_ALERTS.before };
   private endAlert: Alert = { ...DEFAULT_ALERTS.end };
@@ -71,9 +71,9 @@ export class SettingsManager {
   }
 
   // Getters
-  getDefaultTimerMinutes(): number {
-    console.log(`[SettingsManager] 🔧 Durée par défaut: ${this.defaultTimerMinutes}min`);
-    return this.defaultTimerMinutes;
+  getDefaultDurationSeconds(): number {
+    console.log(`[SettingsManager] 🔧 Durée par défaut: ${this.defaultDurationSeconds}s`);
+    return this.defaultDurationSeconds;
   }
 
   getDefaultAlertDuration(): number {
@@ -93,10 +93,10 @@ export class SettingsManager {
   }
 
   // Setters
-  setDefaultTimerMinutes(minutes: number) {
-    console.log(`[SettingsManager] ⏱️ Mise à jour de la durée par défaut: ${minutes}min`);
-    this.defaultTimerMinutes = minutes;
-    this.emit('defaultTimerMinutesChange', minutes);
+  setDefaultDurationSeconds(seconds: number) {
+    console.log(`[SettingsManager] ⏱️ Mise à jour de la durée par défaut: ${seconds}s`);
+    this.defaultDurationSeconds = seconds;
+    this.emit('defaultDurationSecondsChange', seconds);
     this.saveSettings();
   }
 
@@ -148,8 +148,14 @@ export class SettingsManager {
     try {
       const settings = await AsyncStorage.getItem('settings');
       if (settings) {
-        const { defaultTimerMinutes, defaultAlertDuration, beforeAlert, endAlert, afterAlert } = JSON.parse(settings);
-        this.defaultTimerMinutes = defaultTimerMinutes ?? 30;
+        const parsedSettings = JSON.parse(settings);
+        const { defaultDurationSeconds, defaultAlertDuration, beforeAlert, endAlert, afterAlert } = parsedSettings;
+        // Rétrocompatibilité avec l'ancien format en minutes
+        if (defaultDurationSeconds === undefined && parsedSettings.defaultTimerMinutes !== undefined) {
+          this.defaultDurationSeconds = parsedSettings.defaultTimerMinutes * 60;
+        } else {
+          this.defaultDurationSeconds = defaultDurationSeconds ?? 1800;
+        }
         this.defaultAlertDuration = defaultAlertDuration ?? 5;
         this.beforeAlert = beforeAlert ?? { ...DEFAULT_ALERTS.before };
         this.endAlert = endAlert ?? { ...DEFAULT_ALERTS.end };
@@ -163,7 +169,7 @@ export class SettingsManager {
   private async saveSettings() {
     try {
       const settings = {
-        defaultTimerMinutes: this.defaultTimerMinutes,
+        defaultDurationSeconds: this.defaultDurationSeconds,
         defaultAlertDuration: this.defaultAlertDuration,
         beforeAlert: this.beforeAlert,
         endAlert: this.endAlert,

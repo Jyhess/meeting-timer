@@ -1,17 +1,15 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     position: 'relative',
   },
   prefixContainer: {
     position: 'relative',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 0,
+    minWidth: 40,
     justifyContent: 'center',
     alignItems: 'flex-end',
   },

@@ -26,6 +26,13 @@ export const TimeDisplay: React.FC<TimeDisplayProps> = ({
       <Text style={[styles.time, { color: timeColor }]}>
         {timeBuffer}
       </Text>
+      {prefix && (
+        <View style={styles.prefixContainer}>
+          <Text style={[styles.prefix, { color: 'transparent' }]}>
+            {prefix}
+          </Text>
+        </View>
+      )}
     </View>
   );
-}; 
+};

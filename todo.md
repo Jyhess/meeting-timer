@@ -1,6 +1,5 @@
 = TODO list
 
-* Saise des alertes avec les secondes (alertes et prefs)
 * Plus de son, activable/désactivables dans les préférences
 * ajout temps supplémentaire
 * Vue du temps en camembert
