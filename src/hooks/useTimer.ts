@@ -21,6 +21,7 @@ type TimerAction =
   | { type: 'START' }
   | { type: 'PAUSE' }
   | { type: 'RESUME' }
+  | { type: 'STOP' }
   | { type: 'RESET' }
   | { type: 'RESET_FROM_DEFAULT' }
   | { type: 'LOAD_PRESET'; payload: string }
@@ -73,12 +74,20 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
         state: 'running',
       };
 
-    case 'RESET':
+    case 'STOP':
       return {
         ...state,
         timeLeft: state.duration,
         isRunning: false,
         state: 'idle',
+      };
+
+    case 'RESET':
+      return {
+        ...state,
+        timeLeft: state.duration,
+        isRunning: true,
+        state: 'running',
       };
 
     case 'RESET_FROM_DEFAULT':
@@ -107,7 +116,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
       };
 
     case 'TICK':
-      if (!state.isRunning) return state;
+      if (state.state !== 'running') return state;
       const newTimeLeft = state.timeLeft - 1;
       return {
         ...state,
@@ -212,8 +221,15 @@ export function useTimer() {
       dispatch({ type: 'RESUME' });
     }, []),
 
+    stop: useCallback(() => {
+      dispatch({ type: 'STOP' });
+      stopAlerts(soundPlayer);
+    }, []),
+
     reset: useCallback(() => {
       dispatch({ type: 'RESET' });
+      stopAlerts(soundPlayer);
+      startedAlerts.current.clear();
     }, []),
 
     resetFromDefault: useCallback(() => {

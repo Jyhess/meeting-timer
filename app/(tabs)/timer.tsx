@@ -83,14 +83,19 @@ export default function TimerScreen() {
   }, [state, timeLeft, beforeAlert, endAlert, afterAlert]);
 
   const handleStop = () => {
-    actions.reset();
-    actions.stopAlerts();
+    actions.stop();
     flashViewRef.current?.stopAnimation();
     startedAlerts.current.clear();
     
     if (state === 'idle') {
       router.replace('/');
     }
+  };
+
+  const handleReset = () => {
+    actions.reset();
+    flashViewRef.current?.stopAnimation();
+    startedAlerts.current.clear();
   };
 
   const getAlertTimeColor = (alert: Alert) => {
@@ -178,7 +183,7 @@ export default function TimerScreen() {
                 <Pressable style={styles.controlButton} onPress={handleStop}>
                   <Icon name="stop" size={32} color={theme.colors.danger} />
                 </Pressable>
-                <Pressable style={styles.controlButton} onPress={actions.reset}>
+                <Pressable style={styles.controlButton} onPress={handleReset}>
                   <Icon name="restart" size={32} color={theme.colors.primary} />
                 </Pressable>
               </>

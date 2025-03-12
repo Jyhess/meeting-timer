@@ -49,6 +49,7 @@ export const useAudio = () => {
   const stopSound = async () => {
     if (audioRef.current && ! audioRef.current?.ended ) {
       audioRef.current.pause();
+      audioRef.current.currentTime = 0;
       setIsPlaying(false);
       console.log(`[useAudio] ⏹️ Arrêt effectué`);
     }
