@@ -30,7 +30,7 @@ export default function RootLayout() {
     
     return () => {
       // Clean up the subscription
-      subscription.remove();
+      subscription?.remove();
     };
   }, [handleAppStateChange]);
 
