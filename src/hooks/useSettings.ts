@@ -1,90 +1,90 @@
 import { useEffect, useState } from 'react';
-import { Alert } from '../types/timer';
-import { SettingsManager } from '../utils/SettingsManager';
+import { DEFAULT_SOUNDS } from '../types/sounds';
+import { Alert, AlertSoundId, DEFAULT_ALERTS } from '../types/alerts';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { MMKV } from 'react-native-mmkv';
 
+const DEFAULT_DURATION = 1800;
+const DEFAULT_ALERT_DURATION = 5;
 
-export type Settings = {
+interface SettingsState {
   defaultDurationSeconds: number;
   defaultAlerts: Alert[];
   defaultAlertDuration: number;
+  availableSounds: AlertSoundId[];
+  toggleSound: (soundId: AlertSoundId, enabled: boolean) => void;
+  updateDefaultAlert: (alert: Alert) => void;
+  setDefaultDurationSeconds: (seconds: number) => void;
+  setDefaultAlertDuration: (seconds: number) => void;
+}
+
+const defaultSettings: Omit<SettingsState, 'toggleSound' | 'updateDefaultAlert' | 'setDefaultDurationSeconds' | 'setDefaultAlertDuration'> = {
+  defaultDurationSeconds: DEFAULT_DURATION,
+  defaultAlertDuration: DEFAULT_ALERT_DURATION,
+  defaultAlerts: DEFAULT_ALERTS,
+  availableSounds: DEFAULT_SOUNDS,
 };
 
-export const useSettings = () => {
-  const settingsManager = SettingsManager.getInstance();
-  const [defaultDurationSeconds, setDefaultDurationSeconds] = useState(
-    settingsManager.getDefaultDurationSeconds()
-  );
-  const [defaultAlertDuration, setDefaultAlertDuration] = useState(
-    settingsManager.getDefaultAlertDuration()
-  );
-  const [beforeAlert, setBeforeAlert] = useState(
-    settingsManager.getBeforeAlert()
-  );
-  const [endAlert, setEndAlert] = useState(
-    settingsManager.getEndAlert()
-  );
-  const [afterAlert, setAfterAlert] = useState(
-    settingsManager.getAfterAlert()
-  );
-
-  useEffect(() => {
-    const onDefaultDurationSecondsChange = (seconds: number) => {
-      setDefaultDurationSeconds(seconds);
-    };
-
-    const onDefaultAlertDurationChange = (duration: number) => {
-      setDefaultAlertDuration(duration);
-    };
-
-    const onBeforeAlertChange = (alert: Alert) => {
-      setBeforeAlert(alert);
-    };
-
-    const onEndAlertChange = (alert: Alert) => {
-      setEndAlert(alert);
-    };
-
-    const onAfterAlertChange = (alert: Alert) => {
-      setAfterAlert(alert);
-    };
-
-    settingsManager.addEventListener('defaultDurationSecondsChange', onDefaultDurationSecondsChange);
-    settingsManager.addEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
-    settingsManager.addEventListener('beforeAlertChange', onBeforeAlertChange);
-    settingsManager.addEventListener('endAlertChange', onEndAlertChange);
-    settingsManager.addEventListener('afterAlertChange', onAfterAlertChange);
-
-    return () => {
-      settingsManager.removeEventListener('defaultDurationSecondsChange', onDefaultDurationSecondsChange);
-      settingsManager.removeEventListener('defaultAlertDurationChange', onDefaultAlertDurationChange);
-      settingsManager.removeEventListener('beforeAlertChange', onBeforeAlertChange);
-      settingsManager.removeEventListener('endAlertChange', onEndAlertChange);
-      settingsManager.removeEventListener('afterAlertChange', onAfterAlertChange);
-    };
-  }, []);
-
-  return {
-    defaultDurationSeconds,
-    defaultAlertDuration,
-    defaultAlerts: [beforeAlert, endAlert, afterAlert],
-    setDefaultDurationSeconds: (seconds: number) => {
-      settingsManager.setDefaultDurationSeconds(seconds);
-    },
-    setDefaultAlertDuration: (duration: number) => {
-      settingsManager.setDefaultAlertDuration(duration);
-    },
-    updateDefaultAlert: (alert: Alert) => {
-      switch (alert.id) {
-        case 'before':
-          settingsManager.updateBeforeAlert(alert);
-          break;
-        case 'end':
-          settingsManager.updateEndAlert(alert);
-          break;
-        case 'after':
-          settingsManager.updateAfterAlert(alert);
-          break;
-      }
-    },
-  };
+// Fonction utilitaire pour sauvegarder dans MMKV
+const storage = new MMKV();
+const saveSettings = (settings: SettingsState) => {
+  storage.set('appSettings', JSON.stringify(settings));
 };
+
+// Store Zustand
+export const useSettings = create<SettingsState>()(
+  persist(
+    (set, get) => ({
+      ...defaultSettings,
+
+      toggleSound: (soundId: AlertSoundId, enabled: boolean) => {
+        set((state: SettingsState) => {
+          const updatedSounds = enabled
+            ? [...state.availableSounds, soundId]
+            : state.availableSounds.filter((s) => s !== soundId);
+
+          const newState = { ...state, availableSounds: updatedSounds };
+          saveSettings(newState);
+          return newState;
+        });
+      },
+
+      updateDefaultAlert: (alert: Alert) => {
+        set((state: SettingsState) => {
+          const updatedAlerts = state.defaultAlerts.map((a) =>
+            a.id === alert.id ? { ...a, ...alert } : a
+          );
+
+          const newState = { ...state, defaultAlerts: updatedAlerts };
+          saveSettings(newState);
+          return newState;
+        });
+      },
+
+      setDefaultDurationSeconds: (seconds: number) => {
+        set((state: SettingsState) => {
+          const newState = { ...state, defaultDurationSeconds: seconds };
+          saveSettings(newState);
+          return newState;
+        });
+      },
+
+      setDefaultAlertDuration: (seconds: number) => {
+        set((state: SettingsState) => {
+          const newState = { ...state, defaultAlertDuration: seconds };
+          saveSettings(newState);
+          return newState;
+        });
+      },
+    }),
+    {
+      name: 'app-settings',
+      getStorage: () => ({
+        getItem: (key) => storage.getString(key) ?? null,
+        setItem: (key, value) => storage.set(key, value),
+        removeItem: (key) => storage.delete(key),
+      }),
+    }
+  )
+);

@@ -22,6 +22,7 @@ const iconMap = {
   doorbell: require('../../../assets/icons/doorbell.png'),
   edit: require('../../../assets/icons/edit.png'),
   flash: require('../../../assets/icons/flash.png'),
+  foggy: require('../../../assets/icons/foggy.png'),
   gong: require('../../../assets/icons/gong.png'),
   highlight: require('../../../assets/icons/highlight.png'),
   minus_circle: require('../../../assets/icons/minus_circle.png'),

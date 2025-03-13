@@ -7,6 +7,7 @@ import { TimeInput } from './TimeInput';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
 import { AlertEffect, AlertSoundId } from '../../types/alerts';
+import { useSettings } from '../../hooks/useSettings';
 
 type AlertEditorProps = {
   alert: Alert;
@@ -15,13 +16,13 @@ type AlertEditorProps = {
   onSave: (updatedAlert: Alert) => void;
 };
 
-
 export const AlertEditor = ({
   alert,
   isVisible,
   onClose,
   onSave,
 }: AlertEditorProps) => {
+  const { availableSounds } = useSettings();
   const [editedAlert, setEditedAlert] = useState<Alert>(JSON.parse(JSON.stringify(alert)));
   const [modalVisible, setModalVisible] = useState(isVisible);
   const [isValidTime, setIsValidTime] = useState(true);
@@ -56,7 +57,6 @@ export const AlertEditor = ({
         effects: newEffects,
       };
     });
-        
   };
 
   const handleTimeChange = (seconds: number, isValid: boolean) => {
@@ -79,6 +79,9 @@ export const AlertEditor = ({
   const isEffectSelected = (effectId: AlertEffect) => {
     return editedAlert.effects.includes(effectId);
   };
+
+  // Filtrer les sons disponibles
+  const availableSoundConfigs = sounds.filter(sound => availableSounds.includes(sound.id));
 
   return (
     <Modal
@@ -110,16 +113,21 @@ export const AlertEditor = ({
             <View style={styles.modalSection}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Son</Text>
+                {availableSoundConfigs.length === 0 && (
+                  <Text style={styles.noSoundsText}>
+                    Aucun son disponible. Activez des sons dans les préférences.
+                  </Text>
+                )}
               </View>
               <View style={styles.optionsGrid}>
-                {sounds.map((sound) => (
+                {availableSoundConfigs.map((sound) => (
                   <TouchableOpacity
                     key={sound.id}
                     style={[
                       styles.optionButton,
                       editedAlert.sound === sound.id && styles.optionButtonActive,
                     ]}
-                    onPress={() => handleSoundSelect(sound.id as AlertSoundId)}
+                    onPress={() => handleSoundSelect(sound.id)}
                   >
                     <Icon 
                       name={sound?.icon as any}
@@ -181,14 +189,14 @@ export const AlertEditor = ({
               style={[
                 styles.modalButton,
                 styles.modalButtonPrimary,
-                !isValidTime && styles.modalButtonDisabled
+                (!isValidTime || availableSoundConfigs.length === 0) && styles.modalButtonDisabled
               ]} 
               onPress={handleSave}
-              disabled={!isValidTime}
+              disabled={!isValidTime || availableSoundConfigs.length === 0}
             >
               <Text style={[
                 styles.modalButtonText,
-                !isValidTime && styles.modalButtonTextDisabled
+                (!isValidTime || availableSoundConfigs.length === 0) && styles.modalButtonTextDisabled
               ]}>
                 Enregistrer
               </Text>

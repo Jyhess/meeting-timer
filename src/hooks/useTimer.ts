@@ -1,6 +1,6 @@
 import { useReducer, useCallback, useRef, useEffect, useState } from 'react';
-import { Alert } from '../types/timer';
-import { SettingsManager } from '../utils/SettingsManager';
+import { Alert } from '../types/alerts';
+import { useSettings } from './useSettings';
 import { PresetManager } from '../utils/PresetManager';
 import { useAudio } from './useAudio';
 import { useVibration } from './useVibration';
@@ -24,27 +24,12 @@ type TimerAction =
   | { type: 'RESUME' }
   | { type: 'STOP' }
   | { type: 'RESET' }
-  | { type: 'RESET_FROM_DEFAULT' }
+  | { type: 'RESET_FROM_DEFAULT'; payload: TimerState }
   | { type: 'LOAD_PRESET'; payload: string }
   | { type: 'UPDATE_ALERT'; payload: Alert }
   | { type: 'ADD_TIME'; payload: number }
   | { type: 'TICK' };
 
-function getInitialState(): TimerState {
-  const settings = SettingsManager.getInstance();
-  const defaultDuration = settings.getDefaultDurationSeconds();
-
-  return {
-    duration: defaultDuration,
-    timeLeft: defaultDuration,
-    isRunning: false,
-    state: 'idle',
-    beforeAlert: settings.getBeforeAlert(),
-    endAlert: settings.getEndAlert(),
-    afterAlert: settings.getAfterAlert(),
-    effectDuration: settings.getDefaultAlertDuration(),
-  };
-}
 
 function timerReducer(state: TimerState, action: TimerAction): TimerState {
   switch (action.type) {
@@ -93,7 +78,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
       };
 
     case 'RESET_FROM_DEFAULT':
-      return getInitialState();
+      return {...action.payload};
 
     case 'LOAD_PRESET':
       const presetManager = PresetManager.getInstance();
@@ -132,7 +117,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
     case 'ADD_TIME':
       return {
         ...state,
-        timeLeft: Number(state.timeLeft) + action.payload,
+        timeLeft: Number(state.timeLeft) + Number(action.payload),
       };
 
     case 'TICK':
@@ -149,7 +134,17 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
 }
 
 export function useTimer() {
-  const [state, dispatch] = useReducer(timerReducer, null, getInitialState);
+  const settings = useSettings();
+  const [state, dispatch] = useReducer(timerReducer, {
+    duration: settings.defaultDurationSeconds,
+    timeLeft: settings.defaultDurationSeconds,
+    isRunning: false,
+    state: 'idle',
+    beforeAlert: settings.defaultAlerts[0],
+    endAlert: settings.defaultAlerts[1],
+    afterAlert: settings.defaultAlerts[2],
+    effectDuration: settings.defaultAlertDuration,
+  });
   const intervalRef = useRef<NodeJS.Timeout>();
   const startedAlerts = useRef<Set<string>>(new Set());
   const [shouldFlash, setShouldFlash] = useState(false);
@@ -161,12 +156,19 @@ export function useTimer() {
   useVibration(isVibrating, state.effectDuration * 1000);
 
   useEffect(() => {
+    console.log('[useTimer] 🔔 useEffect [state.state] :', state.state);
     if (state.state === 'running') {
       intervalRef.current = setInterval(() => {
         dispatch({ type: 'TICK' });
       }, 1000);
-    } else if (state.state === 'idle' && intervalRef.current) {
-      clearInterval(intervalRef.current);
+    } else {
+      stopAlerts();
+      if(state.state === 'idle') {
+        startedAlerts.current.clear();
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+      }
     }
 
     return () => {
@@ -177,6 +179,7 @@ export function useTimer() {
   }, [state.state]);
 
   useEffect(() => {
+    console.log('[useTimer] 🔔 useEffect [state.timeLeft] :', state.timeLeft);
     const checkAlerts = () => {
       const alerts = [state.beforeAlert, state.endAlert, state.afterAlert];
 
@@ -210,12 +213,11 @@ export function useTimer() {
 
     if (state.state === 'running') {
       checkAlerts();
-    } else {
-      setHasActiveAlert(false);
     }
-  }, [state.timeLeft, state.state, state.beforeAlert, state.endAlert, state.afterAlert, playSound]);
+  }, [state.timeLeft]);
 
   useEffect(() => {
+    console.log('[useTimer] 🔔 useEffect [flash & vibration] :', shouldFlash, isVibrating);
     if (shouldFlash || isVibrating) {
       console.log('[useTimer] 🔔 Create alert effect timeout :', shouldFlash, isVibrating, state.effectDuration);
       alertTimerRef.current = setTimeout(() => {
@@ -231,9 +233,10 @@ export function useTimer() {
         alertTimerRef.current = null;
       }
     };
-  }, [shouldFlash, isVibrating, state.effectDuration]);
+  }, [shouldFlash, isVibrating]);
 
   const stopAlerts = useCallback(() => {
+    console.log('[useTimer] 🔔 stopAlerts');
     stopAudioSound();
     setIsVibrating(false);
     setShouldFlash(false);
@@ -249,61 +252,82 @@ export function useTimer() {
 
   const actions = {
     setDuration: useCallback((duration: number) => {
+      console.log('[useTimer] 🔔 actions [setDuration] :', duration);
       dispatch({ type: 'SET_DURATION', payload: duration });
     }, []),
 
     start: useCallback(() => {
+      console.log('[useTimer] 🔔 actions [start] :', state.state, state.duration);
       if(state.state === 'idle' && state.duration > 0) {
         savePreset();
       }
       dispatch({ type: 'START' });
-    }, [state.state, state.duration]),
+    }, [state.state, state.duration, savePreset]),
 
     pause: useCallback(() => {
+      console.log('[useTimer] 🔔 actions [pause] :', state.state);
       dispatch({ type: 'PAUSE' });
-      stopAlerts();
     }, []),
 
     resume: useCallback(() => {
+      console.log('[useTimer] 🔔 actions [resume] :', state.state);
       dispatch({ type: 'RESUME' });
     }, []),
 
     stop: useCallback(() => {
+      console.log('[useTimer] 🔔 actions [stop] :', state.state);
       dispatch({ type: 'STOP' });
-      stopAlerts();
     }, []),
 
     reset: useCallback(() => {
+      console.log('[useTimer] 🔔 actions [reset] :', state.state);
       dispatch({ type: 'RESET' });
       stopAlerts();
       startedAlerts.current.clear();
-    }, []),
+    }, [stopAlerts]),
 
     resetFromDefault: useCallback(() => {
-      dispatch({ type: 'RESET_FROM_DEFAULT' });
-    }, []),
-
+      console.log('[useTimer] 🔔 actions [resetFromDefault] :', state.state);
+      dispatch({ type: 'RESET_FROM_DEFAULT', payload: {
+        duration: settings.defaultDurationSeconds,
+        timeLeft: settings.defaultDurationSeconds,
+        isRunning: false,
+        state: 'idle',
+        beforeAlert: settings.defaultAlerts[0],
+        endAlert: settings.defaultAlerts[1],
+        afterAlert: settings.defaultAlerts[2],
+        effectDuration: settings.defaultAlertDuration,
+      }});
+    }, [settings.defaultDurationSeconds, settings.defaultAlerts, settings.defaultAlertDuration]),
+  
     loadPreset: useCallback((presetId: string) => {
+      console.log('[useTimer] 🔔 actions [loadPreset] :', presetId);
       dispatch({ type: 'LOAD_PRESET', payload: presetId });
     }, []),
 
     updateAlert: useCallback((alert: Alert) => {
+      console.log('[useTimer] 🔔 actions [updateAlert] :', alert);
       dispatch({ type: 'UPDATE_ALERT', payload: alert });
     }, []),
-
-    stopAlerts: useCallback(() => {
-      stopAlerts();
-    }, []),
-
     addTime: useCallback((seconds: number) => {
+      console.log('[useTimer] 🔔 actions [addTime] :', seconds);
       dispatch({ type: 'ADD_TIME', payload: seconds });
     }, []),
+    stopAlerts,
+    savePreset,
   };
 
   return {
-    ...state,
-    hasActiveAlert,
+    duration: state.duration,
+    timeLeft: state.timeLeft,
+    isRunning: state.isRunning,
+    state: state.state,
+    beforeAlert: state.beforeAlert,
+    endAlert: state.endAlert,
+    afterAlert: state.afterAlert,
+    effectDuration: state.effectDuration,
     shouldFlash,
+    hasActiveAlert,
     actions,
   };
 }

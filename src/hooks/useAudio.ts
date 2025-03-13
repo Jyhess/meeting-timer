@@ -6,6 +6,7 @@ export const useAudio = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [soundDuration, setSoundDuration] = useState<number | null>(null);
+  const [playingSound, setPlayingSound] = useState<SoundName | null>(null);
 
   if (!audioRef.current) {
     audioRef.current = new window.Audio();
@@ -31,6 +32,7 @@ export const useAudio = () => {
 
       audio.addEventListener('ended', () => {
         setIsPlaying(false);
+        setPlayingSound(null);
       });
 
       audio.addEventListener('loadeddata', () => {
@@ -39,6 +41,7 @@ export const useAudio = () => {
 
       audio.play();
       setIsPlaying(true);
+      setPlayingSound(sound);
       audioRef.current = audio;
       console.log(`[useAudio] ✅ Lecture démarrée pour: ${sound}`);
     } catch (error) {
@@ -51,9 +54,10 @@ export const useAudio = () => {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
       setIsPlaying(false);
+      setPlayingSound(null);
       console.log(`[useAudio] ⏹️ Arrêt effectué`);
     }
   };
 
-  return { isPlaying, playSound, stopSound, soundDuration };
+  return { isPlaying, playSound, stopSound, soundDuration, playingSound };
 };

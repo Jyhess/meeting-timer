@@ -8,16 +8,18 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Icon } from '../../src/components/Timer/Icon';
+import { Icon, IconName } from '../../src/components/Timer/Icon';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { Alert } from '../../src/types/timer';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
-import { ALERT_SOUNDS } from '../../src/types/alerts';
 import { formatTimeFromSeconds } from '../../src/utils/time';
 import { TimeInput } from '../../src/components/Timer/TimeInput';
 import { theme } from '../../src/theme';
-import { TimeDisplay } from '@/src/components/Timer/TimeDisplay';
+import { sounds } from '../../src/config/alerts';
+import { AlertSoundId } from '../../src/types/alerts';
+import { ToggleSlider } from '@/src/components/Timer/ToggleSlider';
+import { useAudio } from '@/src/hooks/useAudio';
 
 export default function SettingsScreen() {
   const { 
@@ -27,11 +29,15 @@ export default function SettingsScreen() {
     defaultAlertDuration,
     setDefaultAlertDuration,
     updateDefaultAlert,
+    availableSounds,
+    toggleSound,
   } = useSettings();
     
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const [alertDuration, setAlertDuration] = useState(defaultAlertDuration.toString());
   const [editingDuration, setEditingDuration] = useState(false);
+  const { playSound, stopSound, playingSound } = useAudio();
+
   
   useEffect(() => {
     setAlertDuration(defaultAlertDuration.toString());
@@ -168,35 +174,73 @@ export default function SettingsScreen() {
               Configurez les alertes par défaut qui seront appliquées aux nouveaux timers
             </Text>
             
-            {defaultAlerts.map((alert) => (
-              <View key={alert.id} style={styles.alertItem}>
-                <View style={styles.alertInfo}>
-                  <Icon
-                    name={ALERT_SOUNDS[alert.sound].iconName as any}
-                    size={24}
-                    color="#fff"
-                  />
-                  <View style={styles.alertTextContainer}>
-                    <Text style={styles.alertName}>{alert.name}</Text>
-                    <Text style={styles.alertDetail}>
-                      {alert.id === 'before'
-                        ? `${formatTimeFromSeconds(alert.timeOffset)} avant la fin`
-                        : alert.id === 'end'
-                        ? 'À la fin du timer'
-                        : `${formatTimeFromSeconds(alert.timeOffset)} après la fin`}
-                    </Text>
+            {defaultAlerts.map((alert) => {
+              const soundConfig = sounds.find(s => s.id === alert.sound);
+              if (!soundConfig) return null;
+
+              return (
+                <View key={alert.id} style={styles.alertItem}>
+                  <View style={styles.alertInfo}>
+                    <Icon
+                      name={soundConfig.icon as any}
+                      size={24}
+                      color="#fff"
+                    />
+                    <View style={styles.alertTextContainer}>
+                      <Text style={styles.alertName}>{alert.name}</Text>
+                      <Text style={styles.alertDetail}>
+                        {alert.id === 'before'
+                          ? `${formatTimeFromSeconds(alert.timeOffset)} avant la fin`
+                          : alert.id === 'end'
+                          ? 'À la fin du timer'
+                          : `${formatTimeFromSeconds(alert.timeOffset)} après la fin`}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.alertControls}>
+                    <Pressable
+                      style={styles.editButton}
+                      onPress={() => handleAlertEdit(alert)}
+                    >
+                      <Icon name="edit" size={20} color="#aaa" />
+                    </Pressable>
                   </View>
                 </View>
-                <View style={styles.alertControls}>
-                  <Pressable
-                    style={styles.editButton}
-                    onPress={() => handleAlertEdit(alert)}
-                  >
-                    <Icon name="edit" size={20} color="#aaa" />
-                  </Pressable>
+              );
+            })}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Sons disponibles</Text>
+            <Text style={styles.sectionDescription}>
+              Choisissez les sons qui seront disponibles pour les alertes
+            </Text>
+            
+            <View style={styles.soundsList}>
+              {sounds.map((soundConfig) => (
+                <View key={soundConfig.id} style={styles.soundItem}>
+                  <View style={styles.soundInfo}>
+                    <Icon name={soundConfig.icon as IconName} size={24} color={theme.colors.white} />
+                    <Text style={styles.soundName}>{soundConfig.name}</Text>
+                  </View>
+                  <View style={styles.soundControls}>
+                    <ToggleSlider
+                      value={availableSounds.includes(soundConfig.id)}
+                      onToggle={() => toggleSound(soundConfig.id, !availableSounds.includes(soundConfig.id))}
+                    />
+                    <Pressable
+                      style={styles.playButton}
+                      onPress={() => playingSound === soundConfig.id ? stopSound() : playSound(soundConfig.id)}
+                    >
+                      <Icon
+                        name={playingSound === soundConfig.id ? "stop" : "play_arrow" as IconName}
+                        size={24}
+                      />
+                    </Pressable>
+                  </View>
                 </View>
-              </View>
-            ))}
+              ))}
+            </View>
           </View>
         </ScrollView>
         

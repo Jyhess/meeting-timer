@@ -28,7 +28,7 @@ export const useAudio = () => {
   const audioRef = useRef<ExpoAudio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [soundDuration, setSoundDuration] = useState<number | null>(null);
-
+  const [playingSound, setPlayingSound] = useState<SoundName | null>(null);
 
   useEffect(() => {
     const initAudio = async () => {
@@ -51,6 +51,7 @@ export const useAudio = () => {
         onPlaybackStatusUpdate
       );
       audioRef.current = sound;
+      setPlayingSound(soundName);
       await sound.playAsync();
 
       setIsPlaying(true);
@@ -64,6 +65,7 @@ export const useAudio = () => {
     if ('isLoaded' in status && status.isLoaded) {
       if (status.didJustFinish) {
         setIsPlaying(false);
+        setPlayingSound(null);
       }
       if (status.durationMillis) {
         setSoundDuration(status.durationMillis / 1000);
@@ -75,10 +77,11 @@ export const useAudio = () => {
     if (audioRef.current && isPlaying) {
       await audioRef.current.unloadAsync();
       setIsPlaying(false);
+      setPlayingSound(null);
       console.log(`[useAudio] ⏹️ Arrêt effectué`);
     }
   };
 
-  return { isPlaying, playSound, stopSound, soundDuration };
+  return { isPlaying, playSound, stopSound, soundDuration, playingSound };
 };
 

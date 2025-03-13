@@ -1,16 +1,4 @@
-import { AlertEffect } from "./alerts";
-import { AlertSoundId } from './alerts';
-
-
-export type Alert = {
-  id: string;
-  name: string;
-  enabled: boolean;
-  timeOffset: number;
-  sound: AlertSoundId;
-  effects: AlertEffect[];
-  effectDuration?: number;
-};
+import { Alert } from "./alerts";
 
 export type TimerPreset = {
   id: string;
@@ -19,11 +7,4 @@ export type TimerPreset = {
   alerts: Alert[];
   created_at: string;
   last_used?: string;
-};
-
-export type CustomSound = {
-  id: string;
-  name: string;
-  uri: string;
-  type: string;
 };

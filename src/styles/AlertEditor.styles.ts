@@ -35,9 +35,10 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 12,
+    fontSize: theme.typography.fontSize.medium,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.white,
+    marginBottom: theme.spacing.small,
   },
   sectionDescription: {
     fontSize: 12,
@@ -143,5 +144,11 @@ export const styles = StyleSheet.create({
     color: '#FF9800',
     fontSize: 12,
     textAlign: 'center',
+  },
+  noSoundsText: {
+    fontSize: theme.typography.fontSize.small,
+    color: theme.colors.gray.light,
+    marginTop: theme.spacing.xs,
+    fontStyle: 'italic',
   },
 });

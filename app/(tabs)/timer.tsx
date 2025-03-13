@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { AlertIcon } from '../../src/components/Timer/AlertIcon';
 import { Icon } from '../../src/components/Timer/Icon';
-import { Alert } from '../../src/types/timer';
+import { Alert } from '../../src/types/alerts';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
@@ -43,6 +43,7 @@ export default function TimerScreen() {
   useEffect(() => {
     if (params.seed !== lastSeed) {
       setLastSeed(params.seed || null);
+      console.log('[TimerScreen] 🔔 useEffect [params.seed] :', params.seed, lastSeed);
       if (params.presetId) {
         actions.loadPreset(params.presetId);
       } else {
@@ -129,20 +130,20 @@ export default function TimerScreen() {
               timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
             />
           ) : (
-              <TimerOutput
-                timeLeft={timeLeft}
-                beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-              />
+            <TimerOutput
+              timeLeft={timeLeft}
+              beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+            />
           )}
           {isRunning && hasActiveAlert && (
-                <Pressable 
-                  style={[styles.controlButton, styles.alertStopButton]} 
-                  onPress={() => {
-                    actions.stopAlerts();
-                  }}
-                >
-                  <Icon name="volume_off" size={32} color={theme.colors.danger} />
-                </Pressable>
+            <Pressable 
+              style={[styles.controlButton, styles.alertStopButton]} 
+              onPress={() => {
+                actions.stopAlerts();
+              }}
+            >
+              <Icon name="volume_off" size={32} color={theme.colors.danger} />
+            </Pressable>
           )}
 
           <View style={styles.controlsContainer}>

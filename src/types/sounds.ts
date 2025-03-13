@@ -18,4 +18,10 @@ export const soundMap = {
     churchbell: require('../../assets/sounds/church-bell-dong.mp3'),
   } as const;
   
-  export type SoundName = keyof typeof soundMap;
+export type SoundName = keyof typeof soundMap;
+
+export const DEFAULT_SOUNDS = [
+  'bell',
+  'gong',
+  'alarm',
+] as SoundName[];
