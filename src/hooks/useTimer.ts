@@ -1,7 +1,7 @@
 import { useReducer, useCallback, useRef, useEffect, useState } from 'react';
 import { Alert } from '../types/alerts';
 import { useSettings } from './useSettings';
-import { PresetManager } from '../utils/PresetManager';
+import { usePresets } from './usePresets';
 import { useAudio } from './useAudio';
 import { useVibration } from './useVibration';
 import { AlertEffect } from '../types/alerts';
@@ -81,8 +81,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
       return {...action.payload};
 
     case 'LOAD_PRESET':
-      const presetManager = PresetManager.getInstance();
-      const preset = presetManager.getPreset(action.payload);
+      const preset = usePresets.getState().getPreset(action.payload);
       if (!preset) return state;
       return {
         ...state,
@@ -100,17 +99,17 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
         case 'before':
           return {
             ...state,
-            beforeAlert: action.payload,
+            beforeAlert: {...action.payload},
           };
         case 'end':
           return {
             ...state,
-            endAlert: action.payload,
+            endAlert: {...action.payload},
           };
         case 'after':
           return {
             ...state,
-            afterAlert: action.payload,
+            afterAlert: {...action.payload},
           };
       }
 
@@ -135,6 +134,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
 
 export function useTimer() {
   const settings = useSettings();
+  const presets = usePresets();
   const [state, dispatch] = useReducer(timerReducer, {
     duration: settings.defaultDurationSeconds,
     timeLeft: settings.defaultDurationSeconds,
@@ -246,8 +246,7 @@ export function useTimer() {
 
   const savePreset = async () => {
     console.log('[useTimer] 💾 Sauvegarde du preset');
-    const presetManager = PresetManager.getInstance();
-    await presetManager.createPreset(state.duration, [state.beforeAlert, state.endAlert, state.afterAlert]);
+    await presets.createPreset(state.duration, [state.beforeAlert, state.endAlert, state.afterAlert]);
   };
 
   const actions = {
