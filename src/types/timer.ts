@@ -1,10 +1,10 @@
 import { Alert } from "./alerts";
 
-export interface TimerPreset {
+export type TimerPreset = {
   id: string;
   name: string;
   seconds: number;
-  alerts: any[];
+  alerts: Alert[];
   created_at: string;
-  last_used: string;
-}
+  last_used?: string;
+};

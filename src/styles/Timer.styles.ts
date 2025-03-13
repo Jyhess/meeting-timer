@@ -13,18 +13,27 @@ export const styles = StyleSheet.create({
     position: 'relative',
   },
   timerContainer: {
-    width: '90%',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: theme.spacing.large,
     borderRadius: theme.borders.radius.large,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     overflow: 'hidden',
     zIndex: 2,
+  },
+  timerAndControlsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.background.tertiary,
+    borderRadius: theme.borders.radius.large,
+    marginBottom: theme.spacing.medium,
+    minWidth: 350,
   },
   timeDisplayContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
     marginBottom: theme.spacing.large,
   },
   timeDisplay: {
@@ -81,7 +90,11 @@ export const styles = StyleSheet.create({
   controlButton: {
     padding: theme.spacing.small,
     borderRadius: theme.borders.radius.medium,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: theme.colors.gray.light,
+    width: 64,
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   controlButtonDisabled: {
     opacity: theme.effects.opacity.disabled,
@@ -96,14 +109,6 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.secondary,
   },
   alertsContainer: {
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.1)',
-    paddingTop: theme.spacing.large,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: theme.spacing.large,
-  },
-  alertsList: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: theme.spacing.large,
@@ -121,10 +126,10 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
-    addTimeContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    padding: theme.spacing.xs,
+  addTimeContainer: {
+    backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borders.radius.large,
     marginBottom: theme.spacing.small,
+    minWidth: 350
   },
 });

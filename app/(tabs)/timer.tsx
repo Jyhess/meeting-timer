@@ -12,6 +12,7 @@ import { theme } from '../../src/theme';
 import { TimeInput } from '../../src/components/Timer/TimeInput';
 import { TimerOutput } from '../../src/components/Timer/TimerOutput';
 import { FlashView, FlashViewRef } from '../../src/components/Timer/FlashView';
+import { ProgressBar } from '../../src/components/Timer/ProgressBar';
 import { useTimer } from '../../src/hooks/useTimer';
 
 export default function TimerScreen() {
@@ -117,81 +118,93 @@ export default function TimerScreen() {
         colors={[theme.colors.background.primary, theme.colors.background.secondary]} 
         style={styles.container}
       >
+        
+        {isRunning && (
+          <ProgressBar
+            duration={duration}
+            timeLeft={timeLeft}
+            isRunning={state === 'running'}
+            beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+          />
+        )}
+
         <FlashView 
           ref={flashViewRef}
           effectDuration={effectDuration}
         />
-        
-        <View style={styles.timerContainer}>
-          {!isRunning ? (
-            <TimeInput
-              initialSeconds={timeLeft}
-              onTimeChange={handleDurationChange}
-              timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
-            />
-          ) : (
-            <TimerOutput
-              timeLeft={timeLeft}
-              beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-            />
-          )}
-          {isRunning && hasActiveAlert && (
-            <Pressable 
-              style={[styles.controlButton, styles.alertStopButton]} 
-              onPress={() => {
-                actions.stopAlerts();
-              }}
-            >
-              <Icon name="volume_off" size={32} color={theme.colors.danger} />
-            </Pressable>
-          )}
 
-          <View style={styles.controlsContainer}>
+        <View style={styles.timerContainer}>
+          <View style={styles.timerAndControlsContainer}>
             {!isRunning ? (
-              <>
-                <Pressable style={styles.controlButton} onPress={handleStop}>
-                  <Icon name="close" size={40} color={theme.colors.danger} />
-                </Pressable>
-                <Pressable 
-                  style={[
-                    styles.controlButton,
-                    !isValidTime && styles.controlButtonDisabled
-                  ]} 
-                  onPress={actions.start}
-                  disabled={!isValidTime}
-                >
-                  <Icon 
-                    name="play_arrow" 
-                    size={40} 
-                    color={isValidTime ? theme.colors.primary : theme.colors.disabled}
-                  />
-                </Pressable>
-              </>
+              <TimeInput
+                initialSeconds={timeLeft}
+                onTimeChange={handleDurationChange}
+                timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
+              />
             ) : (
-              <>
-                <Pressable style={styles.controlButton} onPress={state === 'paused' ? actions.resume : actions.pause}>
-                  <Icon 
-                    name={state === 'paused' ? "play_arrow" : "pause"} 
-                    size={40} 
-                    color={theme.colors.secondary}
-                  />
-                </Pressable>
-                <Pressable style={styles.controlButton} onPress={handleStop}>
-                  <Icon name="stop" size={40} color={theme.colors.danger} />
-                </Pressable>
-                <Pressable style={styles.controlButton} onPress={handleReset}>
-                  <Icon name="restart" size={40} color={theme.colors.primary} />
-                </Pressable>
-                {!addingTime && (
-                  <Pressable 
-                    style={styles.controlButton} 
-                    onPress={() => setAddingTime(true)}
-                  >
-                    <Icon name="add" size={40} color={theme.colors.primary} />
-                  </Pressable>
-                )}
-              </>
+              <TimerOutput
+                timeLeft={timeLeft}
+                beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+              />
             )}
+            {isRunning && hasActiveAlert && (
+              <Pressable 
+                style={[styles.controlButton, styles.alertStopButton]} 
+                onPress={() => {
+                  actions.stopAlerts();
+                }}
+              >
+                <Icon name="volume_off" size={32} color={theme.colors.danger} />
+              </Pressable>
+            )}
+
+            <View style={styles.controlsContainer}>
+              {!isRunning ? (
+                <>
+                  <Pressable style={styles.controlButton} onPress={handleStop}>
+                    <Icon name="close" size={40} color={theme.colors.danger} />
+                  </Pressable>
+                  <Pressable 
+                    style={[
+                      styles.controlButton,
+                      !isValidTime && styles.controlButtonDisabled
+                    ]} 
+                    onPress={actions.start}
+                    disabled={!isValidTime}
+                  >
+                    <Icon 
+                      name="play_arrow" 
+                      size={40} 
+                      color={isValidTime ? theme.colors.primary : theme.colors.disabled}
+                    />
+                  </Pressable>
+                </>
+              ) : (
+                <>
+                  <Pressable style={styles.controlButton} onPress={state === 'paused' ? actions.resume : actions.pause}>
+                    <Icon 
+                      name={state === 'paused' ? "play_arrow" : "pause"} 
+                      size={40} 
+                      color={theme.colors.secondary}
+                    />
+                  </Pressable>
+                  <Pressable style={styles.controlButton} onPress={handleStop}>
+                    <Icon name="stop" size={40} color={theme.colors.danger} />
+                  </Pressable>
+                  <Pressable style={styles.controlButton} onPress={handleReset}>
+                    <Icon name="restart" size={40} color={theme.colors.primary} />
+                  </Pressable>
+                  {!addingTime && (
+                    <Pressable 
+                      style={styles.controlButton} 
+                      onPress={() => setAddingTime(true)}
+                    >
+                      <Icon name="add" size={40} color={theme.colors.primary} />
+                    </Pressable>
+                  )}
+                </>
+              )}
+            </View>
           </View>
           {isRunning && addingTime && (
             <View style={styles.addTimeContainer}>

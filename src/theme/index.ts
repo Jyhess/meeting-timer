@@ -23,6 +23,7 @@ export const colors = {
   background: {
     primary: '#1a1a1a',
     secondary: '#2d2d2d',
+    tertiary: '#3a3a3a',
   },
 } as const;
 

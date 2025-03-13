@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   alertItemContainer: {
     alignItems: 'center',
     gap: theme.spacing.small,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: theme.colors.background.tertiary,
     padding: theme.spacing.medium,
     borderRadius: theme.borders.radius.large,
     minWidth: 100,
