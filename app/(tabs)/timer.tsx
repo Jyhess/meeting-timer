@@ -14,6 +14,7 @@ import { TimerOutput } from '../../src/components/Timer/TimerOutput';
 import { FlashView, FlashViewRef } from '../../src/components/Timer/FlashView';
 import { ProgressBar } from '../../src/components/Timer/ProgressBar';
 import { useTimer } from '../../src/hooks/useTimer';
+import { CircularProgress } from '@/src/components/Timer/CircularProgress';
 
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string, seed?: string }>();
@@ -112,6 +113,8 @@ export default function TimerScreen() {
     setAddingTime(false);
   };
 
+  const progressBar = false;
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <LinearGradient 
@@ -120,12 +123,23 @@ export default function TimerScreen() {
       >
         
         {isRunning && (
-          <ProgressBar
-            duration={duration}
-            timeLeft={timeLeft}
-            isRunning={state === 'running'}
-            beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-          />
+          <>
+          {progressBar ? (
+            <ProgressBar
+              duration={duration}
+              timeLeft={timeLeft-1}
+              isRunning={state === 'running'}
+              beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+            />
+          ) : (<CircularProgress 
+              duration={duration}
+              timeLeft={timeLeft-1}
+              isRunning={state === 'running'}
+              beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+              afterAlertOffset={afterAlert.enabled ? afterAlert.timeOffset : undefined}
+            />
+          )}
+          </>
         )}
 
         <FlashView 
