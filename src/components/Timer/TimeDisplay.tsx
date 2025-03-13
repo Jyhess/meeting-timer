@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { styles } from './TimeDisplay.styles';
+import { styles } from '../../styles/TimeDisplay.styles';
 
 interface TimeDisplayProps {
   timeBuffer: string;
@@ -16,23 +16,9 @@ export const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
   return (
     <View style={styles.container}>
-      {prefix && (
-        <View style={styles.prefixContainer}>
-          <Text style={[styles.prefix, { color: timeColor }]}>
-            {prefix}
-          </Text>
-        </View>
-      )}
-      <Text style={[styles.time, { color: timeColor }]}>
-        {timeBuffer}
-      </Text>
-      {prefix && (
-        <View style={styles.prefixContainer}>
-          <Text style={[styles.prefix, { color: 'transparent' }]}>
-            {prefix}
-          </Text>
-        </View>
-      )}
+      {prefix?.trim() !== '' && <Text style={[styles.prefix, { color: timeColor }]}>{prefix}</Text>}
+      <Text style={[styles.time, { color: timeColor }]}>{timeBuffer}</Text>
+      {prefix?.trim() !== '' && <Text style={[styles.prefix, { color: 'transparent' }]}>{prefix}</Text>}
     </View>
   );
 };
