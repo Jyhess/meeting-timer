@@ -9,6 +9,18 @@ web-build/
 *.mobileprovision
 *.orig.*
 
+# Android
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/*.iml
+android/app/*.iml
+android/.idea/
+android/app/.cxx/
+android/app/debug.keystore
+android/captures/
+
 # Node
 node_modules/
 npm-debug.*
