@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
-import { TimerPreset, Alert } from '../../types/timer';
+import { TimerPreset } from '../../types/timer';
+import { Alert } from '../../types/alerts';
 import { formatTimeFromSeconds } from '../../utils/time';
 import { theme } from '../../theme';
 
@@ -35,10 +36,10 @@ export const PresetCard = ({ preset, onPress }: PresetCardProps) => {
               />
               <Text style={styles.alertText}>
                 {alert.id === 'before'
-                  ? `${formatTimeFromSeconds(alert.timeOffset)} avant la fin`
+                  ? `- ${formatTimeFromSeconds(alert.timeOffset)}`
                   : alert.id === 'end'
                   ? 'À la fin'
-                  : `${formatTimeFromSeconds(alert.timeOffset)} après la fin`}
+                  : `+ ${formatTimeFromSeconds(alert.timeOffset)}`}
               </Text>
             </View>
           );
