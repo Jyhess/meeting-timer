@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { DEFAULT_SOUNDS } from '../types/sounds';
 import { Alert, AlertSoundId, DEFAULT_ALERTS } from '../types/alerts';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { MMKV } from 'react-native-mmkv';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DEFAULT_DURATION = 1800;
 const DEFAULT_ALERT_DURATION = 5;
@@ -26,16 +26,10 @@ const defaultSettings: Omit<SettingsState, 'toggleSound' | 'updateDefaultAlert' 
   availableSounds: DEFAULT_SOUNDS,
 };
 
-// Fonction utilitaire pour sauvegarder dans MMKV
-const storage = new MMKV();
-const saveSettings = (settings: SettingsState) => {
-  storage.set('appSettings', JSON.stringify(settings));
-};
-
 // Store Zustand
 export const useSettings = create<SettingsState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...defaultSettings,
 
       toggleSound: (soundId: AlertSoundId, enabled: boolean) => {
@@ -44,9 +38,7 @@ export const useSettings = create<SettingsState>()(
             ? [...state.availableSounds, soundId]
             : state.availableSounds.filter((s) => s !== soundId);
 
-          const newState = { ...state, availableSounds: updatedSounds };
-          saveSettings(newState);
-          return newState;
+          return { ...state, availableSounds: updatedSounds };
         });
       },
 
@@ -56,35 +48,27 @@ export const useSettings = create<SettingsState>()(
             a.id === alert.id ? { ...a, ...alert } : a
           );
 
-          const newState = { ...state, defaultAlerts: updatedAlerts };
-          saveSettings(newState);
-          return newState;
+          return { ...state, defaultAlerts: updatedAlerts };
         });
       },
 
       setDefaultDurationSeconds: (seconds: number) => {
-        set((state: SettingsState) => {
-          const newState = { ...state, defaultDurationSeconds: seconds };
-          saveSettings(newState);
-          return newState;
-        });
+        set((state: SettingsState) => ({
+          ...state,
+          defaultDurationSeconds: seconds,
+        }));
       },
 
       setDefaultAlertDuration: (seconds: number) => {
-        set((state: SettingsState) => {
-          const newState = { ...state, defaultAlertDuration: seconds };
-          saveSettings(newState);
-          return newState;
-        });
+        set((state: SettingsState) => ({
+          ...state,
+          defaultAlertDuration: seconds,
+        }));
       },
     }),
     {
       name: 'app-settings',
-      getStorage: () => ({
-        getItem: (key) => storage.getString(key) ?? null,
-        setItem: (key, value) => storage.set(key, value),
-        removeItem: (key) => storage.delete(key),
-      }),
+      storage: createJSONStorage(() => AsyncStorage),
     }
   )
 );

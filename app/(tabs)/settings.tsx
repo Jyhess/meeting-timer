@@ -10,14 +10,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon, IconName } from '../../src/components/Timer/Icon';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
-import { Alert } from '../../src/types/timer';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
 import { formatTimeFromSeconds } from '../../src/utils/time';
 import { TimeInput } from '../../src/components/Timer/TimeInput';
 import { theme } from '../../src/theme';
 import { sounds } from '../../src/config/alerts';
-import { AlertSoundId } from '../../src/types/alerts';
+import { Alert } from '../../src/types/alerts';
 import { ToggleSlider } from '@/src/components/Timer/ToggleSlider';
 import { useAudio } from '@/src/hooks/useAudio';
 

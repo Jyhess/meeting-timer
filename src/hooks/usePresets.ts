@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { MMKV } from 'react-native-mmkv';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TimerPreset } from '../types/timer';
 
 interface PresetsState {
@@ -14,8 +14,6 @@ interface PresetsState {
   refreshPresets: () => Promise<void>;
 }
 
-const storage = new MMKV();
-
 export const usePresets = create<PresetsState>()(
   persist(
     (set, get) => ({
@@ -23,13 +21,14 @@ export const usePresets = create<PresetsState>()(
       isLoading: true,
 
       loadPresets: async () => {
+        set({ isLoading: true });
         try {
-          const storedPresets = storage.getString('presets');
-          const presets = storedPresets ? JSON.parse(storedPresets) : [];
-          set({ presets, isLoading: false });
+          const state = get();
+          set({ presets: state.presets });
         } catch (error) {
           console.error('Erreur lors du chargement des presets:', error);
-          set({ presets: [], isLoading: false });
+        } finally {
+          set({ isLoading: false });
         }
       },
 
@@ -65,7 +64,6 @@ export const usePresets = create<PresetsState>()(
           })
           .slice(0, 6);
 
-        storage.set('presets', JSON.stringify(newPresets));
         set({ presets: newPresets });
       },
 
@@ -95,21 +93,14 @@ export const usePresets = create<PresetsState>()(
 
       removePreset: async (presetId: string) => {
         const state = get();
-        const newPresets = state.presets.filter(p => p.id !== presetId);
-        storage.set('presets', JSON.stringify(newPresets));
-        set({ presets: newPresets });
+        set({
+          presets: state.presets.filter((preset) => preset.id !== presetId),
+        });
       },
     }),
     {
       name: 'app-presets',
-      storage: {
-        getItem: (key) => {
-          const value = storage.getString(key);
-          return value ? JSON.parse(value) : null;
-        },
-        setItem: (key, value) => storage.set(key, JSON.stringify(value)),
-        removeItem: (key) => storage.delete(key),
-      },
+      storage: createJSONStorage(() => AsyncStorage),
     }
   )
 ); 
