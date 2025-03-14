@@ -264,4 +264,16 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: theme.spacing.medium,
   },
+  legalLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: theme.spacing.medium,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: theme.borders.radius.medium,
+  },
+  legalLinkText: {
+    fontSize: theme.typography.fontSize.medium,
+    color: theme.colors.white,
+  },
 });

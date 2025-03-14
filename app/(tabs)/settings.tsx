@@ -19,6 +19,7 @@ import { sounds } from '../../src/config/alerts';
 import { Alert } from '../../src/types/alerts';
 import { ToggleSlider } from '@/src/components/Timer/ToggleSlider';
 import { useAudio } from '@/src/hooks/useAudio';
+import { Link } from 'expo-router';
 
 export default function SettingsScreen() {
   const { 
@@ -241,6 +242,15 @@ export default function SettingsScreen() {
               ))}
             </View>
           </View>
+
+          <View style={styles.section}>
+            <Link href="/legal" asChild>
+              <Pressable style={styles.legalLink}>
+                <Text style={styles.legalLinkText}>Informations légales</Text>
+                <Icon name="arrow_back" size={24} color="#aaa" style={{ transform: [{ rotate: '180deg' }] }} />
+              </Pressable>
+            </Link>
+          </View>
         </ScrollView>
         
         {editingAlert && (
@@ -248,13 +258,9 @@ export default function SettingsScreen() {
             alert={editingAlert}
             isVisible={true}
             onClose={() => setEditingAlert(null)}
-            onSave={(updatedAlert) => {
-              updateDefaultAlert(updatedAlert);
-              setEditingAlert(null);
-            }}
+            onSave={updateDefaultAlert}
           />
         )}
-        
       </LinearGradient>
     </SafeAreaView>
   );

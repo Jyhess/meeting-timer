@@ -80,7 +80,20 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 
 ## Licence
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+Ce projet est open source et sous licence GNU General Public License v3.0 (GPL-3.0). Cela signifie que vous êtes libre de :
+- Utiliser l'application pour n'importe quel usage
+- Étudier le code source
+- Modifier le code source
+- Redistribuer l'application
+- Partager vos modifications
+
+À condition de :
+- Inclure le texte de la licence GPL-3.0
+- Indiquer clairement les modifications apportées
+- Rendre le code source disponible
+- Utiliser la même licence pour les modifications
+
+Voir le fichier `LICENSE` pour plus de détails.
 
 ## Contact
 
