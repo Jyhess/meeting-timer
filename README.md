@@ -2,6 +2,8 @@
 
 CoachTimer est une application de minuterie professionnelle conçue pour les coachs, les présentateurs et les formateurs. Elle offre une interface élégante et des fonctionnalités avancées de gestion du temps.
 
+Cette application est accessible à l'URL https://coach-timer.expo.app/
+
 ## À propos
 
 Cette application a été créée par Bolt, une IA développée par StackBlitz, en collaboration avec un utilisateur humain. Elle représente un exemple de co-création entre l'intelligence artificielle et l'humain pour produire une application professionnelle et fonctionnelle.
