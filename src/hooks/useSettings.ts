@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
 import { DEFAULT_SOUNDS } from '../types/sounds';
 import { Alert, AlertSoundId, DEFAULT_ALERTS } from '../types/alerts';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const DEFAULT_DURATION = 1800;
+const DEFAULT_DURATION = 180;
 const DEFAULT_ALERT_DURATION = 5;
 
 interface SettingsState {
