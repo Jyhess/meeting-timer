@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
 import { TimerPreset } from '../../types/timer';
@@ -9,14 +9,13 @@ import { theme } from '../../theme';
 
 type PresetCardProps = {
   preset: TimerPreset;
-  onPress: () => void;
 };
 
-export const PresetCard = ({ preset, onPress }: PresetCardProps) => {
+export const PresetCard = ({ preset }: PresetCardProps) => {
   const { alerts } = preset;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{preset.name}</Text>
         <Text style={styles.duration}>{formatTimeFromSeconds(preset.seconds)}</Text>
@@ -45,7 +44,7 @@ export const PresetCard = ({ preset, onPress }: PresetCardProps) => {
           );
         })}
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -55,6 +54,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
+    width: '100%',
   },
   header: {
     flexDirection: 'row',

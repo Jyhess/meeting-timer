@@ -12,7 +12,7 @@ function TimerTab() {
       onPress={() => {
         router.push({
           pathname: "/timer",
-          params: { seed: Math.random().toString() }
+          params: { presetId: null }
         });
       }}
     >

@@ -15,6 +15,7 @@ import { FlashView, FlashViewRef } from '../../src/components/Timer/FlashView';
 import { ProgressBar } from '../../src/components/Timer/ProgressBar';
 import { useTimer } from '../../src/hooks/useTimer';
 import { CircularProgress } from '@/src/components/Timer/CircularProgress';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string, seed?: string }>();
@@ -40,10 +41,19 @@ export default function TimerScreen() {
   // Calculer isValidTime
   const [validInput, setValidInput] = useState(true);
   const isValidTime = validInput && timeLeft > 0 && (!beforeAlert.enabled || timeLeft > beforeAlert.timeOffset);
+ const isFocused = useIsFocused();
+
+ useEffect(() => {
+  console.log('[TimerScreen] 🔔 useEffect [isFocused] :', isFocused);
+  if (! isFocused) {
+    actions.stop();
+    setAddingTime(false);
+  }
+ }, [isFocused]);
 
   // Réinitialiser le timer quand le seed change
   useEffect(() => {
-    if (params.seed !== lastSeed) {
+    if (params.seed && params.seed !== lastSeed) {
       setLastSeed(params.seed || null);
       console.log('[TimerScreen] 🔔 useEffect [params.seed] :', params.seed, lastSeed);
       if (params.presetId) {

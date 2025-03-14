@@ -72,19 +72,8 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     width: '48%',
-    height: cardHeight,
-  },
-  presetCardInner: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-  },
-  presetTime: {
-    fontSize: 32,
-    color: '#eee',
-    fontWeight: 'bold',
-    fontFamily: Platform.OS === 'web' ? 'monospace' : undefined,
   },
   alertIcons: {
     flexDirection: 'row',

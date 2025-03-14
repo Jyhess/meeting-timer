@@ -74,10 +74,6 @@ export default function HomeScreen() {
                   <Pressable style={styles.presetCard}>
                     <PresetCard
                       preset={preset}
-                      style={styles.presetCardInner}
-                      timeStyle={styles.presetTime}
-                      iconColor="#fff"
-                      iconSize={20}
                     />
                   </Pressable>
                 </Link>
