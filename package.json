@@ -11,7 +11,7 @@
     "lint": "expo lint",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "deploy": "expo export --platform web && eas deploy"
+    "prod:web": "expo export --platform web && eas deploy --prod"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
