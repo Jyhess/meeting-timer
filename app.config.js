@@ -1,6 +1,6 @@
 module.exports = {
   expo: {
-    name: 'CoachTimer',
+    name: 'Coach Timer',
     slug: 'coach-timer',
     version: '1.0.0',
     orientation: 'portrait',
@@ -8,6 +8,11 @@ module.exports = {
     scheme: 'coachtimer',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
+    extra: {
+      eas: {
+        projectId: "27463754-938a-4738-ae20-cedfd653131b"
+      }
+    },
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.coachtimer.app'
