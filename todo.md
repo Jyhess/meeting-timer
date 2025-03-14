@@ -2,11 +2,10 @@
 
 * Vue du temps en camembert
 * Bloquer le passage en veille
-* sons custom
-* remplacement composants expo par du react native
 * traduction
 * ajout tests unitaires
 * Preset nommés en couleur
+* sons custom
 
 
 == Question
