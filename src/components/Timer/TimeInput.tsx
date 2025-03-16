@@ -46,6 +46,9 @@ export const TimeInput: React.FC<TimeInputProps> = ({
 
   const handleNumberPress = (num: number) => {
     if (inputBuffer.length < 4) {
+      if (num === 0 && inputBuffer.length === 0) {
+        return;
+      }
       const newBuffer = inputBuffer + num.toString();
       handleBufferChange(newBuffer);
     }
@@ -59,6 +62,9 @@ export const TimeInput: React.FC<TimeInputProps> = ({
   };
 
   const handleDoubleZero = () => {
+    if (inputBuffer.length === 0) {
+      return;
+    }
     const newBuffer = inputBuffer + '00';
     if (newBuffer.length <= 4) {
       handleBufferChange(newBuffer);
