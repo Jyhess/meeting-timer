@@ -12,7 +12,6 @@ import { theme } from '../../src/theme';
 import { TimeInput } from '../../src/components/Timer/TimeInput';
 import { TimerOutput } from '../../src/components/Timer/TimerOutput';
 import { FlashView, FlashViewRef } from '../../src/components/Timer/FlashView';
-import { ProgressBar } from '../../src/components/Timer/ProgressBar';
 import { useTimer } from '../../src/hooks/useTimer';
 import { CircularProgress } from '@/src/components/Timer/CircularProgress';
 import { useIsFocused } from '@react-navigation/native';
@@ -121,8 +120,6 @@ export default function TimerScreen() {
     setAddingTime(false);
   };
 
-  const progressBar = false;
-
   const handleSavePress = () => {
     console.log('[TimerScreen] 🔔 handleSavePress :', duration);
     if (duration > 0) {
@@ -141,24 +138,13 @@ export default function TimerScreen() {
         style={[styles.container, { backgroundColor: presetColor ? presetColor + '66' : theme.colors.background.primary }]}
       >
         
-        {isRunning && (
-          <>
-          {progressBar ? (
-            <ProgressBar
-              duration={duration}
-              timeLeft={timeLeft-1}
-              isRunning={state === 'running'}
-              beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-            />
-          ) : (<CircularProgress 
-              duration={duration}
-              timeLeft={timeLeft-1}
-              isRunning={state === 'running'}
-              beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-              afterAlertOffset={afterAlert.enabled ? afterAlert.timeOffset : undefined}
-            />
-          )}
-          </>
+        {isRunning && (<CircularProgress 
+            duration={duration}
+            timeLeft={timeLeft-1}
+            isRunning={state === 'running'}
+            beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+            afterAlertOffset={afterAlert.enabled ? afterAlert.timeOffset : undefined}
+          />
         )}
 
         <FlashView 
