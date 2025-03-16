@@ -19,10 +19,18 @@ export const TimeInput: React.FC<TimeInputProps> = ({
   prefix = '',
 }) => {
   const [inputBuffer, setInputBuffer] = useState('');
-  const [displayValue, setDisplayValue] = useState(formatTime('', Math.floor(initialSeconds / 60), initialSeconds % 60));
+  const [displayValue, setDisplayValue] = useState(formatTime('', 
+    Math.floor(initialSeconds / 3600),
+    Math.floor((initialSeconds % 3600) / 60),
+    initialSeconds % 60
+  ));
 
   useEffect(() => {
-    setDisplayValue(formatTime('', Math.floor(initialSeconds / 60), initialSeconds % 60));
+    setDisplayValue(formatTime('',
+      Math.floor(initialSeconds / 3600),
+      Math.floor((initialSeconds % 3600) / 60),
+      initialSeconds % 60
+    ));
   }, [initialSeconds]);
 
   const handleBufferChange = (newBuffer: string) => {
@@ -30,22 +38,23 @@ export const TimeInput: React.FC<TimeInputProps> = ({
 
     if (newBuffer.length === 0) {
       onTimeChange(0, false);
-      setDisplayValue(formatTime('', 0, 0));
+      setDisplayValue(formatTime('', 0, 0, 0));
       return;
     }
 
-    const digits = newBuffer.padStart(4, '0').split('').map(Number);
-    const mins = parseInt(digits.slice(0, 2).join(''), 10);
-    const secs = parseInt(digits.slice(2).join(''), 10);
-    const totalSeconds = mins * 60 + secs;
-    setDisplayValue(formatTime('', mins, secs));
+    const digits = newBuffer.padStart(6, '0').split('').map(Number);
+    const hours = parseInt(digits.slice(0, 2).join(''), 10);
+    const mins = parseInt(digits.slice(2, 4).join(''), 10);
+    const secs = parseInt(digits.slice(4).join(''), 10);
+    const totalSeconds = hours * 3600 + mins * 60 + secs;
+    setDisplayValue(formatTime('', hours, mins, secs));
 
     const isValidTime = secs < 60 && totalSeconds > 0;
     onTimeChange(totalSeconds, isValidTime);
   };
 
   const handleNumberPress = (num: number) => {
-    if (inputBuffer.length < 4) {
+    if (inputBuffer.length < 6) {
       if (num === 0 && inputBuffer.length === 0) {
         return;
       }
@@ -66,10 +75,10 @@ export const TimeInput: React.FC<TimeInputProps> = ({
       return;
     }
     const newBuffer = inputBuffer + '00';
-    if (newBuffer.length <= 4) {
+    if (newBuffer.length <= 6) {
       handleBufferChange(newBuffer);
     }
-    else if (newBuffer.length === 5) {
+    else if (newBuffer.length === 7) {
       handleBufferChange(newBuffer.slice(0, -1));
     }
   };
