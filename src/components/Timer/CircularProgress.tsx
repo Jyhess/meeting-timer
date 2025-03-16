@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
-import Animated, { 
+import Animated, {
   withTiming,
   useSharedValue,
   useAnimatedProps,
   Easing,
-  useDerivedValue,
 } from 'react-native-reanimated';
 import { theme } from '../../theme';
 import Svg, { Polyline } from 'react-native-svg';
+import { polylinePath } from '../../utils/polyline';
 
 const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
 
@@ -18,50 +18,6 @@ interface CircularProgressProps {
   isRunning: boolean;
   beforeAlertOffset?: number;
   afterAlertOffset?: number;
-  size?: number;
-}
-
-const polylinePath = (size: {width: number, height: number}, percentage: number): Array<{x: number, y: number}> => {
-
-  const angle = (Math.PI * 2) - ((percentage) * Math.PI * 2);
-  const angle1 = Math.atan2(size.height, size.width);
-  const angle2 = Math.atan2(size.height, -size.width);
-  const angle3 = angle1 + Math.PI;
-  const angle4 = angle2 + Math.PI;
-
-  const center = {x: size.width/2, y: size.height/ 2};
-  let points: Array<{x: number, y: number}> = [
-    {x: center.x, y: center.y},
-    {x: size.width, y: center.y},
-  ];
-
-  if (angle < angle1) {
-    points.push({x: size.width, y: size.height});
-    points.push({x: 0, y: size.height});
-    points.push({x: 0, y: 0});
-    points.push({x: size.width, y: 0});
-    points.push({x: size.width, y: center.y - (size.width/2) * Math.tan(angle)});
-  }
-  else if (angle < angle2) {
-    points.push({x: size.width, y: size.height});
-    points.push({x: 0, y: size.height});
-    points.push({x: 0, y: 0});
-    points.push({x: center.x + (size.height/2) / Math.tan(angle), y: 0});
-  }
-  else if (angle < angle3) {
-    points.push({x: size.width, y: size.height});
-    points.push({x: 0, y: size.height});
-    points.push({x: 0, y: center.y + (size.width/2) * Math.tan(angle)});
-  }
-  else if (angle < angle4) {
-    points.push({x: size.width, y: size.height});
-    points.push({x: center.x - (size.height/2) / Math.tan(angle), y: size.height});
-  }
-  else{
-    points.push({x: size.width, y: center.y - (size.width/2) * Math.tan(angle)});
-  }
-  points.push({x: center.x, y: center.y});
-  return points;
 }
 
 export const CircularProgress: React.FC<CircularProgressProps> = ({
@@ -86,13 +42,28 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
 
   React.useEffect(() => {
     if (isRunning) {
-      progress.value = withTiming(
-        timeLeft < 0 ? 1 : 1 - (timeLeft / duration),
-        { 
-          duration: 1000,
-          easing: Easing.linear,
-        }
-      );
+      const remaining = 1 - (timeLeft / duration);
+      if(remaining - progress.value < 0)
+      {
+        console.log("timeLeft - progress.value", progress.value, remaining, timeLeft);
+        progress.value = withTiming(
+          0,
+          { 
+            duration: 1000,
+            easing: Easing.out(Easing.quad),
+          }
+        );
+      }
+      else
+      {
+        progress.value = withTiming(
+          timeLeft < 0 ? 1 : remaining,
+          { 
+            duration: 1000,
+            easing: Easing.linear,
+          }
+        );
+      }
     }
   }, [timeLeft, duration, isRunning]);
 
@@ -124,8 +95,8 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
       }, 16);
     }
     else {
-      clearInterval(animationRef.current);
-    }
+        clearInterval(animationRef.current);
+      }
   }, [isRunning, size]);
 
 
@@ -146,10 +117,10 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
 
   return (
     <View style={[styles.container]} onLayout={onLayout}>
-      <Svg width='100%' height='100%' style = {{backgroundColor: 'orange'}}>
+      <Svg width='100%' height='100%' style = {{backgroundColor: theme.colors.secondary}}>
         <Polyline
           points={polylinePath(size, beforeAlertAngle).map(point => `${point.x},${point.y}`).join(' ')}
-          fill='green'
+          fill={theme.colors.primary}
         />
         <AnimatedPolyline
           animatedProps={animatedProps as any}
@@ -158,7 +129,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           <>
             <Polyline
               points={polylinePath(size, afterAlertAngle).map(point => `${point.x},${point.y}`).join(' ')}
-              fill='red'
+              fill={theme.colors.danger}
             />
             <AnimatedPolyline
               animatedProps={animatedProps2 as any}
