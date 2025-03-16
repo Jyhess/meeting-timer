@@ -13,7 +13,6 @@ import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
 import { formatTimeFromSeconds } from '../../src/utils/time';
-import { TimeInput } from '../../src/components/Timer/TimeInput';
 import { theme } from '../../src/theme';
 import { sounds } from '../../src/config/alerts';
 import { Alert } from '../../src/types/alerts';
@@ -23,8 +22,6 @@ import { Link } from 'expo-router';
 
 export default function SettingsScreen() {
   const { 
-    defaultDurationSeconds, 
-    setDefaultDurationSeconds,
     defaultAlerts,
     defaultAlertDuration,
     setDefaultAlertDuration,
@@ -35,10 +32,8 @@ export default function SettingsScreen() {
     
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const [alertDuration, setAlertDuration] = useState(defaultAlertDuration.toString());
-  const [editingDuration, setEditingDuration] = useState(false);
   const { playSound, stopSound, playingSound } = useAudio();
 
-  
   useEffect(() => {
     setAlertDuration(defaultAlertDuration.toString());
   }, [defaultAlertDuration]);
@@ -63,12 +58,6 @@ export default function SettingsScreen() {
     setEditingAlert(alert);
   };
 
-  const handleDurationChange = (seconds: number, isValid: boolean) => {
-    if (isValid) {
-      setDefaultDurationSeconds(seconds);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <LinearGradient colors={['#1a1a1a', '#2d2d2d']} style={styles.container}>
@@ -77,52 +66,6 @@ export default function SettingsScreen() {
         </View>
         
         <ScrollView style={styles.content}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Durée par défaut</Text>
-            <Text style={styles.sectionDescription}>
-              Définissez la durée par défaut pour les nouveaux timers
-            </Text>
-            
-            <View style={styles.durationContainer}>
-              {editingDuration ? (
-                <>
-                  <View style={styles.timeDisplayButton}>
-                    <TimeInput
-                      initialSeconds={defaultDurationSeconds}
-                      onTimeChange={handleDurationChange}
-                      timeColor={theme.colors.white}
-                    />
-                  </View>
-                  <Pressable 
-                    style={styles.confirmButton}
-                    onPress={() => setEditingDuration(false)}
-                  >
-                    <Icon name="check" size={24} color={theme.colors.white} />
-                  </Pressable>
-                </>
-              ) : (
-                <>
-                <View style={styles.durationInputContainer}>
-                  <Pressable 
-                    style={styles.timeDisplayButton}
-                    onPress={() => setEditingDuration(true)}
-                  >
-                    <Text style={styles.durationInput}>
-                      {formatTimeFromSeconds(defaultDurationSeconds)}
-                    </Text>
-                  </Pressable>
-                </View>
-                <Pressable 
-                    style={styles.editButton}
-                    onPress={() => setEditingDuration(true)}
-                  >
-                    <Icon name="edit" size={20} color="#aaa" />
-                  </Pressable>
-                </>
-              )}
-            </View>
-          </View>
-          
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Durée des alertes</Text>
             <Text style={styles.sectionDescription}>
@@ -167,7 +110,7 @@ export default function SettingsScreen() {
               </View>
             </View>
           </View>
-                    
+          
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Alertes par défaut</Text>
             <Text style={styles.sectionDescription}>

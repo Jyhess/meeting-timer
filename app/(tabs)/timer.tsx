@@ -102,7 +102,7 @@ export default function TimerScreen() {
     }
   };
 
-  const [addTimeValue, setAddTimeValue] = useState<{ seconds: number; isValid: boolean }>({ seconds: 60, isValid: true });
+  const [addTimeValue, setAddTimeValue] = useState<{ seconds: number; isValid: boolean }>({ seconds: 0, isValid: false });
 
   const handleAddTimeChange = (seconds: number, isValidTime: boolean) => {
     let newSeconds = seconds;

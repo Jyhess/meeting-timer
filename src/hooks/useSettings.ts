@@ -4,22 +4,18 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const DEFAULT_DURATION = 180;
 const DEFAULT_ALERT_DURATION = 5;
 
 interface SettingsState {
-  defaultDurationSeconds: number;
   defaultAlerts: Alert[];
   defaultAlertDuration: number;
   availableSounds: AlertSoundId[];
   toggleSound: (soundId: AlertSoundId, enabled: boolean) => void;
   updateDefaultAlert: (alert: Alert) => void;
-  setDefaultDurationSeconds: (seconds: number) => void;
   setDefaultAlertDuration: (seconds: number) => void;
 }
 
-const defaultSettings: Omit<SettingsState, 'toggleSound' | 'updateDefaultAlert' | 'setDefaultDurationSeconds' | 'setDefaultAlertDuration'> = {
-  defaultDurationSeconds: DEFAULT_DURATION,
+const defaultSettings: Omit<SettingsState, 'toggleSound' | 'updateDefaultAlert' | 'setDefaultAlertDuration'> = {
   defaultAlertDuration: DEFAULT_ALERT_DURATION,
   defaultAlerts: DEFAULT_ALERTS,
   availableSounds: DEFAULT_SOUNDS,
@@ -49,13 +45,6 @@ export const useSettings = create<SettingsState>()(
 
           return { ...state, defaultAlerts: updatedAlerts };
         });
-      },
-
-      setDefaultDurationSeconds: (seconds: number) => {
-        set((state: SettingsState) => ({
-          ...state,
-          defaultDurationSeconds: seconds,
-        }));
       },
 
       setDefaultAlertDuration: (seconds: number) => {

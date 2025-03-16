@@ -136,8 +136,8 @@ export function useTimer() {
   const settings = useSettings();
   const presets = usePresets();
   const [state, dispatch] = useReducer(timerReducer, {
-    duration: settings.defaultDurationSeconds,
-    timeLeft: settings.defaultDurationSeconds,
+    duration: 0,
+    timeLeft: 0,
     isRunning: false,
     state: 'idle',
     beforeAlert: settings.defaultAlerts[0],
@@ -288,8 +288,8 @@ export function useTimer() {
     resetFromDefault: useCallback(() => {
       console.log('[useTimer] 🔔 actions [resetFromDefault] :', state.state);
       dispatch({ type: 'RESET_FROM_DEFAULT', payload: {
-        duration: settings.defaultDurationSeconds,
-        timeLeft: settings.defaultDurationSeconds,
+        duration: 0,
+        timeLeft: 0,
         isRunning: false,
         state: 'idle',
         beforeAlert: settings.defaultAlerts[0],
@@ -297,7 +297,7 @@ export function useTimer() {
         afterAlert: settings.defaultAlerts[2],
         effectDuration: settings.defaultAlertDuration,
       }});
-    }, [settings.defaultDurationSeconds, settings.defaultAlerts, settings.defaultAlertDuration]),
+    }, [settings.defaultAlerts, settings.defaultAlertDuration]),
   
     loadPreset: useCallback((presetId: string) => {
       console.log('[useTimer] 🔔 actions [loadPreset] :', presetId);
