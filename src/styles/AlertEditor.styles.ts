@@ -15,8 +15,8 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     width: Math.min(screenWidth - 40, 500),
-    maxWidth: '95%',
-    maxHeight: '90%',
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
   modalTitle: {
     fontSize: 20,
