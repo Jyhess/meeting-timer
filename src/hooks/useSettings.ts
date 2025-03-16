@@ -1,5 +1,4 @@
-import { DEFAULT_SOUNDS } from '../types/sounds';
-import { Alert, AlertSoundId, DEFAULT_ALERTS } from '../types/alerts';
+import { Alert, AlertSoundId, DEFAULT_ALERTS, DEFAULT_SOUNDS } from '../types/alerts';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';

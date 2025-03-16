@@ -19,9 +19,3 @@ export const soundMap = {
   } as const;
   
 export type SoundName = keyof typeof soundMap;
-
-export const DEFAULT_SOUNDS = [
-  'bell',
-  'gong',
-  'alarm',
-] as SoundName[];

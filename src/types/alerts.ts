@@ -17,6 +17,12 @@ export type AlertSoundId =
   | 'bigben'
   | 'bell2'
   | 'churchbell';
+  
+export const DEFAULT_SOUNDS = [
+  'bell',
+  'gong',
+  'alarm',
+] as AlertSoundId[];
 
 export type Alert = {
   id: string;
@@ -34,7 +40,7 @@ export const DEFAULT_ALERTS = [
     enabled: false,
     timeOffset: 0,
     sound: 'bell',
-      effects: ['flash', 'shake'] as AlertEffect[],
+    effects: ['flash', 'shake'] as AlertEffect[],
   },
   {
     id: 'end',

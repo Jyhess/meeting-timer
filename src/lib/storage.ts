@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { Platform, Settings } from 'react-native';
 import { TimerPreset } from '../types/timer';
-import { Settings } from '../hooks/useSettings';
 
 const PRESETS_KEY = 'timer_presets';
 const SETTINGS_KEY = 'timer_settings';

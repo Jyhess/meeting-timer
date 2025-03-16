@@ -6,7 +6,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { Alert } from '../../types/timer';
+import { Alert } from '../../types/alerts';
 import { ToggleSlider } from './ToggleSlider';
 import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
