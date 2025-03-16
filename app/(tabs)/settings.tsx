@@ -12,7 +12,6 @@ import { Icon, IconName } from '../../src/components/Timer/Icon';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
-import { formatTimeFromSeconds } from '../../src/utils/time';
 import { theme } from '../../src/theme';
 import { sounds } from '../../src/config/alerts';
 import { Alert } from '../../src/types/alerts';
@@ -22,7 +21,6 @@ import { Link } from 'expo-router';
 
 export default function SettingsScreen() {
   const { 
-    defaultAlerts,
     defaultAlertDuration,
     setDefaultAlertDuration,
     updateDefaultAlert,
@@ -109,48 +107,6 @@ export default function SettingsScreen() {
                 </Pressable>
               </View>
             </View>
-          </View>
-          
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Alertes par défaut</Text>
-            <Text style={styles.sectionDescription}>
-              Configurez les alertes par défaut qui seront appliquées aux nouveaux timers
-            </Text>
-            
-            {defaultAlerts.map((alert) => {
-              const soundConfig = sounds.find(s => s.id === alert.sound);
-              if (!soundConfig) return null;
-
-              return (
-                <View key={alert.id} style={styles.alertItem}>
-                  <View style={styles.alertInfo}>
-                    <Icon
-                      name={soundConfig.icon as any}
-                      size={24}
-                      color="#fff"
-                    />
-                    <View style={styles.alertTextContainer}>
-                      <Text style={styles.alertName}>{alert.name}</Text>
-                      <Text style={styles.alertDetail}>
-                        {alert.id === 'before'
-                          ? `${formatTimeFromSeconds(alert.timeOffset)} avant la fin`
-                          : alert.id === 'end'
-                          ? 'À la fin du timer'
-                          : `${formatTimeFromSeconds(alert.timeOffset)} après la fin`}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={styles.alertControls}>
-                    <Pressable
-                      style={styles.editButton}
-                      onPress={() => handleAlertEdit(alert)}
-                    >
-                      <Icon name="edit" size={20} color="#aaa" />
-                    </Pressable>
-                  </View>
-                </View>
-              );
-            })}
           </View>
 
           <View style={styles.section}>

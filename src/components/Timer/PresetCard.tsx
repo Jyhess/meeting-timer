@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
@@ -12,37 +12,49 @@ type PresetCardProps = {
 };
 
 export const PresetCard = ({ preset }: PresetCardProps) => {
-  const { alerts } = preset;
+  const { alerts, color } = preset;
+  const displayColor = color ? color : theme.colors.gray.dark;
+  const cardColor = color ? displayColor + '33' : theme.colors.gray.light;
+  // La couleur disabled est la couleur de display avec 50% de transparence
+  const disabledColor = `${displayColor}50`;
+
+  console.log('[PresetCard]', preset, displayColor);
+
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: cardColor }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>{preset.name}</Text>
-        <Text style={styles.duration}>{formatTimeFromSeconds(preset.seconds)}</Text>
+        <View style={styles.titleContainer}>
+          <View style={[styles.colorDot, { backgroundColor: displayColor }]} />
+          <Text style={styles.title}>{preset.name}</Text>
+        </View>
       </View>
 
-      <View style={styles.alerts}>
-        {alerts.map((alert: Alert) => {
-          const soundConfig = sounds.find(s => s.id === alert.sound);
-          if (!soundConfig) return null;
-          
-          return (
-            <View key={alert.id} style={styles.alert}>
-              <Icon
-                name={soundConfig.icon as any}
-                size={16}
-                color={theme.colors.gray.light}
-              />
-              <Text style={styles.alertText}>
-                {alert.id === 'before'
-                  ? `- ${formatTimeFromSeconds(alert.timeOffset)}`
-                  : alert.id === 'end'
-                  ? 'À la fin'
-                  : `+ ${formatTimeFromSeconds(alert.timeOffset)}`}
-              </Text>
-            </View>
-          );
-        })}
+      <View style={styles.alertsContainer}>
+        <Text style={styles.duration}>{formatTimeFromSeconds(preset.seconds)}</Text>
+        <View style={styles.alerts}>
+          {alerts.map((alert: Alert) => {
+            const soundConfig = sounds.find(s => s.id === alert.sound);
+            if (!soundConfig) return null;
+            
+            return (
+              <View key={alert.id} style={styles.alert}>
+                <Icon
+                  name={soundConfig.icon as any}
+                  size={16}
+                  color={alert.enabled ? displayColor : disabledColor}
+                />
+                <Text style={[styles.alertText, { color: alert.enabled ? displayColor : disabledColor }]}>
+                  {alert.id === 'before'
+                    ? `- ${formatTimeFromSeconds(alert.timeOffset)}`
+                    : alert.id === 'end'
+                    ? 'À la fin'
+                    : `+ ${formatTimeFromSeconds(alert.timeOffset)}`}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
       </View>
     </View>
   );
@@ -50,37 +62,50 @@ export const PresetCard = ({ preset }: PresetCardProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.gray.dark,
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
+    borderRadius: theme.borders.radius.medium,
+    padding: theme.spacing.medium,
     width: '100%',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: theme.spacing.small,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.small,
+  },
+  colorDot: {
+    width: 12,
+    height: 12,
+    borderRadius: theme.borders.radius.round,
   },
   title: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: theme.typography.fontSize.medium,
+    fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.white,
   },
   duration: {
-    fontSize: 16,
+    fontSize: theme.typography.fontSize.large,
     color: theme.colors.white,
   },
   alerts: {
-    gap: 8,
+    gap: theme.spacing.xs,
   },
   alert: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: theme.spacing.xs,
   },
   alertText: {
-    fontSize: 14,
-    color: theme.colors.gray.light,
+    fontSize: theme.typography.fontSize.small,
+  },
+  alertsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: theme.spacing.xs,
   },
 }); 

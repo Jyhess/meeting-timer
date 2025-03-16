@@ -1,18 +1,13 @@
 import { StyleSheet, Platform, Dimensions } from 'react-native';
+import { theme } from '../theme';
 
-// Calculer la hauteur disponible en enlevant le header et les paddings
-const screenHeight = Dimensions.get('window').height;
 const headerHeight = 76; // 20px padding top + 36px contenu + 20px padding bottom
-const tabBarHeight = 50; // Hauteur de la barre des onglets
-const gridPadding = 20; // 10px padding top + 10px padding bottom
 const cardGap = 10;
-const availableHeight = screenHeight - headerHeight - tabBarHeight - gridPadding;
-const cardHeight = (availableHeight - (cardGap * 2)) / 3; // Hauteur pour 3 cartes avec 2 gaps
 
 export const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: theme.colors.background.primary,
   },
   container: {
     flex: 1,
@@ -27,16 +22,16 @@ export const styles = StyleSheet.create({
   newButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#4CAF50',
+    backgroundColor: theme.colors.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 25,
     gap: 8,
   },
   newButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.medium,
+    fontWeight: theme.typography.fontWeight.bold,
   },
   presetList: {
     flex: 1,
@@ -48,16 +43,16 @@ export const styles = StyleSheet.create({
     padding: 40,
   },
   emptyStateText: {
-    color: '#888',
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 16,
+    color: theme.colors.disabled,
+    fontSize: theme.typography.fontSize.large,
+    fontWeight: theme.typography.fontWeight.bold,
+    marginTop: theme.spacing.medium,
   },
   emptyStateSubtext: {
-    color: '#888',
-    fontSize: 16,
+    color: theme.colors.disabled,
+    fontSize: theme.typography.fontSize.medium,
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: theme.spacing.small,
   },
   grid: {
     flex: 1,
@@ -68,9 +63,7 @@ export const styles = StyleSheet.create({
     gap: cardGap,
   },
   presetCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: theme.borders.radius.medium,
     width: '48%',
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,12 +1,14 @@
 = TODO list
 
-* Vue du temps en camembert
 * Bloquer le passage en veille
 * traduction
-* ajout tests unitaires
-* Preset nommés en couleur
 * sons custom
-
+* Désactiver le bouton back du keypad quand il n'y a aucun digit de saisie
+* Ajouter un timer global et des sous timers
+* Lecture des sons dans la configuration des alertes ?
+* Augmenter la largeur du panel de définition des alertes
+* Réorganisation des bookmarks
+* Settings pour savoir combien de bookmark auto on veut garder
 
 == Question
 

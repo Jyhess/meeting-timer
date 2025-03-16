@@ -15,6 +15,8 @@ interface TimerState {
   endAlert: Alert;
   afterAlert: Alert;
   effectDuration: number;
+  presetName: string;
+  presetColor: string;
 }
 
 type TimerAction =
@@ -26,6 +28,7 @@ type TimerAction =
   | { type: 'RESET' }
   | { type: 'RESET_FROM_DEFAULT'; payload: TimerState }
   | { type: 'LOAD_PRESET'; payload: string }
+  | { type: 'BOOKMARK_PRESET'; payload: { name: string; color: string } }
   | { type: 'UPDATE_ALERT'; payload: Alert }
   | { type: 'ADD_TIME'; payload: number }
   | { type: 'TICK' };
@@ -92,6 +95,15 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
         afterAlert: preset.alerts.find(a => a.id === 'after') || state.afterAlert,
         isRunning: false,
         state: 'idle',
+        presetName: preset.name,
+        presetColor: preset.color,
+      };
+
+    case 'BOOKMARK_PRESET':
+      return {
+        ...state,
+        presetName: action.payload.name,
+        presetColor: action.payload.color,
       };
 
     case 'UPDATE_ALERT':
@@ -144,6 +156,8 @@ export function useTimer() {
     endAlert: settings.defaultAlerts[1],
     afterAlert: settings.defaultAlerts[2],
     effectDuration: settings.defaultAlertDuration,
+    presetName: '',
+    presetColor: '',
   });
   const intervalRef = useRef<NodeJS.Timeout>();
   const startedAlerts = useRef<Set<string>>(new Set());
@@ -244,9 +258,10 @@ export function useTimer() {
     startedAlerts.current.clear();
   }, [stopAudioSound]);
 
-  const savePreset = async () => {
+  const savePreset = async (name?: string, color?: string) => {
     console.log('[useTimer] 💾 Sauvegarde du preset');
-    await presets.createPreset(state.duration, [state.beforeAlert, state.endAlert, state.afterAlert]);
+    await presets.createOrUpdatePreset(state.duration, [state.beforeAlert, state.endAlert, state.afterAlert], name, color);
+    dispatch({ type: 'BOOKMARK_PRESET', payload: { name: name || '', color: color || '' } });
   };
 
   const actions = {
@@ -296,6 +311,8 @@ export function useTimer() {
         endAlert: settings.defaultAlerts[1],
         afterAlert: settings.defaultAlerts[2],
         effectDuration: settings.defaultAlertDuration,
+        presetName: '',
+        presetColor: '',
       }});
     }, [settings.defaultAlerts, settings.defaultAlertDuration]),
   
@@ -325,6 +342,8 @@ export function useTimer() {
     endAlert: state.endAlert,
     afterAlert: state.afterAlert,
     effectDuration: state.effectDuration,
+    presetName: state.presetName,
+    presetColor: state.presetColor,
     shouldFlash,
     hasActiveAlert,
     actions,

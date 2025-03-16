@@ -16,12 +16,15 @@ import { ProgressBar } from '../../src/components/Timer/ProgressBar';
 import { useTimer } from '../../src/hooks/useTimer';
 import { CircularProgress } from '@/src/components/Timer/CircularProgress';
 import { useIsFocused } from '@react-navigation/native';
+import { SavePresetDialog } from '../../src/components/Timer/SavePresetDialog';
+import { formatTimeFromSeconds } from '@/src/utils/time';
 
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string }>();
   const flashViewRef = useRef<FlashViewRef>(null);
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const [addingTime, setAddingTime] = useState(false);
+  const [saveDialogVisible, setSaveDialogVisible] = useState(false);
 
   const {
     duration,
@@ -35,6 +38,8 @@ export default function TimerScreen() {
     shouldFlash,
     hasActiveAlert,
     actions,
+    presetName,
+    presetColor,
   } = useTimer();
 
   // Calculer isValidTime
@@ -118,11 +123,22 @@ export default function TimerScreen() {
 
   const progressBar = false;
 
+  const handleSavePress = () => {
+    console.log('[TimerScreen] 🔔 handleSavePress :', duration);
+    if (duration > 0) {
+      setSaveDialogVisible(true);
+    }
+  };
+
+  const handleSave = async (name: string, color: string) => {
+    actions.savePreset(name, color);
+    setSaveDialogVisible(false);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <LinearGradient 
-        colors={[theme.colors.background.primary, theme.colors.background.secondary]} 
-        style={styles.container}
+      <View 
+        style={[styles.container, { backgroundColor: presetColor ? presetColor + '66' : theme.colors.background.primary }]}
       >
         
         {isRunning && (
@@ -178,6 +194,20 @@ export default function TimerScreen() {
             <View style={styles.controlsContainer}>
               {!isRunning ? (
                 <>
+                  <Pressable 
+                    style={[
+                      styles.controlButton,
+                      !isValidTime && styles.controlButtonDisabled
+                    ]} 
+                    onPress={handleSavePress}
+                    disabled={!isValidTime}
+                  >
+                    <Icon 
+                      name="bookmark" 
+                      size={40} 
+                      color={isValidTime ? theme.colors.primary : theme.colors.black}
+                    />
+                  </Pressable>
                   <Pressable style={styles.controlButton} onPress={handleStop}>
                     <Icon name="restart" size={40} color={theme.colors.danger} />
                   </Pressable>
@@ -186,13 +216,13 @@ export default function TimerScreen() {
                       styles.controlButton,
                       !isValidTime && styles.controlButtonDisabled
                     ]} 
-                    onPress={actions.start}
+                    onPress={() => actions.start()}
                     disabled={!isValidTime}
                   >
                     <Icon 
                       name="play_arrow" 
                       size={40} 
-                      color={isValidTime ? theme.colors.primary : theme.colors.disabled}
+                      color={isValidTime ? theme.colors.primary : theme.colors.black}
                     />
                   </Pressable>
                 </>
@@ -280,6 +310,13 @@ export default function TimerScreen() {
           )}
         </View>
 
+        <SavePresetDialog
+          isVisible={saveDialogVisible}
+          defaultName={`Timer ${formatTimeFromSeconds(duration)}`}
+          onClose={() => setSaveDialogVisible(false)}
+          onSave={handleSave}
+        />
+
         {editingAlert && (
           <View>
             <AlertEditor
@@ -293,7 +330,7 @@ export default function TimerScreen() {
             />
           </View>
         )}
-      </LinearGradient>
+      </View>
     </SafeAreaView>    
   );
 }

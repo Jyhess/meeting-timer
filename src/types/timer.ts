@@ -6,5 +6,7 @@ export type TimerPreset = {
   seconds: number;
   alerts: Alert[];
   created_at: string;
-  last_used?: string;
+  last_used: string;
+  color: string;
+  bookmarked: boolean;
 };

@@ -42,7 +42,7 @@ export default function TabLayout() {
         name="presets"
         options={{
           title: 'Presets',
-          tabBarIcon: ({ color }) => <Icon name="schedule" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Icon name="bookmarks" size={24} color={color} />,
         }}
       />
       <Tabs.Screen

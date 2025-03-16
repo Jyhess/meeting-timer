@@ -11,6 +11,7 @@ const iconMap = {
   backspace: require('../../../assets/icons/backspace.png'),
   bolt: require('../../../assets/icons/bolt.png'),
   bookmark: require('../../../assets/icons/bookmark.png'),
+  bookmarks: require('../../../assets/icons/bookmarks.png'),
   celebration: require('../../../assets/icons/celebration.png'),
   change_circle: require('../../../assets/icons/change_circle.png'),
   check: require('../../../assets/icons/check.png'),
