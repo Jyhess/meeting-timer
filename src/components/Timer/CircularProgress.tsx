@@ -40,42 +40,41 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   const progressNegative = useSharedValue(0);
   const progressShapeNegative = useSharedValue('0,0 0,0');
 
-  React.useEffect(() => {
-    if (isRunning) {
-      const remaining = 1 - (timeLeft / duration);
-      if(remaining - progress.value < 0)
-      {
-        console.log("timeLeft - progress.value", progress.value, remaining, timeLeft);
-        progress.value = withTiming(
-          0,
-          { 
-            duration: 1000,
-            easing: Easing.out(Easing.quad),
-          }
-        );
-      }
-      else
-      {
-        progress.value = withTiming(
-          timeLeft < 0 ? 1 : remaining,
-          { 
-            duration: 1000,
-            easing: Easing.linear,
-          }
-        );
-      }
+  const getAnimetedValue = (remaining: number, currentProgress: number) => {
+    if(remaining - currentProgress < 0)
+    {
+      return withTiming(
+        remaining - (1/duration),
+        {
+          duration: 1000,
+          easing: Easing.out(Easing.quad),
+        }
+      );
     }
-  }, [timeLeft, duration, isRunning]);
-
-  React.useEffect(() => {
-    if (isRunning && timeLeft < 0) {
-      progressNegative.value = withTiming(
-        1 - ((duration+timeLeft) / duration),
+    else
+    {
+      return withTiming(
+        remaining,
         { 
           duration: 1000,
           easing: Easing.linear,
         }
       );
+    }
+  };
+
+  React.useEffect(() => {
+    if (isRunning) {
+      if(timeLeft >= 0)
+      {
+        const remaining = 1 - (timeLeft / duration);
+        progress.value = getAnimetedValue(remaining, progress.value);
+      }
+      else if(timeLeft > (-duration-1))
+      {
+        const remaining = 1 - ((duration+timeLeft) / duration);
+        progressNegative.value = getAnimetedValue(remaining, progressNegative.value);
+      }
     }
   }, [timeLeft, duration, isRunning]);
 

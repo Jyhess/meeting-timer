@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Modal, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Modal, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { theme } from '../../theme';
 import { Icon } from './Icon';
 
@@ -90,6 +90,8 @@ export function SavePresetDialog({ isVisible, defaultName, onClose, onSave }: Sa
   );
 }
 
+const { width: screenWidth } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.borders.radius.large,
     padding: theme.spacing.large,
-    width: '80%',
+    width: Math.min(screenWidth - 20, 500),
     maxWidth: 400,
   },
   title: {

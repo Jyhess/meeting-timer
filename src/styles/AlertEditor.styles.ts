@@ -14,9 +14,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#1a1a1a',
     borderRadius: 12,
     padding: 20,
-    width: Math.min(screenWidth - 40, 500),
+    width: Math.min(screenWidth - 20, 500),
     maxWidth: '100%',
-    maxHeight: '100%',
+    maxHeight: '90%',
   },
   modalTitle: {
     fontSize: 20,

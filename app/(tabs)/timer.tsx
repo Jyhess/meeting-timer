@@ -310,12 +310,14 @@ export default function TimerScreen() {
           )}
         </View>
 
-        <SavePresetDialog
-          isVisible={saveDialogVisible}
-          defaultName={`Timer ${formatTimeFromSeconds(duration)}`}
-          onClose={() => setSaveDialogVisible(false)}
-          onSave={handleSave}
-        />
+        <View>
+          <SavePresetDialog
+            isVisible={saveDialogVisible}
+            defaultName={`Timer ${formatTimeFromSeconds(duration)}`}
+            onClose={() => setSaveDialogVisible(false)}
+            onSave={handleSave}
+          />
+        </View>
 
         {editingAlert && (
           <View>

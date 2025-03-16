@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Modal, Platform, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { Alert } from '../../types/timer';
 import { sounds, effects } from '../../config/alerts';
 import { Icon } from './Icon';
 import { TimeInput } from './TimeInput';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
-import { AlertEffect, AlertSoundId } from '../../types/alerts';
+import { Alert, AlertEffect, AlertSoundId } from '../../types/alerts';
 import { useSettings } from '../../hooks/useSettings';
 
 type AlertEditorProps = {
@@ -71,6 +70,7 @@ export const AlertEditor = ({
 
   const handleSave = () => {
     if (isValidTime) {
+      editedAlert.enabled = true;
       onSave(JSON.parse(JSON.stringify(editedAlert)));
       onClose();
     }

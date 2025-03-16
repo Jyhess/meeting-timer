@@ -1,25 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Icon } from '../../src/components/Timer/Icon';
-import { Platform, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Platform } from 'react-native';
 import { theme } from '../../src/theme';
-
-function TimerTab() {
-  const router = useRouter();
-  
-  return (
-    <Pressable 
-      onPress={() => {
-        router.push({
-          pathname: "/timer",
-          params: { presetId: null }
-        });
-      }}
-    >
-      <Icon name="alarm_add" size={24} color={theme.colors.white} />
-    </Pressable>
-  );
-}
 
 export default function TabLayout() {
   // Initialize audio session on component mount
@@ -49,13 +31,13 @@ export default function TabLayout() {
         name="timer"
         options={{
           title: 'Timer',
-          tabBarIcon: () => <TimerTab />,
+          tabBarIcon: ({ color }) => <Icon name="alarm_add" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Réglages',
+          title: 'Préférences',
           tabBarIcon: ({ color }) => <Icon name="settings" size={24} color={color} />,
         }}
       />
