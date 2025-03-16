@@ -46,7 +46,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           style={styles.keypadButton}
           onPress={onBackspace}
         >
-          <Icon name="backspace" size={24} color={theme.colors.white} />
+          <Icon name="backspace" size={24} color={theme.colors.danger} />
         </Pressable>
         {renderKeypadButton(0)}
         <Pressable
