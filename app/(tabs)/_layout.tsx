@@ -36,9 +36,10 @@ export default function TabLayout() {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.disabled,
       }}
+      initialRouteName="timer"
     >
       <Tabs.Screen
-        name="index"
+        name="presets"
         options={{
           title: 'Presets',
           tabBarIcon: ({ color }) => <Icon name="schedule" size={24} color={color} />,

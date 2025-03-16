@@ -14,10 +14,9 @@ import { PresetCard } from '../../src/components/Timer/PresetCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Home.styles';
 
-export default function HomeScreen() {
+export default function PresetsScreen() {
   const { presets, isLoading, refreshPresets } = usePresets();
 
-  // Use useCallback to prevent unnecessary re-renders
   const loadPresets = useCallback(async () => {
     await refreshPresets();
   }, [refreshPresets]);
@@ -36,7 +35,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <LinearGradient colors={['#1a1a1a', '#2d2d2d']} style={styles.container}>
         <View style={styles.header}>
-          <Link href={{pathname: "/timer", params: {seed: Math.random()}}} asChild>
+          <Link href={{pathname: "/timer", params: {presetId: null}}} asChild>
             <Pressable style={styles.newButton}>
               <Icon name="add" size={24} color="#fff" />
               <Text style={styles.newButtonText}>Nouveau Timer</Text>
@@ -66,7 +65,6 @@ export default function HomeScreen() {
                     pathname: '/timer',
                     params: { 
                       presetId: preset.id,
-                      seed: Math.random().toString()
                     },
                   }}
                   asChild
@@ -84,4 +82,4 @@ export default function HomeScreen() {
       </LinearGradient>
     </SafeAreaView>
   );
-}
+} 

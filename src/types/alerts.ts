@@ -31,8 +31,8 @@ export const DEFAULT_ALERTS = [
   {
     id: 'before',
     name: 'Bientôt fini',
-    enabled: true,
-    timeOffset: 60,
+    enabled: false,
+    timeOffset: 0,
     sound: 'bell',
       effects: ['flash', 'shake'] as AlertEffect[],
   },
@@ -47,8 +47,8 @@ export const DEFAULT_ALERTS = [
   {
     id: 'after',
     name: 'Temps dépassé',
-    enabled: true,
-    timeOffset: 120,
+    enabled: false,
+    timeOffset: 0,
     sound: 'alarm',
     effects: ['flash', 'shake'] as AlertEffect[],
   },
