@@ -26,11 +26,17 @@ export const TimeInput: React.FC<TimeInputProps> = ({
   ));
 
   useEffect(() => {
-    setDisplayValue(formatTime('',
-      Math.floor(initialSeconds / 3600),
-      Math.floor((initialSeconds % 3600) / 60),
-      initialSeconds % 60
-    ));
+    if (initialSeconds === 0) {
+      setInputBuffer('');
+      setDisplayValue(formatTime('', 0, 0, 0));
+    }
+    else {
+      setDisplayValue(formatTime('',
+        Math.floor(initialSeconds / 3600),
+        Math.floor((initialSeconds % 3600) / 60),
+        initialSeconds % 60
+      ));
+    }
   }, [initialSeconds]);
 
   const handleBufferChange = (newBuffer: string) => {
