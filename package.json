@@ -29,6 +29,7 @@
     "expo-file-system": "~18.0.11",
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
+    "expo-keep-awake": "^14.0.3",
     "expo-linear-gradient": "~14.0.2",
     "expo-linking": "~7.0.5",
     "expo-media-library": "~17.0.6",
@@ -68,7 +69,16 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "jsdom",
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
-    "setupFiles": ["<rootDir>/jest.setup.js"]
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ]
   }
 }

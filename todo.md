@@ -1,6 +1,5 @@
 = TODO list
 
-* Bloquer le passage en veille
 * traduction
 * sons custom
 * Désactiver le bouton back du keypad quand il n'y a aucun digit de saisie

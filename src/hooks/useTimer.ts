@@ -4,6 +4,7 @@ import { useSettings } from './useSettings';
 import { usePresets } from './usePresets';
 import { useAudio } from './useAudio';
 import { useVibration } from './useVibration';
+import { useKeepAwake } from './useKeepAwake';
 import { AlertEffect } from '../types/alerts';
 
 interface TimerState {
@@ -168,6 +169,7 @@ export function useTimer() {
   const alertTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useVibration(isVibrating, state.effectDuration * 1000);
+  useKeepAwake(state.state === 'running' || state.state === 'paused');
 
   useEffect(() => {
     console.log('[useTimer] 🔔 useEffect [state.state] :', state.state);
