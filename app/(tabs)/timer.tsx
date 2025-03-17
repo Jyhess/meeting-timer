@@ -75,7 +75,7 @@ export default function TimerScreen() {
     setAddingTime(false);
 
     if (state === 'idle') {
-      router.replace('/');
+      actions.resetFromDefault();
     }
   };
 
@@ -299,7 +299,8 @@ export default function TimerScreen() {
         <View>
           <SavePresetDialog
             isVisible={saveDialogVisible}
-            defaultName={`Timer ${formatTimeFromSeconds(duration)}`}
+            defaultName={presetName || `Timer ${formatTimeFromSeconds(duration)}`}
+            defaultColor={presetColor}
             onClose={() => setSaveDialogVisible(false)}
             onSave={handleSave}
           />

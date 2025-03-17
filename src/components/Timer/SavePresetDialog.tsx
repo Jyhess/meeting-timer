@@ -14,6 +14,8 @@ const PRESET_COLORS = [
   '#3498DB', // Bleu
   '#2ECC71', // Vert
   '#F1C40F', // Jaune
+  '#E67E22', // Orange
+  '#1ABC9C', // Turquoise foncé
 ];
 
 interface SavePresetDialogProps {

@@ -30,9 +30,6 @@ export const PresetCard = ({
   // La couleur disabled est la couleur de display avec 50% de transparence
   const disabledColor = `${displayColor}50`;
 
-  console.log('[PresetCard]', preset, displayColor);
-
-
   return (
     <View style={[styles.container, { backgroundColor: cardColor }]}>
       <View style={styles.header}>

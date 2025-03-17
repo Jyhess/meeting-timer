@@ -263,7 +263,7 @@ export function useTimer() {
   const savePreset = async (name?: string, color?: string) => {
     console.log('[useTimer] 💾 Sauvegarde du preset');
     await presets.createOrUpdatePreset(state.duration, [state.beforeAlert, state.endAlert, state.afterAlert], name, color);
-    dispatch({ type: 'BOOKMARK_PRESET', payload: { name: name || '', color: color || '' } });
+    dispatch({ type: 'BOOKMARK_PRESET', payload: { name: name || state.presetName, color: color || state.presetColor } });
   };
 
   const actions = {
