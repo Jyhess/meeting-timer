@@ -9,8 +9,10 @@ interface PresetsState {
   isLoading: boolean;
   loadPresets: () => Promise<void>;
   createOrUpdatePreset: (seconds: number, alerts: any[], name?: string, color?: string) => Promise<void>;
+  updatePreset: (preset: TimerPreset) => Promise<void>;
   removePreset: (presetId: string) => Promise<void>;
   getPreset: (presetId: string) => TimerPreset | undefined;
+  reorderBookmarkedPresets: (newOrder: TimerPreset[]) => void;
 }
 
 export const usePresets = create<PresetsState>()(
@@ -65,6 +67,23 @@ export const usePresets = create<PresetsState>()(
         }
       },
 
+      updatePreset: async (preset: TimerPreset) => {
+        const state = get();
+        const isInAutoPresets = state.autoPresets.some(p => p.id === preset.id);
+        
+        if (isInAutoPresets) {
+          const newAutoPresets = state.autoPresets.map(p => 
+            p.id === preset.id ? { ...preset, last_used: new Date().toISOString() } : p
+          );
+          set({ autoPresets: newAutoPresets });
+        } else {
+          const newBookmarkedPresets = state.bookmarkedPresets.map(p => 
+            p.id === preset.id ? { ...preset, last_used: new Date().toISOString() } : p
+          );
+          set({ bookmarkedPresets: newBookmarkedPresets });
+        }
+      },
+
       removePreset: async (presetId: string) => {
         const state = get();
         const isInAutoPresets = state.autoPresets.some(p => p.id === presetId);
@@ -78,6 +97,10 @@ export const usePresets = create<PresetsState>()(
             bookmarkedPresets: state.bookmarkedPresets.filter(p => p.id !== presetId),
           });
         }
+      },
+
+      reorderBookmarkedPresets: (newOrder: TimerPreset[]) => {
+        set({ bookmarkedPresets: newOrder });
       },
     }),
     {

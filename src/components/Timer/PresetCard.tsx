@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { sounds } from '../../config/alerts';
 import { Icon } from './Icon';
 import { TimerPreset } from '../../types/timer';
@@ -9,9 +9,21 @@ import { theme } from '../../theme';
 
 type PresetCardProps = {
   preset: TimerPreset;
+  onEdit?: (preset: TimerPreset) => void;
+  onDelete?: (preset: TimerPreset) => void;
+  onMove?: (preset: TimerPreset, direction: 'left' | 'right') => void;
+  canMoveLeft?: boolean;
+  canMoveRight?: boolean;
 };
 
-export const PresetCard = ({ preset }: PresetCardProps) => {
+export const PresetCard = ({ 
+  preset, 
+  onEdit, 
+  onDelete, 
+  onMove,
+  canMoveLeft = true,
+  canMoveRight = true
+}: PresetCardProps) => {
   const { alerts, color } = preset;
   const displayColor = color ? color : theme.colors.gray.dark;
   const cardColor = color ? displayColor + '33' : theme.colors.gray.light;
@@ -56,6 +68,45 @@ export const PresetCard = ({ preset }: PresetCardProps) => {
           })}
         </View>
       </View>
+
+      {(onEdit || onDelete || onMove) && (
+        <View style={styles.actions}>
+          {onMove && (
+            <Pressable
+            style={styles.actionButton}
+            onPress={() => onMove(preset, 'left')}
+              disabled={!canMoveLeft}
+            >
+              <Icon name="arrow_left" size={30} color={canMoveLeft ? theme.colors.white : theme.colors.gray.dark} />
+            </Pressable>
+          )}
+          {onEdit && (
+            <Pressable
+              style={styles.actionButton}
+              onPress={() => onEdit(preset)}
+            >
+              <Icon name="edit" size={20} color={theme.colors.white} />
+            </Pressable>
+          )}
+          {onDelete && (
+            <Pressable
+              style={styles.actionButton}
+              onPress={() => onDelete(preset)}
+            >
+              <Icon name="delete" size={20} color={theme.colors.white} />
+            </Pressable>
+          )}
+          {onMove && (
+            <Pressable
+            style={styles.actionButton}
+            onPress={() => onMove(preset, 'right')}
+              disabled={!canMoveRight}
+            >
+              <Icon name="arrow_right" size={30} color={canMoveRight ? theme.colors.white : theme.colors.gray.dark} />
+            </Pressable>
+          )}
+        </View>
+      )}
     </View>
   );
 };
@@ -107,5 +158,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: theme.spacing.xs,
+  },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: theme.spacing.medium,
+  },
+  actionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: theme.colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }); 

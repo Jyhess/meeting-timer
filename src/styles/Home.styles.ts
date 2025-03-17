@@ -19,6 +19,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     height: headerHeight,
   },
+  title: {
+    fontSize: theme.typography.fontSize.large,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.white,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   newButton: {
     flexDirection: 'row',
     alignItems: 'center',

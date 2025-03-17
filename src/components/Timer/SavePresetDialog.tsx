@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TextInput, Modal, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { theme } from '../../theme';
 import { Icon } from './Icon';
@@ -19,17 +19,35 @@ const PRESET_COLORS = [
 interface SavePresetDialogProps {
   isVisible: boolean;
   defaultName: string;
+  defaultColor?: string;
   onClose: () => void;
   onSave: (name: string, color: string) => void;
 }
 
-export function SavePresetDialog({ isVisible, defaultName, onClose, onSave }: SavePresetDialogProps) {
+export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose, onSave }: SavePresetDialogProps) {
   const [name, setName] = useState(defaultName);
-  const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
+  const [selectedColor, setSelectedColor] = useState(defaultColor || PRESET_COLORS[0]);
+  const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     setName(defaultName);
-  }, [defaultName]);
+    if (defaultColor) {
+      setSelectedColor(defaultColor);
+    }
+  }, [defaultName, defaultColor]);
+
+  useEffect(() => {
+    if (isVisible) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [isVisible]);
+
+  const handleClear = () => {
+    inputRef.current?.focus();
+    setName('');
+  };
 
   const handleSave = () => {
     if (name.trim()) {
@@ -49,13 +67,25 @@ export function SavePresetDialog({ isVisible, defaultName, onClose, onSave }: Sa
         <View style={styles.modalContent}>
           <Text style={styles.title}>Sauvegarder le timer</Text>
           
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Nom du timer"
-            placeholderTextColor={theme.colors.gray.medium}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={inputRef}
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder="Nom du timer"
+              placeholderTextColor={theme.colors.gray.medium}
+              selectTextOnFocus
+              autoFocus
+            />
+            <Pressable 
+              style={styles.clearButton}
+              onPress={handleClear}
+              disabled={!name.trim()}
+            >
+              <Icon name="backspace" size={20} color={theme.colors.danger} />
+            </Pressable>
+          </View>
 
           <Text style={styles.subtitle}>Couleur</Text>
           <View style={styles.colorGrid}>
@@ -118,12 +148,20 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.medium,
     marginBottom: theme.spacing.small,
   },
-  input: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borders.radius.medium,
+  },
+  input: {
+    flex: 1,
     padding: theme.spacing.medium,
     color: theme.colors.white,
     fontSize: theme.typography.fontSize.medium,
+  },
+  clearButton: {
+    padding: theme.spacing.medium,
   },
   colorGrid: {
     flexDirection: 'row',
