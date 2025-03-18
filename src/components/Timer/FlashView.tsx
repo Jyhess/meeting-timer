@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useImperativeHandle, useState, forwardRef } from 'react';
+import React, { useEffect, useImperativeHandle, useState, forwardRef } from 'react';
 import Animated, {
   useAnimatedStyle,
   withRepeat,
@@ -15,11 +15,7 @@ export interface FlashViewRef {
   stopAnimation: () => void;
 }
 
-export type FlashViewProps = {
-  effectDuration: number;
-}
-
-export const FlashView = forwardRef<FlashViewRef, FlashViewProps>(({ effectDuration }, ref) => {  
+export const FlashView = forwardRef<FlashViewRef, unknown>((_, ref) => {  
   const [isAnimated, setIsAnimated] = useState(false);
   const flashBackground = useSharedValue(0);
 
@@ -76,5 +72,5 @@ export const FlashView = forwardRef<FlashViewRef, FlashViewProps>(({ effectDurat
 
   return <Animated.View style={animatedFlashStyle} />;
 });
-
 export default FlashView;
+

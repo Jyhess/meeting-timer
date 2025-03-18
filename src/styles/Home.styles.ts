@@ -1,4 +1,4 @@
-import { StyleSheet, Platform, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { theme } from '../theme';
 
 const headerHeight = 76; // 20px padding top + 36px contenu + 20px padding bottom

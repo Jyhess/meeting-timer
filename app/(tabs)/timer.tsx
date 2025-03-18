@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Pressable } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { AlertEditor } from '../../src/components/Timer/AlertEditor';
 import { AlertIcon } from '../../src/components/Timer/AlertIcon';
 import { Icon } from '../../src/components/Timer/Icon';
 import { Alert } from '../../src/types/alerts';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 import { theme } from '../../src/theme';
@@ -33,7 +32,6 @@ export default function TimerScreen() {
     beforeAlert,
     endAlert,
     afterAlert,
-    effectDuration,
     shouldFlash,
     hasActiveAlert,
     actions,
@@ -149,7 +147,6 @@ export default function TimerScreen() {
 
         <FlashView 
           ref={flashViewRef}
-          effectDuration={effectDuration}
         />
 
         <View style={styles.timerContainer}>

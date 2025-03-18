@@ -8,13 +8,12 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Icon, IconName } from '../../src/components/Timer/Icon';
-import { AlertEditor } from '../../src/components/Timer/AlertEditor';
+import { Icon } from '../../src/components/Timer/Icon';
+import { IconName } from '../../src/types/icons';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
 import { theme } from '../../src/theme';
 import { sounds } from '../../src/config/alerts';
-import { Alert } from '../../src/types/alerts';
 import { ToggleSlider } from '@/src/components/Timer/ToggleSlider';
 import { useAudio } from '@/src/hooks/useAudio';
 import { Link } from 'expo-router';
@@ -23,12 +22,10 @@ export default function SettingsScreen() {
   const { 
     defaultAlertDuration,
     setDefaultAlertDuration,
-    updateDefaultAlert,
     availableSounds,
     toggleSound,
   } = useSettings();
     
-  const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
   const [alertDuration, setAlertDuration] = useState(defaultAlertDuration.toString());
   const { playSound, stopSound, playingSound } = useAudio();
 
@@ -50,10 +47,6 @@ export default function SettingsScreen() {
       // Réinitialiser à la valeur précédente si invalide
       setAlertDuration(defaultAlertDuration.toString());
     }
-  };
-
-  const handleAlertEdit = (alert: Alert) => {
-    setEditingAlert(alert);
   };
 
   return (
@@ -152,14 +145,6 @@ export default function SettingsScreen() {
           </View>
         </ScrollView>
         
-        {editingAlert && (
-          <AlertEditor
-            alert={editingAlert}
-            isVisible={true}
-            onClose={() => setEditingAlert(null)}
-            onSave={updateDefaultAlert}
-          />
-        )}
       </LinearGradient>
     </SafeAreaView>
   );

@@ -101,7 +101,7 @@ export const sounds: SoundConfig[] = [
   {
     id: 'bell2',
     name: 'Cloche 2',
-    icon: 'notifications_active',
+    icon: 'church',
     source: require('../../assets/sounds/bell2.mp3'),
   },
   {
