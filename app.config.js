@@ -1,11 +1,11 @@
 module.exports = {
   expo: {
-    name: 'Coach Timer',
-    slug: 'coach-timer',
+    name: 'Meeting Timer',
+    slug: 'meeting-timer',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
-    scheme: 'coachtimer',
+    scheme: 'meetingtimer',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     extra: {
@@ -15,10 +15,10 @@ module.exports = {
     },
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.coachtimer.app'
+      bundleIdentifier: 'com.meetingtimer.app'
     },
     android: {
-      package: 'com.coachtimer.app',
+      package: 'com.meetingtimer.app',
       adaptiveIcon: {
         foregroundImage: './assets/images/icon.png',
         backgroundColor: '#1a1a1a'

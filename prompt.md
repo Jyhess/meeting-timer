@@ -1,8 +1,8 @@
-# Prompt pour recréer CoachTimer from scratch
+# Prompt pour recréer MeetingTimer from scratch
 
 ## Description du projet
 
-Je souhaite créer une application mobile appelée "CoachTimer" - un outil professionnel de gestion du temps pour les coachs, formateurs et présentateurs. L'application doit offrir une interface élégante avec un thème sombre et des fonctionnalités avancées de minuterie.
+Je souhaite créer une application mobile appelée "MeetingTimer" - un outil professionnel de gestion du temps pour les coachs, formateurs et présentateurs. L'application doit offrir une interface élégante avec un thème sombre et des fonctionnalités avancées de minuterie.
 
 ## Fonctionnalités principales
 

@@ -22,15 +22,15 @@ export default function LegalScreen() {
   };
 
   const handleGitHubPress = () => {
-    Linking.openURL('https://github.com/jyhess/coach-timer');
+    Linking.openURL('https://github.com/jyhess/meeting-timer');
   };
 
   const handleIssuesPress = () => {
-    Linking.openURL('https://github.com/jyhess/coach-timer/issues');
+    Linking.openURL('https://github.com/jyhess/meeting-timer/issues');
   };
 
   const handleLicensePress = () => {
-    Linking.openURL('https://github.com/jyhess/coach-timer/blob/main/LICENSE');
+    Linking.openURL('https://github.com/jyhess/meeting-timer/blob/main/LICENSE');
   };
 
   const handleClose = () => {
@@ -38,10 +38,6 @@ export default function LegalScreen() {
   };
 
   const appVersion = Constants.expoConfig?.version || '1.0.0';
-  const lastUpdate = new Date().toLocaleDateString('fr-FR', { 
-    year: 'numeric', 
-    month: 'long' 
-  });
 
   return (
     <>
@@ -59,7 +55,7 @@ export default function LegalScreen() {
           <View style={styles.section}>
             <Text style={styles.title}>Mentions légales</Text>
             <Text style={styles.text}>
-              L'application Coach Timer est une application dédiée à la gestion du temps durant les réunions et les séances de coaching.
+              L'application Meeting Timer est une application dédiée à la gestion du temps durant les réunions et les séances de coaching.
               Elle est fournie à titre gratuit et ne nécessite aucun compte utilisateur ni connexion Internet pour fonctionner.
               Elle est développée et maintenue par Jyhess.
             </Text>
@@ -68,8 +64,7 @@ export default function LegalScreen() {
           <View style={styles.section}>
             <Text style={styles.title}>Version</Text>
             <Text style={styles.text}>
-              Version {appVersion}{'\n'}
-              Dernière mise à jour : {lastUpdate}
+              Version {appVersion}
             </Text>
           </View>
 
@@ -86,7 +81,7 @@ export default function LegalScreen() {
               Pour les bugs ou les suggestions, merci de créer une issue sur le repository GitHub :
             </Text>
             <Pressable style={styles.linkContainer} onPress={handleIssuesPress}>
-              <Text style={styles.linkText}>https://github.com/jyhess/coach-timer/issues</Text>
+              <Text style={styles.linkText}>https://github.com/jyhess/meeting-timer/issues</Text>
               <Icon name="arrow_back" size={20} color="#aaa" style={{ transform: [{ rotate: '180deg' }] }} />
             </Pressable>
           </View>
@@ -94,7 +89,7 @@ export default function LegalScreen() {
           <View style={styles.section}>
             <Text style={styles.title}>Politique de confidentialité</Text>
             <Text style={styles.text}>
-              Coach Timer ne collecte aucune donnée personnelle.
+            Meeting Timer ne collecte aucune donnée personnelle.
               Toutes les données sont stockées localement sur votre appareil.
             </Text>
           </View>
@@ -116,7 +111,7 @@ export default function LegalScreen() {
               Vous pouvez contribuer au projet à travers son repository GitHub :
             </Text>
             <Pressable style={styles.linkContainer} onPress={handleGitHubPress}>
-              <Text style={styles.linkText}>https://github.com/jyhess/coach-timer</Text>
+              <Text style={styles.linkText}>https://github.com/jyhess/meeting-timer</Text>
               <Icon name="arrow_back" size={20} color="#aaa" style={{ transform: [{ rotate: '180deg' }] }} />
             </Pressable>
             <Pressable style={styles.linkContainer} onPress={handleLicensePress}>

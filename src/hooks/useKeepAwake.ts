@@ -8,9 +8,9 @@ export const useKeepAwake = (shouldKeepAwake: boolean) => {
     const activateKeepAwake = async (keepAwake: boolean) => {
 
         if (keepAwake) {
-        await activateKeepAwakeAsync('coach-timer');
+        await activateKeepAwakeAsync('meeting-timer');
         } else {
-        await deactivateKeepAwake('coach-timer');
+        await deactivateKeepAwake('meeting-timer');
         }
     };
     activateKeepAwake(shouldKeepAwake);

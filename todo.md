@@ -6,6 +6,8 @@
 * Ajouter un timer global et des sous timers
 * Lecture des sons dans la configuration des alertes ?
 * Settings pour savoir combien de bookmark auto on veut garder
+* Ajout dynamique des alertes
+* Alerte après les départ du timer
 
 == Question
 

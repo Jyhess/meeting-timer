@@ -1,8 +1,8 @@
-# CoachTimer
+# Meeting Timer
 
-CoachTimer est une application de minuterie professionnelle conçue pour les coachs, les présentateurs et les formateurs. Elle offre une interface élégante et des fonctionnalités avancées de gestion du temps.
+Meeting Timer est une application de minuterie professionnelle conçue pour les coachs, les présentateurs et les formateurs. Elle offre une interface élégante et des fonctionnalités avancées de gestion du temps.
 
-Cette application est accessible à l'URL https://coach-timer.expo.app/
+Cette application est accessible à l'URL https://meeting-timer.expo.app/
 
 ## À propos
 
@@ -39,12 +39,12 @@ Cette application a été créée par Bolt, une IA développée par StackBlitz, 
 
 1. Clonez le dépôt :
 ```bash
-git clone https://github.com/jyhess/coach-timer.git
+git clone https://github.com/jyhess/meeting-timer.git
 ```
 
 2. Installez les dépendances :
 ```bash
-cd coach-timer
+cd meeting-timer
 npm install
 ```
 
