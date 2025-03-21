@@ -115,7 +115,7 @@ export default function LegalScreen() {
               <Icon name="arrow_back" size={20} color="#aaa" style={{ transform: [{ rotate: '180deg' }] }} />
             </Pressable>
             <Pressable style={styles.linkContainer} onPress={handleLicensePress}>
-              <Text style={styles.linkText}>Plus de détails dans le fichier LICENSE du repository GitHub</Text>
+              <Text style={styles.linkText}>Plus de détails dans le fichier LICENSE.md du repository GitHub</Text>
               <Icon name="arrow_back" size={20} color="#aaa" style={{ transform: [{ rotate: '180deg' }] }} />
             </Pressable>
           </View>

@@ -1,5 +1,7 @@
 # Mentions légales
 
+[English version](legal.en.md)
+
 ## À propos
 
 L'application Meeting Timer est une application dédiée à la gestion du temps durant les réunions et les séances de coaching.
@@ -33,9 +35,14 @@ Cette application est publiée sous licence GLPv3.
 Vous pouvez contribuer au projet à travers son repository GitHub :
 [https://github.com/jyhess/meeting-timer](https://github.com/jyhess/meeting-timer)
 
-Plus de détails dans le fichier [LICENSE](https://github.com/jyhess/meeting-timer/blob/main/LICENSE) du repository GitHub.
+Plus de détails dans le fichier [LICENSE](https://github.com/jyhess/meeting-timer/blob/main/LICENSE.md) du repository GitHub.
+
+### Crédits
+
+- [Gongs icons created by Freepik - Flaticon]("https://www.flaticon.com/free-icons/gongs").
+- Les différents sons viennent de [du catalogue pixabay.com](https://pixabay.com/fr/sound-effects/).
 
 ## Modifications et Mise à Jour
 
 L'éditeur se réserve le droit de modifier ces mentions légales à tout moment,
-notamment en cas d'évolution de l'application ou des obligations légales. 
+notamment en cas d'évolution de l'application ou des obligations légales.
