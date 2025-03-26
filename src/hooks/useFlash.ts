@@ -14,7 +14,7 @@ export const useFlash = () => {
     return () => {
       stopFlash();
     };
-  }, []);
+  });
 
   // Mettre à jour le temps écoulé pour le suivi de la progression
   useEffect(() => {
@@ -37,7 +37,7 @@ export const useFlash = () => {
       }
       setFlashElapsedTime(0);
     }
-  }, [isFlashing, flashStartTime]);
+  }, [isFlashing, flashStartTime, progressTimer]);
 
   const stopFlash = () => {
     if (Platform.OS === 'web') return;

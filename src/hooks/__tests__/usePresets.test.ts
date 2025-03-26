@@ -1,7 +1,5 @@
 import { renderHook } from '@testing-library/react';
 import { usePresets } from '../usePresets';
-import { act } from 'react';
-import { TimerPreset } from '../../types/timer';
 
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
