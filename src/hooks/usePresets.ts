@@ -118,7 +118,7 @@ function updateBookmarkedPresets(bookmarkedPresets: TimerPreset[], newPreset: Ti
     const updatedPreset = {
       ...existingPreset,
       ...newPreset,
-      last_used: new Date().toISOString()
+      ...{ id: existingPreset.id, created_at: existingPreset.created_at }
     };
     const newBookmarkedPresets = bookmarkedPresets.map(p => p.name === newPreset.name ? updatedPreset : p
     );
@@ -136,11 +136,7 @@ function updateAutoPresets(autoPresets: TimerPreset[], newPreset: TimerPreset) {
   if (existingIndex !== -1) {
     newAutoPresets.splice(existingIndex, 1);
   }
-  newAutoPresets = [newPreset, ...newAutoPresets]
-    .sort((a, b) => {
-      return new Date(b.last_used).getTime() - new Date(a.last_used).getTime();
-    })
-    .slice(0, 2); // Garder seulement les 2 derniers presets auto
+  newAutoPresets = [newPreset, ...newAutoPresets].slice(0, 2);
 
   return newAutoPresets;
 }
