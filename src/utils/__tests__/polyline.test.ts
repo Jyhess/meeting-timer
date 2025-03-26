@@ -60,19 +60,26 @@ describe('polylinePath', () => {
       lastBorderPoint,
       { x: 50, y: 50 }
     ]);
+    expect(lastBorderPoint.x).toBeGreaterThan(50);
+    expect(lastBorderPoint.x).toBeLessThan(100);
+    expect(lastBorderPoint.y).toEqual(0);
   });
 
   it('Should properly handle 12.5-25% of progression', () => {
-    const points = polylinePath(size, 0.12);
+    const points = polylinePath(size, 0.14);
     expect(Array.isArray(points)).toBe(true);
     expect(points.length).toBeGreaterThan(3);
     const lastBorderPoint = points[points.length - 2];
     expect(points).toEqual([
       { x: 50, y: 50 },
       { x: 50, y: 0 },
+      { x: 100, y: 0 },
       lastBorderPoint,
       { x: 50, y: 50 }
     ]);
+    expect(lastBorderPoint.x).toEqual(100);
+    expect(lastBorderPoint.y).toBeGreaterThan(0);
+    expect(lastBorderPoint.y).toBeLessThan(50);
   });
 
   it('Should properly handle 25-37.5% of progression', () => {
@@ -87,6 +94,9 @@ describe('polylinePath', () => {
       lastBorderPoint,
       { x: 50, y: 50 }
     ]);
+    expect(lastBorderPoint.x).toEqual(100);
+    expect(lastBorderPoint.y).toBeGreaterThan(50);
+    expect(lastBorderPoint.y).toBeLessThan(100);
   });
 
   it('Should properly handle 37.5-65.5% of progression', () => {
@@ -102,6 +112,9 @@ describe('polylinePath', () => {
       lastBorderPoint,
       { x: 50, y: 50 }
     ]);
+    expect(lastBorderPoint.x).toBeGreaterThan(0);
+    expect(lastBorderPoint.x).toBeLessThan(100);
+    expect(lastBorderPoint.y).toEqual(100);
   });
 
 
@@ -119,6 +132,9 @@ describe('polylinePath', () => {
       lastBorderPoint,
       { x: 50, y: 50 }
     ]);
+    expect(lastBorderPoint.x).toEqual(0);
+    expect(lastBorderPoint.y).toBeGreaterThan(50);
+    expect(lastBorderPoint.y).toBeLessThan(100);
   });
 
   it('Should properly handle 87.5-100% of progression', () => {
@@ -136,6 +152,9 @@ describe('polylinePath', () => {
       lastBorderPoint,
       { x: 50, y: 50 }
     ]);
+    expect(lastBorderPoint.x).toBeGreaterThan(0);
+    expect(lastBorderPoint.x).toBeLessThan(50);
+    expect(lastBorderPoint.y).toEqual(0);
   });
 
 

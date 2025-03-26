@@ -37,10 +37,10 @@ export const polylinePath = (size: Size, percentage: number): Point[] => {
   }
 
   const angle = getAngleFromProgress(percentage);
-  const angle1 = Math.atan2(size.height, size.width);
-  const angle2 = Math.atan2(size.height, -size.width);
-  const angle3 = angle1 + Math.PI;
-  const angle4 = angle2 + Math.PI;
+  const angle1 = Math.atan2(size.height, size.width);  // ]0;PI/2[
+  const angle2 = Math.atan2(size.height, -size.width); // ]PI/2;PI[
+  const angle3 = angle1 + Math.PI; // ]PI;3PI/2[
+  const angle4 = angle2 + Math.PI; // ]3PI/2;2PI[
 
   const center = {x: size.width/2, y: size.height/2};
   let points: Point[] = [
@@ -75,7 +75,7 @@ export const polylinePath = (size: Size, percentage: number): Point[] => {
   }
   else {
     points.push({x: size.width, y: 0});
-    points.push({x: center.x - (size.height/2) / Math.tan(angle), y: size.height});
+    points.push({x: size.width, y: center.y - (size.width/2) * Math.tan(angle)});
   }
   points.push({x: center.x, y: center.y});
   return points;

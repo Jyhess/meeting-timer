@@ -22,19 +22,21 @@ export const TimeInput: React.FC<TimeInputProps> = ({
   const [displayValue, setDisplayValue] = useState(formatTime('', 
     Math.floor(initialSeconds / 3600),
     Math.floor((initialSeconds % 3600) / 60),
-    initialSeconds % 60
+    initialSeconds % 60,
+    true
   ));
 
   useEffect(() => {
     if (initialSeconds === 0) {
       setInputBuffer('');
-      setDisplayValue(formatTime('', 0, 0, 0));
+      setDisplayValue(formatTime('', 0, 0, 0, true));
     }
     else {
       setDisplayValue(formatTime('',
         Math.floor(initialSeconds / 3600),
         Math.floor((initialSeconds % 3600) / 60),
-        initialSeconds % 60
+        initialSeconds % 60,
+        true
       ));
     }
   }, [initialSeconds]);
@@ -44,7 +46,7 @@ export const TimeInput: React.FC<TimeInputProps> = ({
 
     if (newBuffer.length === 0) {
       onTimeChange(0, false);
-      setDisplayValue(formatTime('', 0, 0, 0));
+      setDisplayValue(formatTime('', 0, 0, 0, true));
       return;
     }
 
@@ -53,7 +55,7 @@ export const TimeInput: React.FC<TimeInputProps> = ({
     const mins = parseInt(digits.slice(2, 4).join(''), 10);
     const secs = parseInt(digits.slice(4).join(''), 10);
     const totalSeconds = hours * 3600 + mins * 60 + secs;
-    setDisplayValue(formatTime('', hours, mins, secs));
+    setDisplayValue(formatTime('', hours, mins, secs, true));
 
     const isValidTime = secs < 60 && totalSeconds > 0;
     onTimeChange(totalSeconds, isValidTime);
