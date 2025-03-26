@@ -57,7 +57,8 @@ export default function TimerScreen() {
       actions.stop();
       setAddingTime(false);
     }
-  }, [isFocused]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocused, params.presetId]);
 
   useEffect(() => {
     if (shouldFlash) {

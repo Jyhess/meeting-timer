@@ -192,7 +192,8 @@ export function useTimer() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [state.state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.state, intervalRef]);
 
   useEffect(() => {
     console.log('[useTimer] 🔔 useEffect [state.timeLeft] :', state.timeLeft);
@@ -230,7 +231,8 @@ export function useTimer() {
     if (state.state === 'running') {
       checkAlerts();
     }
-  }, [state.timeLeft]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.timeLeft, state.state]);
 
   useEffect(() => {
     console.log('[useTimer] 🔔 useEffect [flash & vibration] :', shouldFlash, isVibrating);
@@ -249,7 +251,7 @@ export function useTimer() {
         alertTimerRef.current = null;
       }
     };
-  }, [shouldFlash, isVibrating]);
+  }, [shouldFlash, isVibrating, state.effectDuration]);
 
   const stopAlerts = useCallback(() => {
     console.log('[useTimer] 🔔 stopAlerts');
@@ -260,11 +262,11 @@ export function useTimer() {
     startedAlerts.current.clear();
   }, [stopAudioSound]);
 
-  const savePreset = async (name?: string, color?: string) => {
+  const savePreset = useCallback(async (name?: string, color?: string) => {
     console.log('[useTimer] 💾 Sauvegarde du preset');
     await presets.createOrUpdatePreset(state.duration, [state.beforeAlert, state.endAlert, state.afterAlert], name, color);
     dispatch({ type: 'BOOKMARK_PRESET', payload: { name: name || state.presetName, color: color || state.presetColor } });
-  };
+  }, [state.duration, state.beforeAlert, state.endAlert, state.afterAlert, state.presetName, state.presetColor, presets]);
 
   const actions = {
     setDuration: useCallback((duration: number) => {
@@ -283,24 +285,24 @@ export function useTimer() {
     pause: useCallback(() => {
       console.log('[useTimer] 🔔 actions [pause] :', state.state);
       dispatch({ type: 'PAUSE' });
-    }, []),
+    }, [state.state]),
 
     resume: useCallback(() => {
       console.log('[useTimer] 🔔 actions [resume] :', state.state);
       dispatch({ type: 'RESUME' });
-    }, []),
+    }, [state.state]),
 
     stop: useCallback(() => {
       console.log('[useTimer] 🔔 actions [stop] :', state.state);
       dispatch({ type: 'STOP' });
-    }, []),
+    }, [state.state]),
 
     reset: useCallback(() => {
       console.log('[useTimer] 🔔 actions [reset] :', state.state);
       dispatch({ type: 'RESET' });
       stopAlerts();
       startedAlerts.current.clear();
-    }, [stopAlerts]),
+    }, [state.state, stopAlerts]),
 
     resetFromDefault: useCallback(() => {
       console.log('[useTimer] 🔔 actions [resetFromDefault] :', state.state);
@@ -316,7 +318,7 @@ export function useTimer() {
         presetName: '',
         presetColor: '',
       }});
-    }, [settings.defaultAlerts, settings.defaultAlertDuration]),
+    }, [state.state, settings.defaultAlerts, settings.defaultAlertDuration]),
   
     loadPreset: useCallback((presetId: string) => {
       console.log('[useTimer] 🔔 actions [loadPreset] :', presetId);

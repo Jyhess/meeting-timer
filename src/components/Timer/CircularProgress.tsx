@@ -76,6 +76,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
         progressNegative.value = getAnimetedValue(remaining, progressNegative.value);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, duration, isRunning]);
 
   useEffect(() => {
@@ -96,6 +97,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
     else {
         clearInterval(animationRef.current);
       }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, size]);
 
 

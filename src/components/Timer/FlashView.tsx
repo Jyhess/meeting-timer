@@ -32,7 +32,7 @@ export const FlashView = forwardRef<FlashViewRef, unknown>((_, ref) => {
     return () => {
       stopFlashAnimation();
     };
-  }, []);
+  });
 
   const startFlashAnimation = () => {
     // Arrêter toute animation précédente
@@ -72,5 +72,8 @@ export const FlashView = forwardRef<FlashViewRef, unknown>((_, ref) => {
 
   return <Animated.View style={animatedFlashStyle} />;
 });
+
+FlashView.displayName = 'FlashView';
+
 export default FlashView;
 

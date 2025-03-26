@@ -37,6 +37,7 @@ export const ToggleSlider = ({ value, onToggle }: ToggleSliderProps) => {
 
   useEffect(() => {
     translateX.value = withTiming(value ? 28 : 0, { duration: theme.animations.duration.short });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const sliderStyle = useAnimatedStyle(() => ({
