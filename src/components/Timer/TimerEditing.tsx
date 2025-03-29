@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Pressable } from 'react-native';
-import { Icon } from './Icon';
+import { View } from 'react-native';
 import { Alert } from '../../../src/types/alerts';
 import { styles } from '../../../src/styles/TimerEditing.styles';
 import { theme } from '../../../src/theme';
@@ -8,6 +7,7 @@ import { TimeInput } from './TimeInput';
 import { SavePresetDialog } from './SavePresetDialog';
 import { formatTimeFromSeconds } from '@/src/utils/time';
 import { AlertsSection } from './AlertsSection';
+import { ControlButton } from './ControlButton';
 
 interface TimerEditingProps {
   duration: number;
@@ -74,48 +74,38 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
               />
           </View>
           <View style={styles.controlsContainer}>
-            <Pressable 
-              style={[
-                styles.controlButton,
-                !isValidTime && styles.controlButtonDisabled
-              ]} 
-              onPress={handleSavePress}
-              disabled={!isValidTime}
-            >
-              <Icon 
-                name="bookmark" 
-                size={theme.layout.iconSize} 
+            <View style={styles.controlsButtonsContainer}>
+              <ControlButton
+                icon="bookmark"
+                onPress={handleSavePress}
+                disabled={!isValidTime}
                 color={isValidTime ? theme.colors.primary : theme.colors.black}
               />
-            </Pressable>
-            <Pressable style={styles.controlButton} onPress={handleReset}>
-              <Icon name="restart" size={theme.layout.iconSize} color={theme.colors.danger} />
-            </Pressable>
-            <Pressable 
-              style={[
-                styles.controlButton,
-                !isValidTime && styles.controlButtonDisabled
-              ]} 
-              onPress={() => actions.start()}
-              disabled={!isValidTime}
-            >
-              <Icon 
-                name="play_arrow" 
-                size={theme.layout.iconSize} 
+              <ControlButton
+                icon="restart"
+                onPress={handleReset}
+                color={theme.colors.danger}
+              />
+              <ControlButton
+                icon="play_arrow"
+                onPress={() => actions.start()}
+                disabled={!isValidTime}
                 color={isValidTime ? theme.colors.primary : theme.colors.black}
               />
-            </Pressable>
+            </View>
           </View>
         </View>
-        <AlertsSection
-          beforeAlert={beforeAlert}
-          endAlert={endAlert}
-          afterAlert={afterAlert}
-          isRunning={isRunning}
-          timeLeft={timeLeft}
-          actions={actions}
-        />
-      <View>
+        <View style={styles.alertsContainer}>
+          <AlertsSection
+            beforeAlert={beforeAlert}
+            endAlert={endAlert}
+            afterAlert={afterAlert}
+            isRunning={isRunning}
+            timeLeft={timeLeft}
+            actions={actions}
+          />
+        </View>
+        <View>
         <SavePresetDialog
           isVisible={saveDialogVisible}
           defaultName={presetName || `Timer ${formatTimeFromSeconds(duration)}`}

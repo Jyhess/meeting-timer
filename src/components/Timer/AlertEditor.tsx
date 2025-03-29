@@ -102,12 +102,14 @@ export const AlertEditor = ({
                     : 'Alerte à la fin'}</Text>
 
             {alert.id !== 'end' && (
+              <View style={styles.timeInputContainer}>
                 <TimeInput
                   initialSeconds={editedAlert.timeOffset}
                   onTimeChange={handleTimeChange}
                   timeColor={isValidTime ? theme.colors.white : theme.colors.error}
                   prefix={alert.id === 'before' ? '-' : '+'}
-                />
+                  />
+              </View>
             )}
 
             <View style={styles.modalSection}>

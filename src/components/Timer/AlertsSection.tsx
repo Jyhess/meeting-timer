@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { AlertIcon } from './AlertIcon';
 import { AlertEditor } from './AlertEditor';
 import { Alert } from '../../types/alerts';
-import { styles } from '../../styles/AlertsSection.styles';
 import { theme } from '../../theme';
 
 interface AlertsSectionProps {
@@ -76,4 +75,12 @@ export const AlertsSection: React.FC<AlertsSectionProps> = ({
       )}
     </>
   );
-}; 
+};
+
+const styles = StyleSheet.create({
+  alertsContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+});

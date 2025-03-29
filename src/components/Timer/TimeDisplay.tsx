@@ -16,9 +16,11 @@ export const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
   return (
     <View style={styles.container}>
-      {prefix?.trim() !== '' && <Text style={[styles.prefix, { color: timeColor }]}>{prefix}</Text>}
-      <Text style={[styles.time, { color: timeColor }]}>{timeBuffer}</Text>
-      {prefix?.trim() !== '' && <Text style={[styles.prefix, { color: 'transparent' }]}>{prefix}</Text>}
+      <View style={styles.itemsContainer}>
+        <Text style={[styles.prefix, { color: timeColor }]}>{prefix || ''}</Text>
+        <Text style={[styles.time, { color: timeColor }]}>{timeBuffer}</Text>
+        <Text style={[styles.prefix, { color: 'transparent' }]}>{prefix || ''}</Text>
+      </View>
     </View>
   );
 };
@@ -29,6 +31,11 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  itemsContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   time: {
     fontSize: theme.typography.fontSize.timer,
