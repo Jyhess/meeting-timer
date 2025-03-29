@@ -40,29 +40,6 @@ export const styles = StyleSheet.create({
     color: theme.colors.white,
     marginBottom: theme.spacing.small,
   },
-  sectionDescription: {
-    fontSize: 12,
-    color: '#888',
-    marginBottom: 10,
-    fontStyle: 'italic',
-  },
-  timeOffsetControl: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  timeButton: {
-    backgroundColor: '#333',
-    borderRadius: 8,
-    padding: 8,
-  },
-  timeOffsetText: {
-    fontSize: 20,
-    color: '#fff',
-    minWidth: 30,
-    textAlign: 'center',
-  },
   optionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -89,10 +66,6 @@ export const styles = StyleSheet.create({
   effectNote: {
     fontSize: 12,
     color: '#999',
-  },
-  effectIconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -123,27 +96,6 @@ export const styles = StyleSheet.create({
   },
   modalButtonTextDisabled: {
     color: theme.colors.gray.light,
-  },
-  stopSoundButton: {
-    backgroundColor: '#333',
-    borderRadius: 8,
-    padding: 8,
-  },
-  playButton: {
-    marginTop: 5,
-    padding: 5,
-  },
-  infoMessage: {
-    width: '100%',
-    padding: 10,
-    backgroundColor: 'rgba(255, 152, 0, 0.2)',
-    borderRadius: 8,
-    marginTop: 8,
-  },
-  infoMessageText: {
-    color: '#FF9800',
-    fontSize: 12,
-    textAlign: 'center',
   },
   noSoundsText: {
     fontSize: theme.typography.fontSize.small,

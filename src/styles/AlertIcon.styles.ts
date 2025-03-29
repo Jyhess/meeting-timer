@@ -34,31 +34,10 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.5,
   },
-  alertTimeActive: {
-    color: theme.colors.white,
-    fontWeight: theme.typography.fontWeight.bold,
-  },
-  alertTimeDisabled: {
-    color: theme.colors.gray.dark,
-  },
   sliderContainer: {
     width: 50,
     alignItems: 'center',
     marginTop: theme.spacing.xs,
-  },
-  stopSoundButtonContainer: {
-    position: 'absolute',
-    top: -12,
-    right: 0,
-    zIndex: 1,
-  },
-  stopSoundButton: {
-    width: 24,
-    height: 24,
-    borderRadius: theme.borders.radius.round,
-    backgroundColor: theme.colors.danger,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   effectIconsContainer: {
     flexDirection: 'row',
