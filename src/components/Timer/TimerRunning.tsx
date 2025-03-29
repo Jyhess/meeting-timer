@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Pressable } from 'react-native';
-import { Icon } from './Icon';
+import { View } from 'react-native';
 import { Alert } from '../../../src/types/alerts';
 import { styles } from '../../styles/TimerRunning.styles';
 import { theme } from '../../../src/theme';
 import { TimeInput } from './TimeInput';
-import { TimerOutput } from './TimerOutput';
+import { TimeDisplay } from './TimeDisplay';
 import { FlashView, FlashViewRef } from './FlashView';
 import { CircularProgress } from '@/src/components/Timer/CircularProgress';
 import { AlertsSection } from './AlertsSection';
+import { ControlButton } from './ControlButton';
+import { formatTimeFromSeconds } from '@/src/utils/time';
 
 interface TimerRunningProps {
   duration: number;
@@ -88,6 +89,16 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
     setAddingTime(false);
   };
 
+  const getTimeColor = () => {
+    if (timeLeft < 0) {
+      return theme.colors.error;
+    }
+    if (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) {
+      return theme.colors.secondary;
+    }
+    return theme.colors.white;
+  };
+
   return (
     <View style={styles.timerRunningContainer}>
       <CircularProgress 
@@ -102,31 +113,43 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
 
       <View style={styles.timerRunningAndControlsContainer}>
         <View style={styles.timerContainer}>
-          <TimerOutput
-            timeLeft={timeLeft}
-            beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+          <TimeDisplay
+            timeBuffer={formatTimeFromSeconds(timeLeft)}
+            timeColor={getTimeColor()}
             />
+          </View>
 
           <View style={styles.controlsContainer}>
-              <Pressable style={styles.controlButton} onPress={state === 'paused' ? actions.resume : actions.pause}>
-                <Icon 
-                    name={state === 'paused' ? "play_arrow" : "pause"} 
-                    size={theme.layout.iconSize} 
-                    color={theme.colors.secondary}
+            <View style={styles.controlsButtonsContainer}>
+              {state === 'paused' ? (
+                <ControlButton
+                  icon="play_arrow"
+                  onPress={() => actions.resume()}
+                  color={theme.colors.secondary}
                 />
-              </Pressable>
-              <Pressable style={styles.controlButton} onPress={handleStop}>
-                <Icon name="stop" size={theme.layout.iconSize} color={theme.colors.danger} />
-              </Pressable>
-              <Pressable style={styles.controlButton} onPress={handleReset}>
-                <Icon name="restart" size={theme.layout.iconSize} color={theme.colors.primary} />
-              </Pressable>
-              <Pressable 
-                  style={[styles.controlButton, addingTime && styles.controlButtonDisabled]} 
-                  onPress={() => setAddingTime(true)}
-              >
-                  <Icon name="add" size={theme.layout.iconSize} color={theme.colors.primary} />
-              </Pressable>
+              ) : (
+                <ControlButton
+                  icon="pause"
+                  onPress={() => actions.pause()}
+                  color={theme.colors.secondary}
+                />
+              )}
+              <ControlButton
+                icon="stop"
+                onPress={() => handleStop()}
+                color={theme.colors.danger}
+              />
+              <ControlButton
+                icon="restart"
+                onPress={() => handleReset()}
+                color={theme.colors.danger}
+              />
+              <ControlButton
+                icon="add"
+                onPress={() => setAddingTime(true)}
+                color={theme.colors.primary}
+                disabled={addingTime}
+              />
           </View>
         </View>
         {addingTime && (
@@ -137,23 +160,20 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
               timeColor={theme.colors.white}
               prefix="+"
             />
-            <View style={styles.controlsContainer}>
-              <Pressable
-                style={styles.controlButton}
-                onPress={handleAddTimeClose}
-              >
-                <Icon name="close" size={theme.layout.iconSize} color={theme.colors.danger} />
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.controlButton,
-                  !addTimeValue.isValid && styles.controlButtonDisabled
-                ]}
-                onPress={handleAddTime}
-                disabled={!addTimeValue.isValid}
-              >
-                <Icon name="check" size={theme.layout.iconSize} color={theme.colors.primary} />
-              </Pressable>
+            <View style={styles.addTimeControlsContainer}>
+              <View style={styles.controlsButtonsContainer}>
+                <ControlButton
+                  icon="close"
+                  onPress={handleAddTimeClose}
+                  color={theme.colors.danger}
+                />
+                <ControlButton
+                  icon="check"
+                  onPress={handleAddTime}
+                  disabled={!addTimeValue.isValid}
+                  color={theme.colors.primary}
+                />
+              </View>
             </View>
           </View>
         )}
@@ -169,14 +189,15 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
         )}
       </View>
         {hasActiveAlert && (
-          <Pressable 
-            style={[styles.controlButton, styles.alertStopButton, {zIndex: 3}]} 
+          <ControlButton 
+            icon="volume_off"
             onPress={() => {
               actions.stopAlerts();
             }}
-          >
-            <Icon name="volume_off" size={32} color={theme.colors.danger} />
-          </Pressable>
+            color={theme.colors.danger}
+            size={32}
+            style={{...styles.alertStopButton, zIndex: 3}}
+          />
         )}
     </View>
   );

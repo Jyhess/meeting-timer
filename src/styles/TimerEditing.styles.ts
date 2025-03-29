@@ -30,23 +30,18 @@ export const styles = StyleSheet.create({
     controlsContainer: {
         width: '100%',
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-        gap: theme.spacing.large,
-        padding: theme.spacing.medium,
+        marginBottom: theme.spacing.medium,
+        backgroundColor: theme.colors.background.tertiary,
+        borderRadius: theme.borders.radius.large,
     },
-    controlButton: {
-        aspectRatio: 1,
-        height: '100%',
-        maxWidth: '100%',
-        maxHeight: theme.layout.maxButtonSize,
-        padding: theme.spacing.small,
-        borderRadius: theme.borders.radius.medium,
-        backgroundColor: theme.colors.gray.light,
+    controlsButtonsContainer: {
+        width: '100%',
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
     },
-    controlButtonDisabled: {
-        opacity: theme.effects.opacity.disabled,
-    },    
+    alertsContainer: {
+        width: '100%',
+        flexDirection: 'row',
+    },
 });

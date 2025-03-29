@@ -79,6 +79,7 @@ export const layout = {
   iconSize: 40,
   minWidth: 350,
   maxTimerHeight: 520,
+  maxTimeInputHeight: 420,
 } as const;
 
 // Animations

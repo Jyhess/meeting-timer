@@ -27,24 +27,16 @@ export const styles = StyleSheet.create({
     controlsContainer: {
         width: '100%',
         flexDirection: 'row',
+        marginBottom: theme.spacing.medium,
+        backgroundColor: theme.colors.background.tertiary,
+        borderRadius: theme.borders.radius.large,
+    },
+    controlsButtonsContainer: {
+        width: '100%',
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-evenly',
-        gap: theme.spacing.large,
+        justifyContent: 'space-around',
         padding: theme.spacing.medium,
-    },
-    controlButton: {
-        aspectRatio: 1,
-        height: '100%',
-        maxWidth: '100%',
-        maxHeight: theme.layout.maxButtonSize,
-        padding: theme.spacing.small,
-        borderRadius: theme.borders.radius.medium,
-        backgroundColor: theme.colors.gray.light,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    controlButtonDisabled: {
-        opacity: theme.effects.opacity.disabled,
     },
     alertStopButton: {
         position: 'absolute',
@@ -60,13 +52,16 @@ export const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     addTimeContainer: {
+        flex: 1,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: theme.colors.background.tertiary,
         borderRadius: theme.borders.radius.large,
-        marginBottom: theme.spacing.small,
-        flex: 1,
         maxHeight: theme.layout.maxTimerHeight,
+    },
+    addTimeControlsContainer: {
+        width: '100%',
+        flexDirection: 'row',
     },
 });

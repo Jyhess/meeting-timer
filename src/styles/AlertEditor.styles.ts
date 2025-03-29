@@ -25,6 +25,13 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
+  timeInputContainer: {
+    flex: 1,
+    width: '100%',
+    height: theme.layout.maxTimeInputHeight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   modalSection: {
     marginBottom: 24,
   },
