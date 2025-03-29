@@ -30,35 +30,6 @@ export const styles = StyleSheet.create({
     marginBottom: theme.spacing.medium,
     minWidth: 350,
   },
-  timeDisplayContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: theme.spacing.large,
-  },
-  timeDisplay: {
-    alignItems: 'center',
-  },
-  timeText: {
-    fontSize: theme.typography.fontSize.timer,
-    fontWeight: theme.typography.fontWeight.bold,
-    fontFamily: Platform.OS === 'web' ? 'monospace' : undefined,
-  },
-  inputModeText: {
-    fontSize: theme.typography.fontSize.small,
-    color: theme.colors.gray.light,
-    marginTop: theme.spacing.xs,
-  },
-  stopSoundButton: {
-    position: 'absolute',
-    right: 0,
-    width: 40,
-    height: 40,
-    borderRadius: theme.borders.radius.round,
-    backgroundColor: theme.colors.danger,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   keypad: {
     marginBottom: theme.spacing.small,
   },
@@ -98,20 +69,6 @@ export const styles = StyleSheet.create({
   },
   controlButtonDisabled: {
     opacity: theme.effects.opacity.disabled,
-  },
-  startButton: {
-    backgroundColor: theme.colors.primary,
-  },
-  stopButton: {
-    backgroundColor: theme.colors.danger,
-  },
-  pauseButton: {
-    backgroundColor: theme.colors.secondary,
-  },
-  alertsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: theme.spacing.large,
   },
   alertStopButton: {
     position: 'absolute',

@@ -9,9 +9,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.primary,
   },
-  container: {
-    flex: 1,
-  },
   header: {
     padding: 20,
     flexDirection: 'row',
@@ -29,40 +26,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  newButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 25,
-    gap: 8,
-  },
-  newButtonText: {
-    color: theme.colors.white,
-    fontSize: theme.typography.fontSize.medium,
-    fontWeight: theme.typography.fontWeight.bold,
-  },
   presetList: {
     flex: 1,
-  },
-  emptyState: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 40,
-  },
-  emptyStateText: {
-    color: theme.colors.disabled,
-    fontSize: theme.typography.fontSize.large,
-    fontWeight: theme.typography.fontWeight.bold,
-    marginTop: theme.spacing.medium,
-  },
-  emptyStateSubtext: {
-    color: theme.colors.disabled,
-    fontSize: theme.typography.fontSize.medium,
-    textAlign: 'center',
-    marginTop: theme.spacing.small,
   },
   grid: {
     flex: 1,
@@ -77,12 +42,5 @@ export const styles = StyleSheet.create({
     width: '48%',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  alertIcons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  alertIcon: {
-    opacity: 0.6,
   },
 });
