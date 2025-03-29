@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { styles } from '../../styles/Timer.styles';
+import { styles } from '../../styles/Keypad.styles';
 import { Icon } from './Icon';
 import { theme } from '../../theme';
 
@@ -25,7 +25,7 @@ export const Keypad: React.FC<KeypadProps> = ({
   );
 
   return (
-    <View style={styles.keypad}>
+    <View style={styles.keypadContainer}>
       <View style={styles.keypadRow}>
         {renderKeypadButton(1)}
         {renderKeypadButton(2)}
@@ -46,7 +46,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           style={styles.keypadButton}
           onPress={onBackspace}
         >
-          <Icon name="backspace" size={24} color={theme.colors.danger} />
+          <Icon name="backspace" size={theme.layout.iconSize} color={theme.colors.danger} />
         </Pressable>
         {renderKeypadButton(0)}
         <Pressable

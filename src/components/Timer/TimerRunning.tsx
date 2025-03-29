@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Pressable } from 'react-native';
 import { Icon } from './Icon';
 import { Alert } from '../../../src/types/alerts';
-import { styles } from '../../../src/styles/Timer.styles';
+import { styles } from '../../styles/TimerRunning.styles';
 import { theme } from '../../../src/theme';
 import { TimeInput } from './TimeInput';
 import { TimerOutput } from './TimerOutput';
@@ -98,49 +98,35 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
           afterAlertOffset={afterAlert.enabled ? afterAlert.timeOffset : undefined}
         />
 
-      <FlashView 
-        ref={flashViewRef}
-      />
+      <FlashView ref={flashViewRef} />
 
-      <View style={styles.timerContainer}>
-        <View style={styles.timerAndControlsContainer}>
+      <View style={styles.timerRunningAndControlsContainer}>
+        <View style={styles.timerContainer}>
           <TimerOutput
-          timeLeft={timeLeft}
-          beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-          />
-          {hasActiveAlert && (
-            <Pressable 
-              style={[styles.controlButton, styles.alertStopButton]} 
-              onPress={() => {
-                actions.stopAlerts();
-              }}
-            >
-              <Icon name="volume_off" size={32} color={theme.colors.danger} />
-            </Pressable>
-          )}
+            timeLeft={timeLeft}
+            beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+            />
 
           <View style={styles.controlsContainer}>
               <Pressable style={styles.controlButton} onPress={state === 'paused' ? actions.resume : actions.pause}>
                 <Icon 
                     name={state === 'paused' ? "play_arrow" : "pause"} 
-                    size={40} 
+                    size={theme.layout.iconSize} 
                     color={theme.colors.secondary}
                 />
               </Pressable>
               <Pressable style={styles.controlButton} onPress={handleStop}>
-                <Icon name="stop" size={40} color={theme.colors.danger} />
+                <Icon name="stop" size={theme.layout.iconSize} color={theme.colors.danger} />
               </Pressable>
               <Pressable style={styles.controlButton} onPress={handleReset}>
-                <Icon name="restart" size={40} color={theme.colors.primary} />
+                <Icon name="restart" size={theme.layout.iconSize} color={theme.colors.primary} />
               </Pressable>
-              {!addingTime && (
-                  <Pressable 
-                      style={styles.controlButton} 
-                      onPress={() => setAddingTime(true)}
-                  >
-                      <Icon name="add" size={40} color={theme.colors.primary} />
-                  </Pressable>
-              )}
+              <Pressable 
+                  style={[styles.controlButton, addingTime && styles.controlButtonDisabled]} 
+                  onPress={() => setAddingTime(true)}
+              >
+                  <Icon name="add" size={theme.layout.iconSize} color={theme.colors.primary} />
+              </Pressable>
           </View>
         </View>
         {addingTime && (
@@ -156,7 +142,7 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
                 style={styles.controlButton}
                 onPress={handleAddTimeClose}
               >
-                <Icon name="close" size={32} color={theme.colors.danger} />
+                <Icon name="close" size={theme.layout.iconSize} color={theme.colors.danger} />
               </Pressable>
               <Pressable
                 style={[
@@ -166,12 +152,13 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
                 onPress={handleAddTime}
                 disabled={!addTimeValue.isValid}
               >
-                <Icon name="check" size={32} color={theme.colors.primary} />
+                <Icon name="check" size={theme.layout.iconSize} color={theme.colors.primary} />
               </Pressable>
             </View>
           </View>
         )}
-        <AlertsSection
+        {!addingTime && (
+          <AlertsSection
             beforeAlert={beforeAlert}
             endAlert={endAlert}
             afterAlert={afterAlert}
@@ -179,8 +166,18 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
             timeLeft={timeLeft}
             actions={actions}
           />
-
+        )}
       </View>
+        {hasActiveAlert && (
+          <Pressable 
+            style={[styles.controlButton, styles.alertStopButton, {zIndex: 3}]} 
+            onPress={() => {
+              actions.stopAlerts();
+            }}
+          >
+            <Icon name="volume_off" size={32} color={theme.colors.danger} />
+          </Pressable>
+        )}
     </View>
   );
 }

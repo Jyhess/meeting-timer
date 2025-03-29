@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { styles } from '../../styles/TimeDisplay.styles';
+import { View, Text, StyleSheet } from 'react-native';
+import { theme } from '../../theme';
 
 interface TimeDisplayProps {
   timeBuffer: string;
@@ -22,3 +22,23 @@ export const TimeDisplay: React.FC<TimeDisplayProps> = ({
     </View>
   );
 };
+
+export const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  time: {
+    fontSize: theme.typography.fontSize.timer,
+    fontWeight: theme.typography.fontWeight.bold,
+    textAlign: 'center',
+  },
+  prefix: {
+    fontSize: theme.typography.fontSize.timer,
+    fontWeight: theme.typography.fontWeight.bold,
+    textAlign: 'right',
+    minWidth: 40,
+  },
+});

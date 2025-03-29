@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { TimeDisplay } from './TimeDisplay';
 import { Keypad } from './Keypad';
 import { theme } from '@/src/theme';
@@ -92,7 +92,7 @@ export const TimeInput: React.FC<TimeInputProps> = ({
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <TimeDisplay
         timeBuffer={displayValue}
         timeColor={timeColor}
@@ -105,4 +105,14 @@ export const TimeInput: React.FC<TimeInputProps> = ({
       />
     </View>
   );
-}; 
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+});
