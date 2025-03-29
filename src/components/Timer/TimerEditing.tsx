@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Pressable } from 'react-native';
 import { Icon } from './Icon';
 import { Alert } from '../../../src/types/alerts';
-import { styles } from '../../../src/styles/Timer.styles';
+import { styles } from '../../../src/styles/TimerEditing.styles';
 import { theme } from '../../../src/theme';
 import { TimeInput } from './TimeInput';
 import { SavePresetDialog } from './SavePresetDialog';
@@ -64,15 +64,15 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
   };
 
   return (       
-    <View>
-      <View style={styles.timerContainer}>
-        <View style={styles.timerAndControlsContainer}>
-          <TimeInput
-            initialSeconds={timeLeft}
-            onTimeChange={handleDurationChange}
-            timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
-          />
-
+    <View style={styles.timerEditingContainer}>
+        <View style={styles.timerInputAndControlsContainer}>
+          <View style={styles.timerInputContainer}>
+              <TimeInput
+                  initialSeconds={timeLeft}
+                  onTimeChange={handleDurationChange}
+                  timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
+              />
+          </View>
           <View style={styles.controlsContainer}>
             <Pressable 
               style={[
@@ -84,12 +84,12 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
             >
               <Icon 
                 name="bookmark" 
-                size={40} 
+                size={theme.layout.iconSize} 
                 color={isValidTime ? theme.colors.primary : theme.colors.black}
               />
             </Pressable>
             <Pressable style={styles.controlButton} onPress={handleReset}>
-              <Icon name="restart" size={40} color={theme.colors.danger} />
+              <Icon name="restart" size={theme.layout.iconSize} color={theme.colors.danger} />
             </Pressable>
             <Pressable 
               style={[
@@ -101,7 +101,7 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
             >
               <Icon 
                 name="play_arrow" 
-                size={40} 
+                size={theme.layout.iconSize} 
                 color={isValidTime ? theme.colors.primary : theme.colors.black}
               />
             </Pressable>
@@ -115,7 +115,6 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
           timeLeft={timeLeft}
           actions={actions}
         />
-      </View>
       <View>
         <SavePresetDialog
           isVisible={saveDialogVisible}

@@ -75,13 +75,10 @@ export const effects = {
 
 // Layout
 export const layout = {
-  keypad: {
-    buttonSize: 70,
-    gap: 16,
-  },
-  controls: {
-    buttonSize: 64,
-  },
+  maxButtonSize: 70,
+  iconSize: 40,
+  minWidth: 350,
+  maxTimerHeight: 520,
 } as const;
 
 // Animations

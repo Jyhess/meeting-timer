@@ -1,0 +1,72 @@
+import { StyleSheet } from 'react-native';
+import { theme } from '../theme';
+
+export const styles = StyleSheet.create({
+    timerRunningContainer: {
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    timerRunningAndControlsContainer: {
+        minWidth: theme.layout.minWidth,
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: theme.spacing.large,
+        flex: 1,
+        zIndex: 2,
+    },
+    timerContainer: {
+        width: '100%',
+        marginBottom: theme.spacing.medium,
+        backgroundColor: theme.colors.background.tertiary,
+        borderRadius: theme.borders.radius.large,
+        overflow: 'hidden',
+    },
+    controlsContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        gap: theme.spacing.large,
+        padding: theme.spacing.medium,
+    },
+    controlButton: {
+        aspectRatio: 1,
+        height: '100%',
+        maxWidth: '100%',
+        maxHeight: theme.layout.maxButtonSize,
+        padding: theme.spacing.small,
+        borderRadius: theme.borders.radius.medium,
+        backgroundColor: theme.colors.gray.light,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    controlButtonDisabled: {
+        opacity: theme.effects.opacity.disabled,
+    },
+    alertStopButton: {
+        position: 'absolute',
+        right: 8,
+        top: 8,
+        backgroundColor: theme.colors.gray.medium,
+        borderRadius: 24,
+        padding: 8,
+        elevation: 4,
+        shadowColor: theme.colors.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+    },
+    addTimeContainer: {
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.background.tertiary,
+        borderRadius: theme.borders.radius.large,
+        marginBottom: theme.spacing.small,
+        flex: 1,
+        maxHeight: theme.layout.maxTimerHeight,
+    },
+});

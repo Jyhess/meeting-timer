@@ -11,6 +11,7 @@ import { TimerEditing } from '../../src/components/Timer/TimerEditing';
 
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string }>();
+  const isFocused = useIsFocused();
 
   const {
     duration,
@@ -27,8 +28,6 @@ export default function TimerScreen() {
     shouldFlash,
     hasActiveAlert,
   } = useTimer();
-
-  const isFocused = useIsFocused();
 
   useEffect(() => {
     console.log('[TimerScreen] 🔔 useEffect [isFocused] :', isFocused);
