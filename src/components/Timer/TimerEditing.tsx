@@ -1,0 +1,131 @@
+import React, { useState } from 'react';
+import { View, Pressable } from 'react-native';
+import { Icon } from './Icon';
+import { Alert } from '../../../src/types/alerts';
+import { styles } from '../../../src/styles/Timer.styles';
+import { theme } from '../../../src/theme';
+import { TimeInput } from './TimeInput';
+import { SavePresetDialog } from './SavePresetDialog';
+import { formatTimeFromSeconds } from '@/src/utils/time';
+import { AlertsSection } from './AlertsSection';
+
+interface TimerEditingProps {
+  duration: number;
+  timeLeft: number;
+  isRunning: boolean;
+  state: 'idle' | 'running' | 'paused';
+  beforeAlert: Alert;
+  endAlert: Alert;
+  afterAlert: Alert;
+  effectDuration: number;
+  presetName: string;
+  presetColor: string;
+  shouldFlash: boolean;
+  hasActiveAlert: boolean;
+  actions: any,
+}
+
+export const TimerEditing: React.FC<TimerEditingProps> = ({
+    duration,
+    timeLeft,
+    isRunning,
+    beforeAlert,
+    endAlert,
+    afterAlert,
+    presetName,
+    presetColor,
+    actions,
+}) => {
+  const [saveDialogVisible, setSaveDialogVisible] = useState(false);
+  const [validInput, setValidInput] = useState(true);
+  const isValidTime = validInput && timeLeft > 0 && (!beforeAlert.enabled || timeLeft > beforeAlert.timeOffset);
+
+  const handleReset = () => {
+    actions.resetFromDefault();
+  };
+
+  const handleDurationChange = (duration: number, isValidTime: boolean) => {
+    setValidInput(isValidTime);
+    if (isValidTime) {
+      actions.setDuration(duration);
+    }
+  };
+
+  const handleSavePress = () => {
+    console.log('[TimerEditing] 🔔 handleSavePress :', duration);
+    if (duration > 0) {
+      setSaveDialogVisible(true);
+    }
+  };
+
+  const handleSave = async (name: string, color: string) => {
+    actions.savePreset(name, color);
+    setSaveDialogVisible(false);
+  };
+
+  return (       
+    <View>
+      <View style={styles.timerContainer}>
+        <View style={styles.timerAndControlsContainer}>
+          <TimeInput
+            initialSeconds={timeLeft}
+            onTimeChange={handleDurationChange}
+            timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
+          />
+
+          <View style={styles.controlsContainer}>
+            <Pressable 
+              style={[
+                styles.controlButton,
+                !isValidTime && styles.controlButtonDisabled
+              ]} 
+              onPress={handleSavePress}
+              disabled={!isValidTime}
+            >
+              <Icon 
+                name="bookmark" 
+                size={40} 
+                color={isValidTime ? theme.colors.primary : theme.colors.black}
+              />
+            </Pressable>
+            <Pressable style={styles.controlButton} onPress={handleReset}>
+              <Icon name="restart" size={40} color={theme.colors.danger} />
+            </Pressable>
+            <Pressable 
+              style={[
+                styles.controlButton,
+                !isValidTime && styles.controlButtonDisabled
+              ]} 
+              onPress={() => actions.start()}
+              disabled={!isValidTime}
+            >
+              <Icon 
+                name="play_arrow" 
+                size={40} 
+                color={isValidTime ? theme.colors.primary : theme.colors.black}
+              />
+            </Pressable>
+          </View>
+        </View>
+        <AlertsSection
+          beforeAlert={beforeAlert}
+          endAlert={endAlert}
+          afterAlert={afterAlert}
+          isRunning={isRunning}
+          timeLeft={timeLeft}
+          actions={actions}
+        />
+      </View>
+      <View>
+        <SavePresetDialog
+          isVisible={saveDialogVisible}
+          defaultName={presetName || `Timer ${formatTimeFromSeconds(duration)}`}
+          defaultColor={presetColor}
+          onClose={() => setSaveDialogVisible(false)}
+          onSave={handleSave}
+        />
+      </View>
+    </View>
+  );
+}
+

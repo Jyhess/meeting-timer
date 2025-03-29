@@ -12,7 +12,7 @@ import { usePresets } from '../../src/hooks/usePresets';
 import { Icon } from '../../src/components/Timer/Icon';
 import { PresetCard } from '../../src/components/Timer/PresetCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from '../../src/styles/Home.styles';
+import { styles } from '../../src/styles/Presets.styles';
 import { theme } from '@/src/theme';
 import { TimerPreset } from '../../src/types/timer';
 import { SavePresetDialog } from '../../src/components/Timer/SavePresetDialog';

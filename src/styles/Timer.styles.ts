@@ -22,6 +22,23 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     zIndex: 2,
   },
+  timerControlContainer: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: theme.spacing.large,
+    borderRadius: theme.borders.radius.large,
+    overflow: 'hidden',
+    zIndex: 2,
+  },
+  timerRunningContainer: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: theme.spacing.large,
+  },
   timerAndControlsContainer: {
     alignItems: 'center',
     justifyContent: 'center',
