@@ -6,6 +6,7 @@ import { TimerPreset } from '../../types/timer';
 import { Alert } from '../../types/alerts';
 import { formatTimeFromSeconds } from '../../utils/time';
 import { theme } from '../../theme';
+import { useTranslation } from '../../hooks/useTranslation';
 
 type PresetCardProps = {
   preset: TimerPreset;
@@ -24,6 +25,7 @@ export const PresetCard = ({
   canMoveLeft = true,
   canMoveRight = true
 }: PresetCardProps) => {
+  const { t } = useTranslation();
   const { alerts, color } = preset;
   const displayColor = color ? color : theme.colors.gray.dark;
   const cardColor = color ? displayColor + '33' : theme.colors.gray.light;
@@ -57,7 +59,7 @@ export const PresetCard = ({
                   {alert.id === 'before'
                     ? `- ${formatTimeFromSeconds(alert.timeOffset)}`
                     : alert.id === 'end'
-                    ? 'At the end'
+                    ? t('alerts.atEnd')
                     : `+ ${formatTimeFromSeconds(alert.timeOffset)}`}
                 </Text>
               </View>

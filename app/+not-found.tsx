@@ -2,8 +2,10 @@ import React, { useEffect } from 'react';
 import { Link, Stack, usePathname } from 'expo-router';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from '../src/hooks/useTranslation';
 
 export default function NotFoundScreen() {
+  const { t } = useTranslation();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -16,20 +18,20 @@ export default function NotFoundScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Page non trouvée' }} />
+      <Stack.Screen options={{ title: t('common.pageNotFound') }} />
       <View style={styles.container}>
         <LinearGradient
           colors={['#1a1a1a', '#2a2a2a']}
           style={styles.gradient}
         >
           <Text style={styles.title}>404</Text>
-          <Text style={styles.subtitle}>Page non trouvée</Text>
+          <Text style={styles.subtitle}>{t('common.pageNotFound')}</Text>
           <Text style={styles.text}>
-            Désolé, la page que vous recherchez n'existe pas.
+            {t('common.pageNotFoundDescription')}
           </Text>
           <Link href="/" asChild>
             <Pressable style={styles.button}>
-              <Text style={styles.buttonText}>Retour à l'accueil</Text>
+              <Text style={styles.buttonText}>{t('common.backToHome')}</Text>
             </Pressable>
           </Link>
         </LinearGradient>

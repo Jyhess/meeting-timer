@@ -17,8 +17,11 @@ import { sounds } from '../../src/config/alerts';
 import { ToggleSlider } from '@/src/components/Timer/ToggleSlider';
 import { useAudio } from '@/src/hooks/useAudio';
 import { Link } from 'expo-router';
+import { useTranslation } from '../../src/hooks/useTranslation';
+import { Language } from '../../src/locales';
 
 export default function SettingsScreen() {
+  const { t, language, changeLanguage } = useTranslation();
   const { 
     defaultAlertDuration,
     setDefaultAlertDuration,
@@ -49,18 +52,22 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleLanguageChange = (newLanguage: Language) => {
+    changeLanguage(newLanguage);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <LinearGradient colors={['#1a1a1a', '#2d2d2d']} style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Préférences</Text>
+          <Text style={styles.headerTitle}>{t('common.preferences')}</Text>
         </View>
         
         <ScrollView style={styles.content}>
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Durée des alertes</Text>
+            <Text style={styles.sectionTitle}>{t('alerts.duration')}</Text>
             <Text style={styles.sectionDescription}>
-              Définissez la durée des alertes (vibrations et effets visuels)
+              {t('alerts.durationDescription')}
             </Text>
             
             <View style={styles.durationContainer}>
@@ -73,7 +80,7 @@ export default function SettingsScreen() {
                   keyboardType="number-pad"
                   maxLength={2}
                 />
-                <Text style={styles.durationUnit}>secondes</Text>
+                <Text style={styles.durationUnit}>{t('common.seconds')}</Text>
               </View>
               
               <View style={styles.durationControls}>
@@ -103,9 +110,9 @@ export default function SettingsScreen() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Sons disponibles</Text>
+            <Text style={styles.sectionTitle}>{t('alerts.availableSounds')}</Text>
             <Text style={styles.sectionDescription}>
-              Choisissez les sons qui seront disponibles pour les alertes
+              {t('alerts.availableSoundsDescription')}
             </Text>
             
             <View style={styles.soundsList}>
@@ -113,7 +120,7 @@ export default function SettingsScreen() {
                 <View key={soundConfig.id} style={styles.soundItem}>
                   <View style={styles.soundInfo}>
                     <Icon name={soundConfig.icon as IconName} size={24} color={theme.colors.white} />
-                    <Text style={styles.soundName}>{soundConfig.name}</Text>
+                    <Text style={styles.soundName}>{t(`sounds.${soundConfig.id}`)}</Text>
                   </View>
                   <View style={styles.soundControls}>
                     <ToggleSlider
@@ -136,9 +143,36 @@ export default function SettingsScreen() {
           </View>
 
           <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('common.language')}</Text>
+            <Text style={styles.sectionDescription}>
+              {t('common.languageDescription')}
+            </Text>
+            
+            <View style={styles.languageContainer}>
+              <Pressable
+                style={[styles.languageButton, language === 'fr' && styles.languageButtonActive]}
+                onPress={() => handleLanguageChange('fr')}
+              >
+                <Text style={[styles.languageText, language === 'fr' && styles.languageTextActive]}>
+                  Français
+                </Text>
+              </Pressable>
+              
+              <Pressable
+                style={[styles.languageButton, language === 'en' && styles.languageButtonActive]}
+                onPress={() => handleLanguageChange('en')}
+              >
+                <Text style={[styles.languageText, language === 'en' && styles.languageTextActive]}>
+                  English
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+
+         <View style={styles.section}>
             <Link href="/legal" asChild>
               <Pressable style={styles.legalLink}>
-                <Text style={styles.legalLinkText}>Informations légales</Text>
+                <Text style={styles.legalLinkText}>{t('common.legal')}</Text>
                 <Icon name="arrow_back" size={24} color="#aaa" style={{ transform: [{ rotate: '180deg' }] }} />
               </Pressable>
             </Link>
