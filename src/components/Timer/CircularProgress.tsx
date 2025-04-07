@@ -87,10 +87,10 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           return;
         }
         progressShape.value = polylinePath(size, progress.value)
-          .map(point => `${point.x},${point.y}`)
+          .map((point: { x: number; y: number }) => `${point.x},${point.y}`)
           .join(' ');
         progressShapeNegative.value = polylinePath(size, progressNegative.value)
-          .map(point => `${point.x},${point.y}`)
+          .map((point: { x: number; y: number }) => `${point.x},${point.y}`)
           .join(' ');
       }, 16);
     }
@@ -120,7 +120,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
     <View style={[styles.container]} onLayout={onLayout}>
       <Svg width='100%' height='100%' style = {{backgroundColor: theme.colors.secondary}}>
         <Polyline
-          points={polylinePath(size, beforeAlertAngle).map(point => `${point.x},${point.y}`).join(' ')}
+          points={polylinePath(size, beforeAlertAngle).map((point: { x: number; y: number }) => `${point.x},${point.y}`).join(' ')}
           fill={theme.colors.primary}
         />
         <AnimatedPolyline
@@ -129,7 +129,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
         {timeLeft < 0 && (
           <>
             <Polyline
-              points={polylinePath(size, afterAlertAngle).map(point => `${point.x},${point.y}`).join(' ')}
+              points={polylinePath(size, afterAlertAngle).map((point: { x: number; y: number }) => `${point.x},${point.y}`).join(' ')}
               fill={theme.colors.danger}
             />
             <AnimatedPolyline
