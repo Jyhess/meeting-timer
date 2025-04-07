@@ -42,6 +42,27 @@ export const styles = StyleSheet.create({
     color: theme.colors.gray.light,
     marginBottom: theme.spacing.medium,
   },
+  languageContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  languageButton: {
+    flex: 1,
+    padding: theme.spacing.medium,
+    borderRadius: theme.borders.radius.medium,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+  },
+  languageButtonActive: {
+    backgroundColor: theme.colors.primary,
+  },
+  languageText: {
+    fontSize: theme.typography.fontSize.medium,
+    color: theme.colors.white,
+  },
+  languageTextActive: {
+    fontWeight: theme.typography.fontWeight.bold,
+  },
   durationContainer: {
     borderRadius: theme.borders.radius.medium,
     //padding: theme.spacing.small,

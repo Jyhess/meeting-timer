@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TextInput, Modal, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { theme } from '../../theme';
 import { Icon } from './Icon';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const PRESET_COLORS = [
   '#FF6B6B', // Rouge
@@ -27,6 +28,7 @@ interface SavePresetDialogProps {
 }
 
 export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose, onSave }: SavePresetDialogProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState(defaultName);
   const [selectedColor, setSelectedColor] = useState(defaultColor || PRESET_COLORS[0]);
   const inputRef = useRef<TextInput>(null);
@@ -67,7 +69,7 @@ export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.title}>Sauvegarder le timer</Text>
+          <Text style={styles.title}>{t('preset.saveTitle')}</Text>
           
           <View style={styles.inputContainer}>
             <TextInput
@@ -75,7 +77,7 @@ export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose
               style={styles.input}
               value={name}
               onChangeText={setName}
-              placeholder="Nom du timer"
+              placeholder={t('preset.namePlaceholder')}
               placeholderTextColor={theme.colors.gray.medium}
               selectTextOnFocus
               autoFocus
@@ -89,7 +91,7 @@ export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose
             </Pressable>
           </View>
 
-          <Text style={styles.subtitle}>Couleur</Text>
+          <Text style={styles.subtitle}>{t('preset.color')}</Text>
           <View style={styles.colorGrid}>
             {PRESET_COLORS.map((color) => (
               <Pressable

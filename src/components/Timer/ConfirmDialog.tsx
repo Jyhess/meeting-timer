@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Modal, Pressable, StyleSheet } from 'react-native';
 import { theme } from '../../theme';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface ConfirmDialogProps {
   isVisible: boolean;
@@ -18,9 +19,11 @@ export function ConfirmDialog({
   message,
   onClose,
   onConfirm,
-  confirmText = "Confirmer",
-  cancelText = "Annuler"
+  confirmText,
+  cancelText
 }: ConfirmDialogProps) {
+  const { t } = useTranslation();
+
   return (
     <Modal
       visible={isVisible}
@@ -38,13 +41,13 @@ export function ConfirmDialog({
               style={[styles.button, styles.cancelButton]}
               onPress={onClose}
             >
-              <Text style={styles.cancelButtonText}>{cancelText}</Text>
+              <Text style={styles.cancelButtonText}>{cancelText || t('common.cancel')}</Text>
             </Pressable>
             <Pressable
               style={[styles.button, styles.confirmButton]}
               onPress={onConfirm}
             >
-              <Text style={styles.confirmButtonText}>{confirmText}</Text>
+              <Text style={styles.confirmButtonText}>{confirmText || t('common.confirm')}</Text>
             </Pressable>
           </View>
         </View>

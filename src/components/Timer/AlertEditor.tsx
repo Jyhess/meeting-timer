@@ -7,6 +7,7 @@ import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
 import { Alert, AlertEffect, AlertSoundId } from '../../types/alerts';
 import { useSettings } from '../../hooks/useSettings';
+import { useTranslation } from '../../hooks/useTranslation';
 
 type AlertEditorProps = {
   alert: Alert;
@@ -21,6 +22,7 @@ export const AlertEditor = ({
   onClose,
   onSave,
 }: AlertEditorProps) => {
+  const { t } = useTranslation();
   const { availableSounds } = useSettings();
   const [editedAlert, setEditedAlert] = useState<Alert>(JSON.parse(JSON.stringify(alert)));
   const [modalVisible, setModalVisible] = useState(isVisible);
@@ -96,10 +98,10 @@ export const AlertEditor = ({
         <View style={styles.modalContent}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.modalTitle}>{alert.id === 'before'
-                    ? 'Alerte avant la fin'
+                    ? t('alerts.preEnd')
                     : alert.id === 'after'
-                    ? 'Alerte après la fin'
-                    : 'Alerte à la fin'}</Text>
+                    ? t('alerts.postEnd')
+                    : t('alerts.end')}</Text>
 
             {alert.id !== 'end' && (
               <View style={styles.timeInputContainer}>
@@ -114,10 +116,10 @@ export const AlertEditor = ({
 
             <View style={styles.modalSection}>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Son</Text>
+                <Text style={styles.sectionTitle}>{t('alerts.sound')}</Text>
                 {availableSoundConfigs.length === 0 && (
                   <Text style={styles.noSoundsText}>
-                    Aucun son disponible. Activez des sons dans les préférences.
+                    {t('alerts.noSoundsAvailable')}
                   </Text>
                 )}
               </View>
@@ -142,7 +144,7 @@ export const AlertEditor = ({
                         editedAlert.sound === sound.id && styles.optionTextActive,
                       ]}
                     >
-                      {sound.name}
+                      {t(`sounds.${sound.id}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -150,7 +152,7 @@ export const AlertEditor = ({
             </View>
 
             <View style={styles.modalSection}>
-              <Text style={styles.sectionTitle}>Effets</Text>
+              <Text style={styles.sectionTitle}>{t('alerts.effects')}</Text>
               <View style={styles.optionsGrid}>
                 {effects.map((effect) => (
                   <TouchableOpacity
@@ -172,7 +174,7 @@ export const AlertEditor = ({
                         isEffectSelected(effect.id as AlertEffect) && styles.optionTextActive,
                       ]}
                     >
-                      {effect.name}
+                      {t(`effects.${effect.id}`)}
                       {effect.id === 'shake' && Platform.OS !== 'web' && (
                         <Text style={styles.effectNote}> (+ vibration)</Text>
                       )}
@@ -185,7 +187,7 @@ export const AlertEditor = ({
           
           <View style={styles.modalButtons}>
             <Pressable style={styles.modalButton} onPress={onClose}>
-              <Text style={styles.modalButtonText}>Annuler</Text>
+              <Text style={styles.modalButtonText}>{t('common.cancel')}</Text>
             </Pressable>
             <Pressable 
               style={[
@@ -200,7 +202,7 @@ export const AlertEditor = ({
                 styles.modalButtonText,
                 (!isValidTime || availableSoundConfigs.length === 0) && styles.modalButtonTextDisabled
               ]}>
-                Enregistrer
+                {t('common.save')}
               </Text>
             </Pressable>
           </View>

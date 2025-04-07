@@ -17,8 +17,10 @@ import { theme } from '@/src/theme';
 import { TimerPreset } from '../../src/types/timer';
 import { SavePresetDialog } from '../../src/components/Timer/SavePresetDialog';
 import { ConfirmDialog } from '../../src/components/Timer/ConfirmDialog';
+import { useTranslation } from '../../src/hooks/useTranslation';
 
 export default function PresetsScreen() {
+  const { t } = useTranslation();
   const { 
     autoPresets, 
     bookmarkedPresets: manualPresets, 
@@ -128,11 +130,11 @@ export default function PresetsScreen() {
         {editable && (
           <Pressable 
             style={[localStyles.manageButton, isReordering && localStyles.manageButtonActive]}
-          onPress={() => setIsReordering(!isReordering)}
-        >
-          <Icon name={isReordering ? "check" : "settings"} size={20} color={theme.colors.white} />
-          <Text style={localStyles.manageButtonText}>
-            {isReordering ? "Terminer" : "Réorganiser"}
+            onPress={() => setIsReordering(!isReordering)}
+          >
+            <Icon name={isReordering ? "check" : "settings"} size={20} color={theme.colors.white} />
+            <Text style={localStyles.manageButtonText}>
+              {isReordering ? t('common.finish') : t('common.reorder')}
             </Text>
           </Pressable>
         )}
@@ -154,12 +156,12 @@ export default function PresetsScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <Text style={styles.title}>Timers enregistrés</Text>
+        <Text style={styles.title}>{t('common.savedTimers')}</Text>
       </View>
 
       <ScrollView style={styles.presetList}>
-        {autoPresets.length > 0 && renderPresetSection('Derniers utilisés', autoPresets, false)}
-        {manualPresets.length > 0 && renderPresetSection('Enregistrés', manualPresets)}
+        {autoPresets.length > 0 && renderPresetSection(t('common.recentlyUsed'), autoPresets, false)}
+        {manualPresets.length > 0 && renderPresetSection(t('common.saved'), manualPresets)}
       </ScrollView>
 
       <SavePresetDialog
@@ -175,15 +177,15 @@ export default function PresetsScreen() {
 
       <ConfirmDialog
         isVisible={isDeleteDialogVisible}
-        title="Supprimer le preset"
-        message={`Êtes-vous sûr de vouloir supprimer "${presetToDelete?.name}" ?`}
+        title={t('common.deletePreset')}
+        message={`${t('common.deletePresetConfirm')} "${presetToDelete?.name}" ?`}
         onClose={() => {
           setIsDeleteDialogVisible(false);
           setPresetToDelete(null);
         }}
         onConfirm={handleConfirmDelete}
-        confirmText="Supprimer"
-        cancelText="Annuler"
+        confirmText={t('common.delete')}
+        cancelText={t('common.cancel')}
       />
     </SafeAreaView>
   );
