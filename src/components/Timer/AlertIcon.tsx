@@ -28,18 +28,18 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: Ale
   const soundConfig = sounds.find(s => s.id === alert.sound);
   const [localEnabled, setLocalEnabled] = useState(alert.enabled);
   
-  // Synchroniser l'état local avec l'état de l'alerte
+  // Synchronize local state with alert state
   useEffect(() => {
     setLocalEnabled(alert.enabled);
   }, [alert.enabled]);
 
   const getAlertTimeText = () => {
-    if (alert.id === 'end') return 'Fin';
+    if (alert.id === 'end') return 'End';
     const prefix = alert.id === 'before' ? '-' : '+';
     return `${prefix}${formatTimeFromSeconds(alert.timeOffset)}`;
   };
 
-  // Animation de secousse
+  // Shake animation
   const shakeAnimation = useAnimatedStyle(() => {
     if (isActive && alert.effects.includes('shake')) {
       return {

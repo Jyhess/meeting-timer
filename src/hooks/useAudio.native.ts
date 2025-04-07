@@ -7,7 +7,7 @@ class Audio {
   public static isInitialized: boolean = false;
 
   public static async initAudio(): Promise<void> {
-    console.log('[Audio.native] Initialisation du système audio');
+    console.log('[Audio.native] Initializing audio system');
     try {
       await ExpoAudio.setAudioModeAsync({
         playsInSilentModeIOS: true,
@@ -16,9 +16,9 @@ class Audio {
         playThroughEarpieceAndroid: false,
       });
       Audio.isInitialized = true;
-      console.log('[Audio.native] Système audio initialisé avec succès');
+      console.log('[Audio.native] Audio system initialized successfully');
     } catch (error) {
-      console.error('[Audio.native] Erreur lors de l\'initialisation du système audio:', error);
+      console.error('[Audio.native] Error initializing audio system:', error);
     }
   };
 }
@@ -55,7 +55,7 @@ export const useAudio = () => {
       await sound.playAsync();
 
       setIsPlaying(true);
-      console.log(`[useAudio] ✅ Lecture démarrée pour: ${soundName}`);
+      console.log(`[useAudio] ✅ Playback started for: ${soundName}`);
     } catch (error) {
       console.error(`[useAudio] ❌ Erreur lors de la lecture de ${soundName}:`, error);
     }
@@ -78,7 +78,7 @@ export const useAudio = () => {
       await audioRef.current.unloadAsync();
       setIsPlaying(false);
       setPlayingSound(null);
-      console.log(`[useAudio] ⏹️ Arrêt effectué`);
+      console.log(`[useAudio] ⏹️ Playback stopped`);
     }
   };
 

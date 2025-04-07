@@ -23,7 +23,7 @@ export const useAudio = () => {
 
           // Configurer les événements
       audio.addEventListener('canplaythrough', () => {
-        console.debug(`[Audio.web] Son ${sound} chargé avec succès`);
+        console.debug(`[Audio.web] Sound ${sound} loaded successfully`);
       });
 
       audio.addEventListener('error', (error) => {
@@ -43,7 +43,7 @@ export const useAudio = () => {
       setIsPlaying(true);
       setPlayingSound(sound);
       audioRef.current = audio;
-      console.log(`[useAudio] ✅ Lecture démarrée pour: ${sound}`);
+      console.log(`[useAudio] ✅ Playback started for: ${sound}`);
     } catch (error) {
       console.error(`[useAudio] Erreur lors de la lecture de: ${sound}`, error);
     }
@@ -55,7 +55,7 @@ export const useAudio = () => {
       audioRef.current.currentTime = 0;
       setIsPlaying(false);
       setPlayingSound(null);
-      console.log(`[useAudio] ⏹️ Arrêt effectué`);
+      console.log(`[useAudio] ⏹️ Playback stopped`);
     }
   };
 

@@ -9,9 +9,9 @@ interface Point {
 }
 
 /**
- * Calcule l'angle en radians à partir d'un pourcentage de progression
- * @param percentage - Le pourcentage de progression (0 à 1)
- * @returns L'angle en radians
+ * Calculate the angle in radians from a progress percentage.
+ * Ensure angle is between 0 and 2*PI
+ * @param percentage - The progress percentage (0 to 1)
  */
 export const getAngleFromProgress = (percentage: number): number => {
   const progressAngle = percentage * Math.PI * 2;
@@ -26,10 +26,10 @@ export const getAngleFromProgress = (percentage: number): number => {
 }
 
 /**
- * Calcule les points d'un polyline pour représenter une progression circulaire
- * @param size - Les dimensions du conteneur
- * @param percentage - Le pourcentage de progression (0 à 1)
- * @returns Un tableau de points définissant le polyline
+ * Calculate points for a polyline to represent circular progress
+ * @param size - The dimensions of the container
+ * @param percentage - The progress percentage (0 to 1)
+ * @returns An array of points defining the polyline
  */
 export const polylinePath = (size: Size, percentage: number): Point[] => {
   if (percentage === 0) {
