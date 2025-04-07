@@ -9,14 +9,14 @@ export const useFlash = () => {
   const [flashElapsedTime, setFlashElapsedTime] = useState<number>(0);
   const [progressTimer, setProgressTimer] = useState<NodeJS.Timeout | null>(null);
 
-  // Nettoyer les ressources lors du démontage
+  // Clean up resources on unmount
   useEffect(() => {
     return () => {
       stopFlash();
     };
   });
 
-  // Mettre à jour le temps écoulé pour le suivi de la progression
+  // Update elapsed time for progress tracking
   useEffect(() => {
     if (isFlashing && flashStartTime) {
       const timer = setInterval(() => {

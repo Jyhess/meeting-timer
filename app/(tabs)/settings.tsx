@@ -34,7 +34,7 @@ export default function SettingsScreen() {
   }, [defaultAlertDuration]);
 
   const handleAlertDurationChange = (text: string) => {
-    // Accepter uniquement les chiffres
+    // Accept only numbers
     const numericValue = text.replace(/[^0-9]/g, '');
     setAlertDuration(numericValue);
   };
@@ -44,7 +44,7 @@ export default function SettingsScreen() {
     if (!isNaN(numValue) && numValue > 0) {
       setDefaultAlertDuration(numValue);
     } else {
-      // Réinitialiser à la valeur précédente si invalide
+      // Reset to previous value if invalid
       setAlertDuration(defaultAlertDuration.toString());
     }
   };

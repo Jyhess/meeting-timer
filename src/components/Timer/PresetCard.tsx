@@ -27,7 +27,7 @@ export const PresetCard = ({
   const { alerts, color } = preset;
   const displayColor = color ? color : theme.colors.gray.dark;
   const cardColor = color ? displayColor + '33' : theme.colors.gray.light;
-  // La couleur disabled est la couleur de display avec 50% de transparence
+  // Disabled color is the display color with 50% transparency
   const disabledColor = `${displayColor}50`;
 
   return (
@@ -57,7 +57,7 @@ export const PresetCard = ({
                   {alert.id === 'before'
                     ? `- ${formatTimeFromSeconds(alert.timeOffset)}`
                     : alert.id === 'end'
-                    ? 'À la fin'
+                    ? 'At the end'
                     : `+ ${formatTimeFromSeconds(alert.timeOffset)}`}
                 </Text>
               </View>

@@ -35,23 +35,23 @@ export const FlashView = forwardRef<FlashViewRef, unknown>((_, ref) => {
   });
 
   const startFlashAnimation = () => {
-    // Arrêter toute animation précédente
+    // Stop any previous animation
     if(isAnimated) {return;}
 
     stopFlashAnimation();
     setIsAnimated(true);
-    // Démarrer l'animation de flash
+    // Start flash animation
     flashBackground.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 250, easing: Easing.out(Easing.ease) }),
         withTiming(0, { duration: 250, easing: Easing.in(Easing.ease) })
       ),
-      -1 // Répéter indéfiniment
+      -1 // Repeat indefinitely
     );
   };
 
   const stopFlashAnimation = () => {
-    // Annuler l'animation
+    // Cancel animation
     setIsAnimated(false);
     cancelAnimation(flashBackground);
     flashBackground.value = 0;

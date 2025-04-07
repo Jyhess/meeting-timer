@@ -14,7 +14,7 @@ export const useVibration = (isActive: boolean, duration: number) => {
       if (Platform.OS === 'ios') {
         // Pour iOS, utiliser Haptics avec un intervalle
         vibrationInterval = setInterval(async () => {
-          // Vérifier si la durée de vibration est dépassée
+          // Check if vibration duration is exceeded
           if (vibrationStartTimeRef.current && 
               Date.now() - vibrationStartTimeRef.current >= duration * 1000) {
             if (vibrationInterval) {
@@ -26,11 +26,11 @@ export const useVibration = (isActive: boolean, duration: number) => {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         }, 500);
       } else if (Platform.OS === 'android') {
-        // Pour Android, utiliser l'API Vibration avec un pattern qui se répète
+        // For Android, use Vibration API with a repeating pattern
         const pattern = [0, 300, 150, 300, 150, 300];
         Vibration.vibrate(pattern, true);
         
-        // Arrêter la vibration après la durée spécifiée
+        // Stop vibration after specified duration
         setTimeout(() => {
           Vibration.cancel();
         }, duration * 1000);
@@ -48,4 +48,4 @@ export const useVibration = (isActive: boolean, duration: number) => {
       vibrationStartTimeRef.current = null;
     };
   }, [isActive, duration]);
-}; 
+};
