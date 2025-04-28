@@ -10,6 +10,7 @@ import { AlertEffect } from '../types/alerts';
 interface TimerState {
   duration: number;
   timeLeft: number;
+  endTime: number | null; // Timestamp en millisecondes
   isRunning: boolean;
   state: 'idle' | 'running' | 'paused';
   beforeAlert: Alert;
@@ -36,12 +37,21 @@ type TimerAction =
 
 
 function timerReducer(state: TimerState, action: TimerAction): TimerState {
+  function endTime(): number {
+    return Date.now() + state.duration * 1000;
+  }
+
+  function computeTimeLeft(endTime: number): number {
+    return Math.floor((endTime - Date.now()) / 1000);
+  }
+
   switch (action.type) {
     case 'SET_DURATION':
       return {
         ...state,
         duration: action.payload,
         timeLeft: action.payload,
+        endTime: null,
       };
 
     case 'START':
@@ -49,6 +59,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
         ...state,
         isRunning: true,
         state: 'running',
+        endTime: endTime(),
       };
 
     case 'PAUSE':
@@ -63,12 +74,14 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
         ...state,
         isRunning: true,
         state: 'running',
+        endTime: endTime(),
       };
 
     case 'STOP':
       return {
         ...state,
         timeLeft: state.duration,
+        endTime: null,
         isRunning: false,
         state: 'idle',
       };
@@ -77,6 +90,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
       return {
         ...state,
         timeLeft: state.duration,
+        endTime: endTime(),
         isRunning: true,
         state: 'running',
       };
@@ -91,6 +105,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
         ...state,
         duration: preset.seconds,
         timeLeft: preset.seconds,
+        endTime: null,
         beforeAlert: preset.alerts.find(a => a.id === 'before') || state.beforeAlert,
         endAlert: preset.alerts.find(a => a.id === 'end') || state.endAlert,
         afterAlert: preset.alerts.find(a => a.id === 'after') || state.afterAlert,
@@ -127,17 +142,20 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
       }
 
     case 'ADD_TIME':
-      return {
-        ...state,
-        timeLeft: Number(state.timeLeft) + Number(action.payload),
-      };
+      {
+        const newEndTime = state.endTime ? state.endTime + Number(action.payload) * 1000 : 0;
+        return {
+          ...state,
+          endTime: newEndTime,
+          timeLeft: computeTimeLeft(newEndTime),
+        };
+      }
 
     case 'TICK':
       if (state.state !== 'running') return state;
-      const newTimeLeft = state.timeLeft - 1;
       return {
         ...state,
-        timeLeft: newTimeLeft,
+        timeLeft: computeTimeLeft(state.endTime || 0),
       };
 
     default:
@@ -151,6 +169,7 @@ export function useTimer() {
   const [state, dispatch] = useReducer(timerReducer, {
     duration: 0,
     timeLeft: 0,
+    endTime: null,
     isRunning: false,
     state: 'idle',
     beforeAlert: settings.defaultAlerts[0],
@@ -209,7 +228,7 @@ export function useTimer() {
           (alert.id === 'after' && state.timeLeft === -alert.timeOffset)
         );
 
-      if (shouldTrigger) {
+        if (shouldTrigger) {
           startedAlerts.current.add(alert.id);
           if (alert.effects.includes('flash' as AlertEffect)) {
             console.log('[useTimer] 🔔 Alerte flash active :', alert.id);
@@ -309,6 +328,7 @@ export function useTimer() {
       dispatch({ type: 'RESET_FROM_DEFAULT', payload: {
         duration: 0,
         timeLeft: 0,
+        endTime: null,
         isRunning: false,
         state: 'idle',
         beforeAlert: settings.defaultAlerts[0],
