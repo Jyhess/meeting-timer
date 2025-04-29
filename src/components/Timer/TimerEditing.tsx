@@ -26,15 +26,15 @@ interface TimerEditingProps {
 }
 
 export const TimerEditing: React.FC<TimerEditingProps> = ({
-    duration,
-    timeLeft,
-    isRunning,
-    beforeAlert,
-    endAlert,
-    afterAlert,
-    presetName,
-    presetColor,
-    actions,
+  duration,
+  timeLeft,
+  isRunning,
+  beforeAlert,
+  endAlert,
+  afterAlert,
+  presetName,
+  presetColor,
+  actions,
 }) => {
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
   const [validInput, setValidInput] = useState(true);
@@ -63,49 +63,49 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
     setSaveDialogVisible(false);
   };
 
-  return (       
+  return (
     <View style={styles.timerEditingContainer}>
-        <View style={styles.timerInputAndControlsContainer}>
-          <View style={styles.timerInputContainer}>
-              <TimeInput
-                  initialSeconds={timeLeft}
-                  onTimeChange={handleDurationChange}
-                  timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
-              />
-          </View>
-          <View style={styles.controlsContainer}>
-            <View style={styles.controlsButtonsContainer}>
-              <ControlButton
-                icon="bookmark"
-                onPress={handleSavePress}
-                disabled={!isValidTime}
-                color={isValidTime ? theme.colors.primary : theme.colors.black}
-              />
-              <ControlButton
-                icon="restart"
-                onPress={handleReset}
-                color={theme.colors.danger}
-              />
-              <ControlButton
-                icon="play_arrow"
-                onPress={() => actions.start()}
-                disabled={!isValidTime}
-                color={isValidTime ? theme.colors.primary : theme.colors.black}
-              />
-            </View>
-          </View>
-        </View>
-        <View style={styles.alertsContainer}>
-          <AlertsSection
-            beforeAlert={beforeAlert}
-            endAlert={endAlert}
-            afterAlert={afterAlert}
-            isRunning={isRunning}
-            timeLeft={timeLeft}
-            actions={actions}
+      <View style={styles.timerInputAndControlsContainer}>
+        <View style={styles.timerInputContainer}>
+          <TimeInput
+            initialSeconds={timeLeft}
+            onTimeChange={handleDurationChange}
+            timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
           />
         </View>
-        <View>
+        <View style={styles.controlsContainer}>
+          <View style={styles.controlsButtonsContainer}>
+            <ControlButton
+              icon="bookmark_add"
+              onPress={handleSavePress}
+              disabled={!isValidTime}
+              color={isValidTime ? theme.colors.primary : theme.colors.black}
+            />
+            <ControlButton
+              icon="delete_history"
+              onPress={handleReset}
+              color={theme.colors.danger}
+            />
+            <ControlButton
+              icon="play_arrow"
+              onPress={() => actions.start()}
+              disabled={!isValidTime}
+              color={isValidTime ? theme.colors.primary : theme.colors.black}
+            />
+          </View>
+        </View>
+      </View>
+      <View style={styles.alertsContainer}>
+        <AlertsSection
+          beforeAlert={beforeAlert}
+          endAlert={endAlert}
+          afterAlert={afterAlert}
+          isRunning={isRunning}
+          timeLeft={timeLeft}
+          actions={actions}
+        />
+      </View>
+      <View>
         <SavePresetDialog
           isVisible={saveDialogVisible}
           defaultName={presetName || `Timer ${formatTimeFromSeconds(duration)}`}
