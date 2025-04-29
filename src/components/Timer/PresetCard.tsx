@@ -17,10 +17,10 @@ type PresetCardProps = {
   canMoveRight?: boolean;
 };
 
-export const PresetCard = ({ 
-  preset, 
-  onEdit, 
-  onDelete, 
+export const PresetCard = ({
+  preset,
+  onEdit,
+  onDelete,
   onMove,
   canMoveLeft = true,
   canMoveRight = true
@@ -47,7 +47,7 @@ export const PresetCard = ({
           {alerts.map((alert: Alert) => {
             const soundConfig = sounds.find(s => s.id === alert.sound);
             if (!soundConfig) return null;
-            
+
             return (
               <View key={alert.id} style={styles.alert}>
                 <Icon
@@ -59,8 +59,8 @@ export const PresetCard = ({
                   {alert.id === 'before'
                     ? `- ${formatTimeFromSeconds(alert.timeOffset)}`
                     : alert.id === 'end'
-                    ? t('alerts.atEnd')
-                    : `+ ${formatTimeFromSeconds(alert.timeOffset)}`}
+                      ? t('alerts.atEnd')
+                      : `+ ${formatTimeFromSeconds(alert.timeOffset)}`}
                 </Text>
               </View>
             );
@@ -72,8 +72,8 @@ export const PresetCard = ({
         <View style={styles.actions}>
           {onMove && (
             <Pressable
-            style={styles.actionButton}
-            onPress={() => onMove(preset, 'left')}
+              style={styles.actionButton}
+              onPress={() => onMove(preset, 'left')}
               disabled={!canMoveLeft}
             >
               <Icon name="arrow_left" size={30} color={canMoveLeft ? theme.colors.white : theme.colors.gray.dark} />
@@ -92,13 +92,13 @@ export const PresetCard = ({
               style={styles.actionButton}
               onPress={() => onDelete(preset)}
             >
-              <Icon name="delete" size={20} color={theme.colors.white} />
+              <Icon name="bookmark_remove" size={20} color={theme.colors.white} />
             </Pressable>
           )}
           {onMove && (
             <Pressable
-            style={styles.actionButton}
-            onPress={() => onMove(preset, 'right')}
+              style={styles.actionButton}
+              onPress={() => onMove(preset, 'right')}
               disabled={!canMoveRight}
             >
               <Icon name="arrow_right" size={30} color={canMoveRight ? theme.colors.white : theme.colors.gray.dark} />

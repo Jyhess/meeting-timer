@@ -28,16 +28,16 @@ interface TimerRunningProps {
 }
 
 export const TimerRunning: React.FC<TimerRunningProps> = ({
-    duration,
-    timeLeft,
-    isRunning,
-    state,
-    beforeAlert,
-    endAlert,
-    afterAlert,
-    shouldFlash,
-    hasActiveAlert,
-    actions,
+  duration,
+  timeLeft,
+  isRunning,
+  state,
+  beforeAlert,
+  endAlert,
+  afterAlert,
+  shouldFlash,
+  hasActiveAlert,
+  actions,
 }) => {
   const flashViewRef = useRef<FlashViewRef>(null);
   const [addingTime, setAddingTime] = useState(false);
@@ -45,7 +45,7 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
 
   useEffect(() => {
     console.log('[TimerRunning] 🔔 useEffect [isRunning] :', isRunning);
-    if(!isRunning) {
+    if (!isRunning) {
       actions.stop();
       setAddingTime(false);
     }
@@ -101,13 +101,13 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
 
   return (
     <View style={styles.timerRunningContainer}>
-      <CircularProgress 
-          duration={duration}
-          timeLeft={timeLeft-1}
-          isRunning={state === 'running'}
-          beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-          afterAlertOffset={afterAlert.enabled ? afterAlert.timeOffset : undefined}
-        />
+      <CircularProgress
+        duration={duration}
+        timeLeft={timeLeft - 1}
+        isRunning={state === 'running'}
+        beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
+        afterAlertOffset={afterAlert.enabled ? afterAlert.timeOffset : undefined}
+      />
 
       <FlashView ref={flashViewRef} />
 
@@ -116,40 +116,40 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
           <TimeDisplay
             timeBuffer={formatTimeFromSeconds(timeLeft)}
             timeColor={getTimeColor()}
-            />
-          </View>
+          />
+        </View>
 
-          <View style={styles.controlsContainer}>
-            <View style={styles.controlsButtonsContainer}>
-              {state === 'paused' ? (
-                <ControlButton
-                  icon="play_arrow"
-                  onPress={() => actions.resume()}
-                  color={theme.colors.secondary}
-                />
-              ) : (
-                <ControlButton
-                  icon="pause"
-                  onPress={() => actions.pause()}
-                  color={theme.colors.secondary}
-                />
-              )}
+        <View style={styles.controlsContainer}>
+          <View style={styles.controlsButtonsContainer}>
+            {state === 'paused' ? (
               <ControlButton
-                icon="stop"
-                onPress={() => handleStop()}
-                color={theme.colors.danger}
+                icon="play_arrow"
+                onPress={() => actions.resume()}
+                color={theme.colors.secondary}
               />
+            ) : (
               <ControlButton
-                icon="restart"
-                onPress={() => handleReset()}
-                color={theme.colors.danger}
+                icon="pause"
+                onPress={() => actions.pause()}
+                color={theme.colors.secondary}
               />
-              <ControlButton
-                icon="add"
-                onPress={() => setAddingTime(true)}
-                color={theme.colors.primary}
-                disabled={addingTime}
-              />
+            )}
+            <ControlButton
+              icon="stop"
+              onPress={() => handleStop()}
+              color={theme.colors.danger}
+            />
+            <ControlButton
+              icon="history"
+              onPress={() => handleReset()}
+              color={theme.colors.danger}
+            />
+            <ControlButton
+              icon="more_time"
+              onPress={() => setAddingTime(true)}
+              color={theme.colors.primary}
+              disabled={addingTime}
+            />
           </View>
         </View>
         {addingTime && (
@@ -188,17 +188,17 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
           />
         )}
       </View>
-        {hasActiveAlert && (
-          <ControlButton 
-            icon="volume_off"
-            onPress={() => {
-              actions.stopAlerts();
-            }}
-            color={theme.colors.danger}
-            size={32}
-            style={{...styles.alertStopButton, zIndex: 3}}
-          />
-        )}
+      {hasActiveAlert && (
+        <ControlButton
+          icon="volume_off"
+          onPress={() => {
+            actions.stopAlerts();
+          }}
+          color={theme.colors.danger}
+          size={32}
+          style={{ ...styles.alertStopButton, zIndex: 3 }}
+        />
+      )}
     </View>
   );
 }

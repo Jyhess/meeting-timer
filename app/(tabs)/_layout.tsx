@@ -6,7 +6,7 @@ import { useTranslation } from '../../src/hooks/useTranslation';
 
 export default function TabLayout() {
   const { t } = useTranslation();
-  
+
   // Initialize audio session on component mount
   return (
     <Tabs
@@ -34,7 +34,7 @@ export default function TabLayout() {
         name="timer"
         options={{
           title: t('common.timer'),
-          tabBarIcon: ({ color }) => <Icon name="alarm_add" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Icon name="alarm" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
