@@ -1,0 +1,12 @@
+name: Submit Android app
+
+on:
+  push:
+    branches: ['store']
+
+jobs:
+  submit_ios:
+    name: Submit Android
+    type: submit
+    params:
+      platform: android
