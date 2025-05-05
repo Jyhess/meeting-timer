@@ -14,7 +14,8 @@ jobs:
 
   submit_android:
     name: Submit to Google Play Store
-    needs: build_android
+    needs:
+      - build_android
     type: submit
     params:
       build_id: ${{ github.event.inputs.build_id }}
