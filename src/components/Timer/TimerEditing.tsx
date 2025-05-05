@@ -8,6 +8,7 @@ import { SavePresetDialog } from './SavePresetDialog';
 import { formatTimeFromSeconds } from '@/src/utils/time';
 import { AlertsSection } from './AlertsSection';
 import { ControlButton } from './ControlButton';
+import { useRouter } from 'expo-router';
 
 interface TimerEditingProps {
   duration: number;
@@ -39,9 +40,11 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
   const [validInput, setValidInput] = useState(true);
   const isValidTime = validInput && timeLeft > 0 && (!beforeAlert.enabled || timeLeft > beforeAlert.timeOffset);
+  const router = useRouter();
 
   const handleReset = () => {
     actions.resetFromDefault();
+    router.setParams({ presetId: null });
   };
 
   const handleDurationChange = (duration: number, isValidTime: boolean) => {
