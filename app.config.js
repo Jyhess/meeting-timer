@@ -41,6 +41,12 @@ module.exports = {
     assetBundlePatterns: [
       "assets/sounds/*",
       "assets/images/*"
-    ]
+    ],
+    updates: {
+      url: "https://u.expo.dev/5488530f-6320-46ad-b0b9-5532f24ee751"
+    },
+    runtimeVersion: {
+      policy: "appVersion"
+    }
   }
 };
