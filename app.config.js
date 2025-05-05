@@ -2,7 +2,6 @@ module.exports = {
   expo: {
     name: 'Meeting Timer',
     slug: 'meeting-timer',
-    version: '1.0.1',
     owner: 'jyhess',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
