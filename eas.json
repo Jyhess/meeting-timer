@@ -1,7 +1,7 @@
 {
   "cli": {
     "appVersionSource": "remote",
-    "version": ">= 5.9.1"
+    "version": ">=16.4.0"
   },
   "build": {
     "development": {
@@ -10,21 +10,41 @@
       "environment": "development",
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "development"
     },
-    "preview": {
+    "stage": {
+      "autoIncrement": true,
       "distribution": "internal",
       "environment": "preview",
       "android": {
-        "buildType": "apk"
-      }
+        "buildType": "app-bundle"
+      },
+      "channel": "stage"
     },
     "production": {
       "autoIncrement": true,
       "environment": "production",
       "android": {
         "buildType": "app-bundle"
+      },
+      "channel": "production"
+    }
+  },
+  "submit": {
+    "stage": {
+      "android": {
+        "track": "internal",
+        "applicationId": "com.meetingtimer.app",
+        "releaseStatus": "draft"
+      }
+    },
+    "production": {
+      "android": {
+        "track": "production",
+        "applicationId": "com.meetingtimer.app",
+        "releaseStatus": "draft"
       }
     }
   }
-} 
+}
