@@ -1,10 +1,10 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import {actions } from '../store/timerSlice';
+import { actions } from '../store/timerSlice';
+import { useAudio } from '../contexts/AudioContext';
 import { useSettings } from './useSettings';
 import { usePresets } from './usePresets';
-import { useAudio } from './useAudio';
 import { useVibration } from './useVibration';
 import { useKeepAwake } from './useKeepAwake';
 import { Alert } from '../types/alerts';
@@ -13,6 +13,7 @@ export function useTimerRedux() {
   const dispatch = useDispatch();
   const settings = useSettings();
   const presets = usePresets();
+  const { playSound, stopSound: stopAudioSound } = useAudio();
   const {
     duration,
     timeLeft,
@@ -30,7 +31,6 @@ export function useTimerRedux() {
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startedAlerts = useRef<Set<string>>(new Set());
-  const { playSound, stopSound: stopAudioSound } = useAudio();
   const alertTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useVibration(shouldFlash, effectDuration * 1000);

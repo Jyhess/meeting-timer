@@ -1,46 +1,38 @@
-import { useRef, useEffect, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Audio as ExpoAudio, AVPlaybackSource, AVPlaybackStatus } from 'expo-av';
 import { soundMap, SoundName } from '../types/sounds';
+import { AudioContext } from './AudioContext';
 
-
-class Audio {
-  public static isInitialized: boolean = false;
-
-  public static async initAudio(): Promise<void> {
-    console.log('[Audio.native] Initializing audio system');
-    try {
-      await ExpoAudio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: true,
-        shouldDuckAndroid: true,
-        playThroughEarpieceAndroid: false,
-      });
-      Audio.isInitialized = true;
-      console.log('[Audio.native] Audio system initialized successfully');
-    } catch (error) {
-      console.error('[Audio.native] Error initializing audio system:', error);
-    }
-  };
-}
-
-
-export const useAudio = () => {
+export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const audioRef = useRef<ExpoAudio.Sound | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [soundDuration, setSoundDuration] = useState<number | null>(null);
   const [playingSound, setPlayingSound] = useState<SoundName | null>(null);
 
   useEffect(() => {
     const initAudio = async () => {
-      if( ! Audio.isInitialized) {
-        await Audio.initAudio();
+      if( ! isInitialized) {
+        console.log('[AudioProvider.native] Initializing audio system');
+        try {
+          await ExpoAudio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+            staysActiveInBackground: true,
+            shouldDuckAndroid: true,
+            playThroughEarpieceAndroid: false,
+          });
+          setIsInitialized(true);
+          console.log('[AudioProvider.native] Audio system initialized successfully');
+        } catch (error) {
+          console.error('[AudioProvider.native] Error initializing audio system:', error);
+        }
       }
     }
     initAudio();
   }, []);
-  
+
   const playSound = async (soundName: SoundName) => {
-    console.log(`[useAudio] ▶️ Demande de lecture pour: ${soundName}`);
+    console.log(`[AudioProvider.native] ▶️ Demande de lecture pour: ${soundName}`);
     try {
       if (audioRef.current) {
         await audioRef.current.unloadAsync();
@@ -55,9 +47,9 @@ export const useAudio = () => {
       await sound.playAsync();
 
       setIsPlaying(true);
-      console.log(`[useAudio] ✅ Playback started for: ${soundName}`);
+      console.log(`[AudioProvider.native] ✅ Playback started for: ${soundName}`);
     } catch (error) {
-      console.error(`[useAudio] ❌ Erreur lors de la lecture de ${soundName}:`, error);
+      console.error(`[AudioProvider.native] ❌ Erreur lors de la lecture de ${soundName}:`, error);
     }
   };
 
@@ -78,10 +70,16 @@ export const useAudio = () => {
       await audioRef.current.unloadAsync();
       setIsPlaying(false);
       setPlayingSound(null);
-      console.log(`[useAudio] ⏹️ Playback stopped`);
+      console.log(`[AudioProvider.native] ⏹️ Playback stopped`);
     }
   };
 
-  return { isPlaying, playSound, stopSound, soundDuration, playingSound };
+  return (
+    <AudioContext.Provider
+      value={{ isPlaying, playSound, stopSound, soundDuration, playingSound }}
+    >
+      {children}
+    </AudioContext.Provider>
+  );
 };
 

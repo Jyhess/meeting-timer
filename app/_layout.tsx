@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import { store } from '../src/store/store';
 import { TimerProvider } from '../src/contexts/TimerContext';
+import { AudioProvider } from '../src/contexts/AudioProvider';
 
 declare global {
   interface Window {
@@ -43,14 +44,16 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <TimerProvider>
-          <StatusBar style="light" />
-          <Container style={styles.container}>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-          </Container>
-        </TimerProvider>
+        <AudioProvider>
+          <TimerProvider>
+            <StatusBar style="light" />
+            <Container style={styles.container}>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
+            </Container>
+          </TimerProvider>
+        </AudioProvider>
       </SafeAreaProvider>
     </Provider>
   );

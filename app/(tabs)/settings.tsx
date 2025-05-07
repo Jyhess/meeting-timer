@@ -15,7 +15,7 @@ import { styles } from '../../src/styles/Settings.styles';
 import { theme } from '../../src/theme';
 import { sounds } from '../../src/config/alerts';
 import { ToggleSlider } from '@/src/components/Timer/ToggleSlider';
-import { useAudio } from '@/src/hooks/useAudio';
+import { useAudio } from '@/src/contexts/AudioContext';
 import { Link } from 'expo-router';
 import { useTranslation } from '../../src/hooks/useTranslation';
 import { Language } from '../../src/locales';
