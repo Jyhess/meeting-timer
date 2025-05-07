@@ -38,14 +38,14 @@ jobs:
   #   params:
   #     platform: ios
   #     profile: stage
-  submit_android_build:
-    name: Submit Android Build
-    needs: [build_android]
-    type: submit
-    env:
-      EXPO_DEBUG: 1
-    params:
-      build_id: ${{ needs.build_android.outputs.build_id }}
+  # submit_android_build:
+  #   name: Submit Android Build
+  #   needs: [build_android]
+  #   type: submit
+  #   env:
+  #     EXPO_DEBUG: 1
+  #   params:
+  #     build_id: ${{ needs.build_android.outputs.build_id }}
   # submit_ios_build:
   #   name: Submit iOS Build
   #   needs: [build_ios]
