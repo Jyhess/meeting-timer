@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { Alert } from '../../../src/types/alerts';
 import { styles } from '../../../src/styles/TimerEditing.styles';
 import { theme } from '../../../src/theme';
 import { TimeInput } from './TimeInput';
@@ -9,34 +8,18 @@ import { formatTimeFromSeconds } from '@/src/utils/time';
 import { AlertsSection } from './AlertsSection';
 import { ControlButton } from './ControlButton';
 import { useRouter } from 'expo-router';
+import { useTimerRedux } from '@/src/hooks/useTimerRedux';
 
-interface TimerEditingProps {
-  duration: number;
-  timeLeft: number;
-  isRunning: boolean;
-  state: 'idle' | 'running' | 'paused';
-  beforeAlert: Alert;
-  endAlert: Alert;
-  afterAlert: Alert;
-  effectDuration: number;
-  presetName: string;
-  presetColor: string;
-  shouldFlash: boolean;
-  hasActiveAlert: boolean;
-  actions: any,
-}
+export const TimerEditing: React.FC = () => {
+  const {
+    duration,
+    timeLeft,
+    beforeAlert,
+    presetName,
+    presetColor,
+    actions
+  } = useTimerRedux();
 
-export const TimerEditing: React.FC<TimerEditingProps> = ({
-  duration,
-  timeLeft,
-  isRunning,
-  beforeAlert,
-  endAlert,
-  afterAlert,
-  presetName,
-  presetColor,
-  actions,
-}) => {
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
   const [validInput, setValidInput] = useState(true);
   const isValidTime = validInput && timeLeft > 0 && (!beforeAlert.enabled || timeLeft > beforeAlert.timeOffset);
@@ -99,14 +82,7 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
         </View>
       </View>
       <View style={styles.alertsContainer}>
-        <AlertsSection
-          beforeAlert={beforeAlert}
-          endAlert={endAlert}
-          afterAlert={afterAlert}
-          isRunning={isRunning}
-          timeLeft={timeLeft}
-          actions={actions}
-        />
+        <AlertsSection />
       </View>
       <View>
         <SavePresetDialog
@@ -119,5 +95,5 @@ export const TimerEditing: React.FC<TimerEditingProps> = ({
       </View>
     </View>
   );
-}
+};
 

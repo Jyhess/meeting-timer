@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 import { theme } from '../../src/theme';
-import { useTimer } from '../../src/hooks/useTimer';
+import { useTimerRedux } from '../../src/hooks/useTimerRedux';
 import { useIsFocused } from '@react-navigation/native';
 import { TimerRunning } from '../../src/components/Timer/TimerRunning';
 import { TimerEditing } from '../../src/components/Timer/TimerEditing';
@@ -12,22 +12,7 @@ import { TimerEditing } from '../../src/components/Timer/TimerEditing';
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string }>();
   const isFocused = useIsFocused();
-
-  const {
-    duration,
-    timeLeft,
-    isRunning,
-    state,
-    beforeAlert,
-    endAlert,
-    afterAlert,
-    actions,
-    presetColor,
-    presetName,
-    effectDuration,
-    shouldFlash,
-    hasActiveAlert,
-  } = useTimer();
+  const { isRunning, presetColor, actions } = useTimerRedux();
 
   useEffect(() => {
     console.log('[TimerScreen] 🔔 useEffect [isFocused] :', isFocused);
@@ -49,39 +34,7 @@ export default function TimerScreen() {
       <View 
         style={[styles.container, { backgroundColor: presetColor ? presetColor + '66' : theme.colors.background.primary }]}
       >
-        {isRunning ? (
-          <TimerRunning
-            duration={duration}
-            timeLeft={timeLeft}
-            isRunning={isRunning}
-            state={state}
-            beforeAlert={beforeAlert}
-            endAlert={endAlert}
-            afterAlert={afterAlert}
-            effectDuration={effectDuration}
-            presetName={presetName}
-            presetColor={presetColor}
-            shouldFlash={shouldFlash}
-            hasActiveAlert={hasActiveAlert}
-            actions={actions}
-          />
-        ) : (
-          <TimerEditing
-            duration={duration}
-            timeLeft={timeLeft}
-            isRunning={isRunning}
-            state={state}
-            beforeAlert={beforeAlert}
-            endAlert={endAlert}
-            afterAlert={afterAlert}
-            effectDuration={effectDuration}
-            presetName={presetName}
-            presetColor={presetColor}
-            shouldFlash={shouldFlash}
-            hasActiveAlert={hasActiveAlert}
-            actions={actions}
-          />
-        )}
+        {isRunning ? <TimerRunning /> : <TimerEditing />}
       </View>
     </SafeAreaView>    
   );

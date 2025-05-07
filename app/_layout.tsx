@@ -5,6 +5,8 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Platform, AppState, AppStateStatus, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Provider } from 'react-redux';
+import { store } from '../src/store/store';
 
 declare global {
   interface Window {
@@ -38,14 +40,16 @@ export default function RootLayout() {
   const Container = Platform.OS === 'web' ? View : GestureHandlerRootView;
 
   return (
-    <SafeAreaProvider>
-      <StatusBar style="light" />
-      <Container style={styles.container}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </Container>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <StatusBar style="light" />
+        <Container style={styles.container}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+        </Container>
+      </SafeAreaProvider>
+    </Provider>
   );
 }
 
