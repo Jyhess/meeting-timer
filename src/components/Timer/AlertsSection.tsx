@@ -3,10 +3,10 @@ import { View, StyleSheet } from 'react-native';
 import { AlertIcon } from './AlertIcon';
 import { AlertEditor } from './AlertEditor';
 import { theme } from '../../theme';
-import { useTimerRedux } from '@/src/hooks/useTimerRedux';
+import { useTimer } from '@/src/contexts/TimerContext';
 import { Alert } from '@/src/types/alerts';
 
-export const AlertsSection: React.FC = () => {
+export function AlertsSection() {
   const {
     beforeAlert,
     endAlert,
@@ -14,7 +14,7 @@ export const AlertsSection: React.FC = () => {
     isRunning,
     timeLeft,
     updateAlert,
-  } = useTimerRedux();
+  } = useTimer();
 
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
 
@@ -67,7 +67,7 @@ export const AlertsSection: React.FC = () => {
       )}
     </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   alertsContainer: {

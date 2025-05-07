@@ -9,9 +9,9 @@ import { CircularProgress } from '@/src/components/Timer/CircularProgress';
 import { AlertsSection } from './AlertsSection';
 import { ControlButton } from './ControlButton';
 import { formatTimeFromSeconds } from '@/src/utils/time';
-import { useTimerRedux } from '@/src/hooks/useTimerRedux';
+import { useTimer } from '@/src/contexts/TimerContext';
 
-export const TimerRunning: React.FC = () => {
+export function TimerRunning() {
   const {
     timeLeft,
     isRunning,
@@ -25,7 +25,7 @@ export const TimerRunning: React.FC = () => {
     pauseTimer,
     resumeTimer,
     stopAlerts,
-  } = useTimerRedux();
+  } = useTimer();
 
   const flashViewRef = useRef<FlashViewRef>(null);
   const [addingTime, setAddingTime] = useState(false);

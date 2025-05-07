@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Timer.styles';
 import { theme } from '../../src/theme';
-import { useTimerRedux } from '../../src/hooks/useTimerRedux';
+import { useTimer } from '@/src/contexts/TimerContext';
 import { useIsFocused } from '@react-navigation/native';
 import { TimerRunning } from '../../src/components/Timer/TimerRunning';
 import { TimerEditing } from '../../src/components/Timer/TimerEditing';
@@ -12,7 +12,7 @@ import { TimerEditing } from '../../src/components/Timer/TimerEditing';
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string }>();
   const isFocused = useIsFocused();
-  const { isRunning, presetColor, loadTimerFromPreset, resetNewTimer, stopAlerts } = useTimerRedux();
+  const { isRunning, presetColor, loadTimerFromPreset, resetNewTimer, stopAlerts } = useTimer();
 
   useEffect(() => {
     console.log('[TimerScreen] 🔔 useEffect [isFocused] :', isFocused);
