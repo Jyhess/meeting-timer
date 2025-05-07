@@ -9,24 +9,18 @@ import Animated, {
 import { theme } from '../../theme';
 import Svg, { Polyline } from 'react-native-svg';
 import { polylinePath } from '../../utils/polyline';
-
+import { useTimerRedux } from '@/src/hooks/useTimerRedux';
 const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
 
-interface CircularProgressProps {
-  duration: number;
-  timeLeft: number;
-  isRunning: boolean;
-  beforeAlertOffset?: number;
-  afterAlertOffset?: number;
-}
+export const CircularProgress: React.FC = () => {
+  const {
+    duration,
+    timeLeft,
+    isRunning,
+    beforeAlert,
+    afterAlert,
+  } = useTimerRedux();
 
-export const CircularProgress: React.FC<CircularProgressProps> = ({
-  duration,
-  timeLeft,
-  isRunning,
-  beforeAlertOffset,
-  afterAlertOffset,
-}) => {
   const [size, setSize] = useState({width: 0, height: 0});
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -64,14 +58,14 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   };
 
   React.useEffect(() => {
-    if(timeLeft >= 0)
+    if(timeLeft >= 1)
     {
-      const remaining = 1 - (timeLeft / duration);
+      const remaining = 1 - ((timeLeft-1) / duration);
       progress.value = getAnimetedValue(remaining, progress.value);
     }
-    else if(timeLeft > (-duration-1))
+    else if(timeLeft > (-duration))
     {
-      const remaining = 1 - ((duration+timeLeft) / duration);
+      const remaining = 1 - ((duration+timeLeft-1) / duration);
       progressNegative.value = getAnimetedValue(remaining, progressNegative.value);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,8 +98,8 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   }, [isRunning, size]);
 
 
-  const beforeAlertAngle = (1-(beforeAlertOffset || 0) / duration);
-  const afterAlertAngle = ((afterAlertOffset || 0) / duration);
+  const beforeAlertAngle = (1-(beforeAlert.timeOffset || 0) / duration);
+  const afterAlertAngle = ((afterAlert.timeOffset || 0) / duration);
 
   const animatedProps = useAnimatedProps(() => ({
     points: progressShape.value,
@@ -129,7 +123,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
         <AnimatedPolyline
           animatedProps={animatedProps as any}
         />
-        {timeLeft < 0 && (
+        {timeLeft < 1 && (
           <>
             <Polyline
               points={polylinePath(size, afterAlertAngle).map((point: { x: number; y: number }) => `${point.x},${point.y}`).join(' ')}

@@ -132,20 +132,6 @@ const timerSlice = createSlice({
   }
 });
 
-export const {
-  setDuration,
-  start,
-  pause,
-  resume,
-  stop,
-  reset,
-  resetFromDefault,
-  loadPreset,
-  updateAlert,
-  addTime,
-  tick,
-  setShouldFlash,
-  setHasActiveAlert
-} = timerSlice.actions;
+export const actions = timerSlice.actions;
 
 export default timerSlice.reducer; 
