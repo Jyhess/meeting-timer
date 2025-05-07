@@ -12,19 +12,19 @@ import { TimerEditing } from '../../src/components/Timer/TimerEditing';
 export default function TimerScreen() {
   const params = useLocalSearchParams<{ presetId?: string }>();
   const isFocused = useIsFocused();
-  const { isRunning, presetColor, actions } = useTimerRedux();
+  const { isRunning, presetColor, loadTimerFromPreset, resetNewTimer, stopAlerts } = useTimerRedux();
 
   useEffect(() => {
     console.log('[TimerScreen] 🔔 useEffect [isFocused] :', isFocused);
     if(isFocused) {
       if (params.presetId) {
-        actions.loadPreset(params.presetId);
+        loadTimerFromPreset(params.presetId);
       } else {
-        actions.resetFromDefault();
+        resetNewTimer();
       }
     }
     else {
-      actions.stop();
+      stopAlerts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused, params.presetId]);

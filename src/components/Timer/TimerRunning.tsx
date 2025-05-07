@@ -13,15 +13,18 @@ import { useTimerRedux } from '@/src/hooks/useTimerRedux';
 
 export const TimerRunning: React.FC = () => {
   const {
-    duration,
     timeLeft,
     isRunning,
     state,
     beforeAlert,
-    afterAlert,
     shouldFlash,
     hasActiveAlert,
-    actions
+    stopTimer,
+    resetTimer,
+    addTimerTime,
+    pauseTimer,
+    resumeTimer,
+    stopAlerts,
   } = useTimerRedux();
 
   const flashViewRef = useRef<FlashViewRef>(null);
@@ -32,7 +35,7 @@ export const TimerRunning: React.FC = () => {
     if (!isRunning) {
       setAddingTime(false);
     }
-  }, [isRunning, actions]);
+  }, [isRunning]);
 
   useEffect(() => {
     if (shouldFlash) {
@@ -44,12 +47,12 @@ export const TimerRunning: React.FC = () => {
   }, [shouldFlash]);
 
   const handleStop = () => {
-    actions.stop();
+    stopTimer();
     setAddingTime(false);
   };
 
   const handleReset = () => {
-    actions.reset();
+    resetTimer();
     setAddingTime(false);
   };
 
@@ -63,7 +66,7 @@ export const TimerRunning: React.FC = () => {
 
   const handleAddTime = () => {
     if (addTimeValue.isValid) {
-      actions.addTime(addTimeValue.seconds);
+      addTimerTime(addTimeValue.seconds);
       setAddingTime(false);
     }
   };
@@ -84,13 +87,7 @@ export const TimerRunning: React.FC = () => {
 
   return (
     <View style={styles.timerRunningContainer}>
-      <CircularProgress
-        duration={duration}
-        timeLeft={timeLeft - 1}
-        isRunning={state === 'running'}
-        beforeAlertOffset={beforeAlert.enabled ? beforeAlert.timeOffset : undefined}
-        afterAlertOffset={afterAlert.enabled ? afterAlert.timeOffset : undefined}
-      />
+      <CircularProgress />
 
       <FlashView ref={flashViewRef} />
 
@@ -107,13 +104,13 @@ export const TimerRunning: React.FC = () => {
             {state === 'paused' ? (
               <ControlButton
                 icon="play_arrow"
-                onPress={() => actions.resume()}
+                onPress={() => resumeTimer()}
                 color={theme.colors.secondary}
               />
             ) : (
               <ControlButton
                 icon="pause"
-                onPress={() => actions.pause()}
+                onPress={() => pauseTimer()}
                 color={theme.colors.secondary}
               />
             )}
@@ -169,7 +166,7 @@ export const TimerRunning: React.FC = () => {
         <ControlButton
           icon="volume_off"
           onPress={() => {
-            actions.stopAlerts();
+            stopAlerts();
           }}
           color={theme.colors.danger}
           size={32}

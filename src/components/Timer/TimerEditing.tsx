@@ -17,7 +17,10 @@ export const TimerEditing: React.FC = () => {
     beforeAlert,
     presetName,
     presetColor,
-    actions
+    resetNewTimer,
+    setDuration,
+    startTimer,
+    savePreset,
   } = useTimerRedux();
 
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
@@ -26,14 +29,14 @@ export const TimerEditing: React.FC = () => {
   const router = useRouter();
 
   const handleReset = () => {
-    actions.resetFromDefault();
+    resetNewTimer();
     router.setParams({ presetId: null });
   };
 
   const handleDurationChange = (duration: number, isValidTime: boolean) => {
     setValidInput(isValidTime);
     if (isValidTime) {
-      actions.setDuration(duration);
+      setDuration(duration);
     }
   };
 
@@ -45,7 +48,7 @@ export const TimerEditing: React.FC = () => {
   };
 
   const handleSave = async (name: string, color: string) => {
-    actions.savePreset(name, color);
+    savePreset(name, color);
     setSaveDialogVisible(false);
   };
 
@@ -74,7 +77,7 @@ export const TimerEditing: React.FC = () => {
             />
             <ControlButton
               icon="play_arrow"
-              onPress={() => actions.start()}
+              onPress={() => startTimer()}
               disabled={!isValidTime}
               color={isValidTime ? theme.colors.primary : theme.colors.black}
             />

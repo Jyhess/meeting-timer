@@ -13,7 +13,7 @@ export const AlertsSection: React.FC = () => {
     afterAlert,
     isRunning,
     timeLeft,
-    actions
+    updateAlert,
   } = useTimerRedux();
 
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
@@ -45,7 +45,7 @@ export const AlertsSection: React.FC = () => {
             onPress={() => setEditingAlert(alert)}
             onToggle={(enabled) => {
               const updatedAlert = { ...alert, enabled };
-              actions.updateAlert(updatedAlert);
+              updateAlert(updatedAlert);
             }}
             timeColor={getAlertTimeColor(alert)}
           />
@@ -59,7 +59,7 @@ export const AlertsSection: React.FC = () => {
             isVisible={true}
             onClose={() => setEditingAlert(null)}
             onSave={(updatedAlert) => {
-              actions.updateAlert(updatedAlert);
+              updateAlert(updatedAlert);
               setEditingAlert(null);
             }}
           />

@@ -1,21 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import {
-  setDuration,
-  start,
-  pause,
-  resume,
-  stop,
-  reset,
-  resetFromDefault,
-  loadPreset,
-  updateAlert,
-  addTime,
-  tick,
-  setShouldFlash,
-  setHasActiveAlert
-} from '../store/timerSlice';
+import {actions } from '../store/timerSlice';
 import { useSettings } from './useSettings';
 import { usePresets } from './usePresets';
 import { useAudio } from './useAudio';
@@ -53,7 +39,7 @@ export function useTimerRedux() {
   useEffect(() => {
     if (state === 'running') {
       intervalRef.current = setInterval(() => {
-        dispatch(tick());
+        dispatch(actions.tick());
       }, 100);
     }
 
@@ -80,15 +66,15 @@ export function useTimerRedux() {
         if (shouldTrigger) {
           startedAlerts.current.add(alert.id);
           if (alert.effects.includes('flash')) {
-            dispatch(setShouldFlash(true));
+            dispatch(actions.setShouldFlash(true));
           }
           if (alert.sound) {
             playSound(alert.sound);
           }
           if (alert.effects.includes('shake')) {
-            dispatch(setShouldFlash(true));
+            dispatch(actions.setShouldFlash(true));
           }
-          dispatch(setHasActiveAlert(true));
+          dispatch(actions.setHasActiveAlert(true));
         }
       });
     };
@@ -101,8 +87,8 @@ export function useTimerRedux() {
   useEffect(() => {
     if (shouldFlash) {
       alertTimerRef.current = setTimeout(() => {
-        dispatch(setShouldFlash(false));
-        dispatch(setHasActiveAlert(false));
+        dispatch(actions.setShouldFlash(false));
+        dispatch(actions.setHasActiveAlert(false));
       }, effectDuration * 1000);
     }
     return () => {
@@ -115,89 +101,84 @@ export function useTimerRedux() {
 
   const stopAlerts = useCallback(() => {
     stopAudioSound();
-    dispatch(setShouldFlash(false));
-    dispatch(setHasActiveAlert(false));
+    dispatch(actions.setShouldFlash(false));
+    dispatch(actions.setHasActiveAlert(false));
   }, [stopAudioSound, dispatch]);
 
   const savePreset = useCallback(async (name?: string, color?: string) => {
     await presets.createOrUpdatePreset(duration, [beforeAlert, endAlert, afterAlert], name, color);
   }, [duration, beforeAlert, endAlert, afterAlert, presets]);
 
-  const actions = {
-    setDuration: useCallback((duration: number) => {
-      dispatch(setDuration(duration));
-    }, [dispatch]),
+  const setDuration = useCallback((duration: number) => {
+    dispatch(actions.setDuration(duration));
+  }, [dispatch]);
 
-    start: useCallback(() => {
-      if(state === 'idle' && duration > 0) {
-        savePreset();
-      }
-      dispatch(start());
-    }, [state, duration, savePreset, dispatch]),
+  const startTimer = useCallback(() => {
+    if(state === 'idle' && duration > 0) {
+      savePreset();
+    }
+    dispatch(actions.start());
+  }, [state, duration, savePreset, dispatch]);
 
-    pause: useCallback(() => {
-      dispatch(pause());
-      stopAlerts();
-    }, [dispatch, stopAlerts]),
+  const pauseTimer = useCallback(() => {
+    dispatch(actions.pause());
+    stopAlerts();
+  }, [dispatch, stopAlerts]);
 
-    resume: useCallback(() => {
-      dispatch(resume());
-    }, [dispatch]),
+  const resumeTimer = useCallback(() => {
+    dispatch(actions.resume());
+  }, [dispatch]);
 
-    stop: useCallback(() => {
-      dispatch(stop());
-      stopAlerts();
-      startedAlerts.current.clear();
-    }, [dispatch, stopAlerts]),
+  const stopTimer = useCallback(() => {
+    dispatch(actions.stop());
+    stopAlerts();
+    startedAlerts.current.clear();
+  }, [dispatch, stopAlerts]);
 
-    reset: useCallback(() => {
-      dispatch(reset());
-      stopAlerts();
-      startedAlerts.current.clear();
-    }, [dispatch, stopAlerts]),
+  const resetTimer = useCallback(() => {
+    dispatch(actions.reset());
+    stopAlerts();
+    startedAlerts.current.clear();
+  }, [dispatch, stopAlerts]);
 
-    resetFromDefault: useCallback(() => {
-      dispatch(resetFromDefault({
-        duration: 0,
-        timeLeft: 0,
-        timeLeftMS: 0,
-        endTime: null,
-        isRunning: false,
-        state: 'idle',
-        beforeAlert: settings.defaultAlerts[0],
-        endAlert: settings.defaultAlerts[1],
-        afterAlert: settings.defaultAlerts[2],
-        effectDuration: settings.defaultAlertDuration,
-        presetName: '',
-        presetColor: '',
-        shouldFlash: false,
-        hasActiveAlert: false
+  const resetNewTimer = useCallback(() => {
+    dispatch(actions.resetFromDefault({
+      duration: 0,
+      timeLeft: 0,
+      timeLeftMS: 0,
+      endTime: null,
+      isRunning: false,
+      state: 'idle',
+      beforeAlert: settings.defaultAlerts[0],
+      endAlert: settings.defaultAlerts[1],
+      afterAlert: settings.defaultAlerts[2],
+      effectDuration: settings.defaultAlertDuration,
+      presetName: '',
+      presetColor: '',
+      shouldFlash: false,
+      hasActiveAlert: false
+    }));
+  }, [dispatch, settings.defaultAlerts, settings.defaultAlertDuration]);
+
+  const loadTimerFromPreset = useCallback((presetId: string) => {
+    const preset = presets.getPreset(presetId);
+    if (preset) {
+      dispatch(actions.loadPreset({
+        alerts: preset.alerts,
+        seconds: preset.seconds,
+        name: preset.name,
+        color: preset.color
       }));
-    }, [dispatch, settings.defaultAlerts, settings.defaultAlertDuration]),
+    }
+  }, [dispatch, presets]);
 
-    loadPreset: useCallback((presetId: string) => {
-      const preset = presets.getPreset(presetId);
-      if (preset) {
-        dispatch(loadPreset({
-          alerts: preset.alerts,
-          seconds: preset.seconds,
-          name: preset.name,
-          color: preset.color
-        }));
-      }
-    }, [dispatch, presets]),
+  const updateAlert = useCallback((alert: Alert) => {
+    dispatch(actions.updateAlert(alert));
+  }, [dispatch]);
 
-    updateAlert: useCallback((alert: Alert) => {
-      dispatch(updateAlert(alert));
-    }, [dispatch]),
-
-    addTime: useCallback((seconds: number) => {
-      dispatch(addTime(seconds));
-    }, [dispatch]),
-
-    stopAlerts,
-    savePreset,
-  };
+  const addTimerTime = useCallback((seconds: number) => {
+    dispatch(actions.addTime(seconds));
+  }, [dispatch]);
 
   return {
     duration,
@@ -212,6 +193,17 @@ export function useTimerRedux() {
     presetColor,
     shouldFlash,
     hasActiveAlert,
-    actions,
+    savePreset,
+    setDuration,
+    startTimer,
+    pauseTimer,
+    resumeTimer,
+    stopTimer,
+    resetTimer,
+    resetNewTimer,
+    loadTimerFromPreset,
+    updateAlert,
+    addTimerTime,
+    stopAlerts
   };
-} 
+}
