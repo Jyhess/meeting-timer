@@ -54,15 +54,7 @@ export function useTimerRedux() {
     if (state === 'running') {
       intervalRef.current = setInterval(() => {
         dispatch(tick());
-      }, 1000);
-    } else {
-      stopAlerts();
-      if(state === 'idle') {
-        startedAlerts.current.clear();
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-      }
+      }, 100);
     }
 
     return () => {
@@ -125,7 +117,6 @@ export function useTimerRedux() {
     stopAudioSound();
     dispatch(setShouldFlash(false));
     dispatch(setHasActiveAlert(false));
-    startedAlerts.current.clear();
   }, [stopAudioSound, dispatch]);
 
   const savePreset = useCallback(async (name?: string, color?: string) => {
@@ -146,7 +137,8 @@ export function useTimerRedux() {
 
     pause: useCallback(() => {
       dispatch(pause());
-    }, [dispatch]),
+      stopAlerts();
+    }, [dispatch, stopAlerts]),
 
     resume: useCallback(() => {
       dispatch(resume());
@@ -154,7 +146,9 @@ export function useTimerRedux() {
 
     stop: useCallback(() => {
       dispatch(stop());
-    }, [dispatch]),
+      stopAlerts();
+      startedAlerts.current.clear();
+    }, [dispatch, stopAlerts]),
 
     reset: useCallback(() => {
       dispatch(reset());
@@ -166,6 +160,7 @@ export function useTimerRedux() {
       dispatch(resetFromDefault({
         duration: 0,
         timeLeft: 0,
+        timeLeftMS: 0,
         endTime: null,
         isRunning: false,
         state: 'idle',

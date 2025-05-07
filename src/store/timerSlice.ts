@@ -4,6 +4,7 @@ import { Alert, DEFAULT_ALERTS } from '../types/alerts';
 interface TimerState {
   duration: number;
   timeLeft: number;
+  timeLeftMS: number;
   endTime: number | null;
   isRunning: boolean;
   state: 'idle' | 'running' | 'paused';
@@ -20,6 +21,7 @@ interface TimerState {
 const initialState: TimerState = {
   duration: 0,
   timeLeft: 0,
+  timeLeftMS: 0,
   endTime: null,
   isRunning: false,
   state: 'idle',
@@ -46,6 +48,8 @@ const timerSlice = createSlice({
       state.isRunning = true;
       state.state = 'running';
       state.endTime = Date.now() + state.duration * 1000;
+      state.timeLeft = state.duration;
+      state.timeLeftMS = state.duration * 1000;
     },
     pause: (state) => {
       state.isRunning = true;
@@ -54,16 +58,18 @@ const timerSlice = createSlice({
     resume: (state) => {
       state.isRunning = true;
       state.state = 'running';
-      state.endTime = Date.now() + state.duration * 1000;
+      state.endTime = Date.now() + state.timeLeft * 1000;
     },
     stop: (state) => {
       state.timeLeft = state.duration;
+      state.timeLeftMS = state.duration * 1000;
       state.endTime = null;
       state.isRunning = false;
       state.state = 'idle';
     },
     reset: (state) => {
       state.timeLeft = state.duration;
+      state.timeLeftMS = state.duration * 1000;
       state.endTime = Date.now() + state.duration * 1000;
       state.isRunning = true;
       state.state = 'running';
@@ -74,6 +80,7 @@ const timerSlice = createSlice({
     loadPreset: (state, action: PayloadAction<{ alerts: Alert[], seconds: number, name: string, color: string }>) => {
       state.duration = action.payload.seconds;
       state.timeLeft = action.payload.seconds;
+      state.timeLeftMS = action.payload.seconds * 1000;
       state.endTime = null;
       state.beforeAlert = action.payload.alerts.find(a => a.id === 'before') || state.beforeAlert;
       state.endAlert = action.payload.alerts.find(a => a.id === 'end') || state.endAlert;
@@ -98,13 +105,22 @@ const timerSlice = createSlice({
     },
     addTime: (state, action: PayloadAction<number>) => {
       if (state.endTime) {
-        state.endTime = state.endTime + action.payload * 1000;
-        state.timeLeft = Math.floor((state.endTime - Date.now()) / 1000);
+        if( state.state === 'running') {
+          state.endTime = state.endTime + action.payload * 1000;
+          state.timeLeftMS = state.endTime - Date.now();
+          state.timeLeft = Math.floor(state.timeLeftMS / 1000);
+        }
+        else {
+          state.timeLeftMS = state.timeLeftMS + action.payload * 1000;
+          state.timeLeft = Math.floor(state.timeLeftMS / 1000);
+          state.endTime = Date.now() + state.timeLeftMS;
+        }
       }
     },
     tick: (state) => {
       if (state.state === 'running' && state.endTime) {
-        state.timeLeft = Math.floor((state.endTime - Date.now()) / 1000);
+        state.timeLeftMS = state.endTime - Date.now();
+        state.timeLeft = Math.floor(state.timeLeftMS / 1000);
       }
     },
     setShouldFlash: (state, action: PayloadAction<boolean>) => {
