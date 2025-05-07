@@ -8,9 +8,9 @@ import { formatTimeFromSeconds } from '@/src/utils/time';
 import { AlertsSection } from './AlertsSection';
 import { ControlButton } from './ControlButton';
 import { useRouter } from 'expo-router';
-import { useTimerRedux } from '@/src/hooks/useTimerRedux';
+import { useTimer } from '@/src/contexts/TimerContext';
 
-export const TimerEditing: React.FC = () => {
+export function TimerEditing() {
   const {
     duration,
     timeLeft,
@@ -21,7 +21,7 @@ export const TimerEditing: React.FC = () => {
     setDuration,
     startTimer,
     savePreset,
-  } = useTimerRedux();
+ } = useTimer();
 
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
   const [validInput, setValidInput] = useState(true);

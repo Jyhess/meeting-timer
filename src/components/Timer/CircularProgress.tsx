@@ -9,17 +9,17 @@ import Animated, {
 import { theme } from '../../theme';
 import Svg, { Polyline } from 'react-native-svg';
 import { polylinePath } from '../../utils/polyline';
-import { useTimerRedux } from '@/src/hooks/useTimerRedux';
+import { useTimer } from '@/src/contexts/TimerContext';
 const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
 
-export const CircularProgress: React.FC = () => {
+export function CircularProgress() {
   const {
     duration,
     timeLeft,
     isRunning,
     beforeAlert,
     afterAlert,
-  } = useTimerRedux();
+  } = useTimer();
 
   const [size, setSize] = useState({width: 0, height: 0});
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null);

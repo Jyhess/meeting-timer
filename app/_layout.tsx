@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import { store } from '../src/store/store';
+import { TimerProvider } from '../src/contexts/TimerContext';
 
 declare global {
   interface Window {
@@ -42,12 +43,14 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <StatusBar style="light" />
-        <Container style={styles.container}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </Container>
+        <TimerProvider>
+          <StatusBar style="light" />
+          <Container style={styles.container}>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+          </Container>
+        </TimerProvider>
       </SafeAreaProvider>
     </Provider>
   );
