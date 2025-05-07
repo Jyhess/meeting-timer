@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View } from 'react-native';
-import { Alert } from '../../../src/types/alerts';
 import { styles } from '../../styles/TimerRunning.styles';
 import { theme } from '../../../src/theme';
 import { TimeInput } from './TimeInput';
@@ -10,35 +9,21 @@ import { CircularProgress } from '@/src/components/Timer/CircularProgress';
 import { AlertsSection } from './AlertsSection';
 import { ControlButton } from './ControlButton';
 import { formatTimeFromSeconds } from '@/src/utils/time';
+import { useTimerRedux } from '@/src/hooks/useTimerRedux';
 
-interface TimerRunningProps {
-  duration: number;
-  timeLeft: number;
-  isRunning: boolean;
-  state: 'idle' | 'running' | 'paused';
-  beforeAlert: Alert;
-  endAlert: Alert;
-  afterAlert: Alert;
-  effectDuration: number;
-  presetName: string;
-  presetColor: string;
-  shouldFlash: boolean;
-  hasActiveAlert: boolean;
-  actions: any,
-}
+export const TimerRunning: React.FC = () => {
+  const {
+    duration,
+    timeLeft,
+    isRunning,
+    state,
+    beforeAlert,
+    afterAlert,
+    shouldFlash,
+    hasActiveAlert,
+    actions
+  } = useTimerRedux();
 
-export const TimerRunning: React.FC<TimerRunningProps> = ({
-  duration,
-  timeLeft,
-  isRunning,
-  state,
-  beforeAlert,
-  endAlert,
-  afterAlert,
-  shouldFlash,
-  hasActiveAlert,
-  actions,
-}) => {
   const flashViewRef = useRef<FlashViewRef>(null);
   const [addingTime, setAddingTime] = useState(false);
   const [addTimeValue, setAddTimeValue] = useState<{ seconds: number; isValid: boolean }>({ seconds: 0, isValid: false });
@@ -49,7 +34,7 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
       actions.stop();
       setAddingTime(false);
     }
-  }, [isRunning]);
+  }, [isRunning, actions]);
 
   useEffect(() => {
     if (shouldFlash) {
@@ -152,6 +137,7 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
             />
           </View>
         </View>
+        
         {addingTime && (
           <View style={styles.addTimeContainer}>
             <TimeInput
@@ -178,14 +164,7 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
           </View>
         )}
         {!addingTime && (
-          <AlertsSection
-            beforeAlert={beforeAlert}
-            endAlert={endAlert}
-            afterAlert={afterAlert}
-            isRunning={isRunning}
-            timeLeft={timeLeft}
-            actions={actions}
-          />
+          <AlertsSection />
         )}
       </View>
       {hasActiveAlert && (
@@ -201,5 +180,5 @@ export const TimerRunning: React.FC<TimerRunningProps> = ({
       )}
     </View>
   );
-}
+};
 

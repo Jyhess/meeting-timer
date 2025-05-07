@@ -2,28 +2,20 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { AlertIcon } from './AlertIcon';
 import { AlertEditor } from './AlertEditor';
-import { Alert } from '../../types/alerts';
 import { theme } from '../../theme';
+import { useTimerRedux } from '@/src/hooks/useTimerRedux';
+import { Alert } from '@/src/types/alerts';
 
-interface AlertsSectionProps {
-  beforeAlert: Alert;
-  endAlert: Alert;
-  afterAlert: Alert;
-  isRunning: boolean;
-  timeLeft: number;
-  actions: {
-    updateAlert: (alert: Alert) => void;
-  };
-}
+export const AlertsSection: React.FC = () => {
+  const {
+    beforeAlert,
+    endAlert,
+    afterAlert,
+    isRunning,
+    timeLeft,
+    actions
+  } = useTimerRedux();
 
-export const AlertsSection: React.FC<AlertsSectionProps> = ({
-  beforeAlert,
-  endAlert,
-  afterAlert,
-  isRunning,
-  timeLeft,
-  actions,
-}) => {
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
 
   const getAlertTimeColor = (alert: Alert) => {
