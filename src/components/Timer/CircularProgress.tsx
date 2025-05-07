@@ -28,7 +28,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   afterAlertOffset,
 }) => {
   const [size, setSize] = useState({width: 0, height: 0});
-  const animationRef = useRef<NodeJS.Timeout>();
+  const animationRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -64,39 +64,42 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   };
 
   React.useEffect(() => {
-    if (isRunning) {
-      if(timeLeft >= 0)
-      {
-        const remaining = 1 - (timeLeft / duration);
-        progress.value = getAnimetedValue(remaining, progress.value);
-      }
-      else if(timeLeft > (-duration-1))
-      {
-        const remaining = 1 - ((duration+timeLeft) / duration);
-        progressNegative.value = getAnimetedValue(remaining, progressNegative.value);
-      }
+    if(timeLeft >= 0)
+    {
+      const remaining = 1 - (timeLeft / duration);
+      progress.value = getAnimetedValue(remaining, progress.value);
+    }
+    else if(timeLeft > (-duration-1))
+    {
+      const remaining = 1 - ((duration+timeLeft) / duration);
+      progressNegative.value = getAnimetedValue(remaining, progressNegative.value);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, duration, isRunning]);
 
   useEffect(() => {
-    if (isRunning) {
-      animationRef.current = setInterval(() => {
-        // Some refresh glitch happens with Android, so we check if the size is valid
-        if (size.width <= 0 || size.height <= 0) {
-          return;
-        }
-        progressShape.value = polylinePath(size, progress.value)
-          .map((point: { x: number; y: number }) => `${point.x},${point.y}`)
-          .join(' ');
-        progressShapeNegative.value = polylinePath(size, progressNegative.value)
-          .map((point: { x: number; y: number }) => `${point.x},${point.y}`)
-          .join(' ');
-      }, 16);
+    if (animationRef.current) {
+      clearInterval(animationRef.current);
+      animationRef.current = null;
     }
-    else {
-        clearInterval(animationRef.current);
+    animationRef.current = setInterval(() => {
+      // Some refresh glitch happens with Android, so we check if the size is valid
+      if (size.width <= 0 || size.height <= 0) {
+        return;
       }
+      progressShape.value = polylinePath(size, progress.value)
+        .map((point: { x: number; y: number }) => `${point.x},${point.y}`)
+        .join(' ');
+      progressShapeNegative.value = polylinePath(size, progressNegative.value)
+        .map((point: { x: number; y: number }) => `${point.x},${point.y}`)
+        .join(' ');
+    }, 16);
+    return () => {
+      if (animationRef.current) {
+        clearInterval(animationRef.current);
+        animationRef.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, size]);
 

@@ -29,9 +29,7 @@ export const TimerRunning: React.FC = () => {
   const [addTimeValue, setAddTimeValue] = useState<{ seconds: number; isValid: boolean }>({ seconds: 0, isValid: false });
 
   useEffect(() => {
-    console.log('[TimerRunning] 🔔 useEffect [isRunning] :', isRunning);
     if (!isRunning) {
-      actions.stop();
       setAddingTime(false);
     }
   }, [isRunning, actions]);
