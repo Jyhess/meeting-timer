@@ -7,7 +7,7 @@ export const useFlash = () => {
   const [flashInterval, setFlashInterval] = useState<NodeJS.Timeout | null>(null);
   const [flashStartTime, setFlashStartTime] = useState<number | null>(null);
   const [flashElapsedTime, setFlashElapsedTime] = useState<number>(0);
-  const [progressTimer, setProgressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [progressTimer, setProgressTimer] = useState<number | null>(null);
 
   // Clean up resources on unmount
   useEffect(() => {

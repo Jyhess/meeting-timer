@@ -11,17 +11,17 @@ import { useRouter } from 'expo-router';
 import { useTimer } from '@/src/contexts/TimerContext';
 
 export function TimerEditing() {
-  const {
-    duration,
-    timeLeft,
-    beforeAlert,
-    presetName,
-    presetColor,
-    resetNewTimer,
-    setDuration,
-    startTimer,
-    savePreset,
- } = useTimer();
+   const {
+     duration,
+     timeLeft,
+     beforeAlert,
+     presetName,
+     presetColor,
+     resetNewTimer,
+     setDuration,
+     startTimer,
+     savePreset,
+  } = useTimer();
 
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
   const [validInput, setValidInput] = useState(true);
