@@ -46,6 +46,7 @@ module.exports = {
     updates: {
       url: "https://u.expo.dev/5488530f-6320-46ad-b0b9-5532f24ee751"
     },
+    version: "1.0.2",
     runtimeVersion: {
       policy: "appVersion"
     }
