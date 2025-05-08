@@ -162,4 +162,28 @@ export const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.medium,
     color: theme.colors.white,
   },
+  versionContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    padding: theme.spacing.medium,
+    borderRadius: theme.borders.radius.medium,
+    marginBottom: theme.spacing.medium,
+  },
+  versionText: {
+    fontSize: theme.typography.fontSize.medium,
+    color: theme.colors.white,
+    marginBottom: theme.spacing.small,
+  },
+  copyButton: {
+    position: 'absolute',
+    right: theme.spacing.small,
+    top: theme.spacing.small,
+    backgroundColor: theme.colors.primary,
+    padding: theme.spacing.small,
+    borderRadius: theme.borders.radius.medium,
+    gap: theme.spacing.small,
+  },
+  copyButtonActive: {
+    backgroundColor: theme.colors.primary,
+    opacity: 0.8,
+  },
 });

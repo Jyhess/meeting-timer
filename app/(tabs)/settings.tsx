@@ -5,6 +5,7 @@ import {
   Pressable,
   ScrollView,
   TextInput,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +20,11 @@ import { useAudio } from '@/src/contexts/AudioContext';
 import { Link } from 'expo-router';
 import { useTranslation } from '../../src/hooks/useTranslation';
 import { Language } from '../../src/locales';
+import * as Application from 'expo-application';
+import Constants from 'expo-constants';
+import * as Haptics from 'expo-haptics';
+import * as Clipboard from 'expo-clipboard';
+import * as Device from 'expo-device';
 
 export default function SettingsScreen() {
   const { t, language, changeLanguage } = useTranslation();
@@ -31,6 +37,31 @@ export default function SettingsScreen() {
     
   const [alertDuration, setAlertDuration] = useState(defaultAlertDuration.toString());
   const { playSound, stopSound, playingSound } = useAudio();
+  const [copied, setCopied] = useState(false);
+
+  const applicationId = Application.applicationId || '?ID?';
+  const applicationName = Application.applicationName || '?NAME?';
+  const version = Application.nativeApplicationVersion || '?.?.?';
+  const buildNumber = Application.nativeBuildVersion || '?';
+  const sdkVersion = Constants.expoConfig?.sdkVersion || '?';
+  const platform = Platform.OS || '?';
+  const platformVersion = Platform.Version || '?';
+  const lastUpdateTime = Application.getLastUpdateTimeAsync().then((date) => date.toISOString().replace('T', ' ').slice(0, 16)) || '?';
+
+  const handleCopyVersion = async () => {
+    const toCopy = `Version ${version} (Build ${buildNumber})` + 
+    `\nPlatform: ${platform} ${platformVersion}` +
+    `\nDevice: ${Device.manufacturer} - ${Device.modelName}` +
+    `\nSDK: ${sdkVersion}` +
+    `\n${applicationName} (${applicationId})` +
+    `\nUpdated: ${lastUpdateTime}`;
+    await Clipboard.setStringAsync(toCopy);
+    setCopied(true);
+    if (Platform.OS === 'ios') {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     setAlertDuration(defaultAlertDuration.toString());
@@ -169,7 +200,27 @@ export default function SettingsScreen() {
             </View>
           </View>
 
-         <View style={styles.section}>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('common.about')}</Text>
+            <Text style={styles.sectionDescription}>{t('common.aboutDescription')}</Text>
+            <View style={styles.versionContainer}>
+              <Text style={styles.versionText}>Version {version} - Build {buildNumber}</Text>
+              <Text style={styles.versionText}>{platform} {platformVersion}</Text>
+              <Text style={styles.versionText}>{Device.manufacturer} - {Device.modelName}</Text>
+              <Text style={styles.versionText}>SDK {sdkVersion}</Text>
+              <Text style={styles.versionText}>{applicationName} ({applicationId})</Text>
+              <Text style={styles.versionText}>Updated {lastUpdateTime}</Text>
+              <Pressable
+                style={[styles.copyButton, copied && styles.copyButtonActive]}
+                onPress={handleCopyVersion}
+              >
+                <Icon
+                  name={copied ? "check" : "content_copy"}
+                  size={20}
+                  color={theme.colors.white}
+                />
+              </Pressable>
+            </View>
             <Link href="/legal" asChild>
               <Pressable style={styles.legalLink}>
                 <Text style={styles.legalLinkText}>{t('common.legal')}</Text>
@@ -178,7 +229,6 @@ export default function SettingsScreen() {
             </Link>
           </View>
         </ScrollView>
-        
       </LinearGradient>
     </SafeAreaView>
   );

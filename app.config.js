@@ -19,7 +19,6 @@ module.exports = {
     },
     android: {
       package: 'com.meetingtimer.app',
-      runtimeVersion: "53.0.7",
       adaptiveIcon: {
         foregroundImage: './assets/images/icon.png',
         backgroundColor: '#1a1a1a'
@@ -48,7 +47,7 @@ module.exports = {
     },
     version: "1.0.2",
     runtimeVersion: {
-      policy: "appVersion"
+      policy: "fingerprint"
     }
   }
 };
