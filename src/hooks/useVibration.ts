@@ -6,7 +6,7 @@ export const useVibration = (isActive: boolean, duration: number) => {
   const vibrationStartTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
-    let vibrationInterval: NodeJS.Timeout | null = null;
+    let vibrationInterval: ReturnType<typeof setInterval> | null = null;
     
     if (isActive) {
       vibrationStartTimeRef.current = Date.now();
