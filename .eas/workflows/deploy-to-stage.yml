@@ -2,7 +2,7 @@ name: Deploy to stage
 
 on:
   push:
-    branches: ['main']
+    branches: ['stage']
 
 jobs:
   fingerprint:
