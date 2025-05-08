@@ -16,6 +16,7 @@ export const iconMap = {
   church: require('../../assets/icons/church.png'),
   circle_notifications: require('../../assets/icons/circle_notifications.png'),
   close: require('../../assets/icons/close.png'),
+  content_copy: require('../../assets/icons/content_copy.png'),
   crisis_alert: require('../../assets/icons/crisis_alert.png'),
   delete_history: require('../../assets/icons/delete_history.png'),
   doorbell: require('../../assets/icons/doorbell.png'),
