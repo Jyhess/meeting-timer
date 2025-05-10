@@ -17,8 +17,7 @@ export function CircularProgress() {
     duration,
     timeLeft,
     isRunning,
-    beforeAlert,
-    afterAlert,
+    alerts,
   } = useTimer();
 
   const [size, setSize] = useState({width: 0, height: 0});
@@ -97,9 +96,11 @@ export function CircularProgress() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, size]);
 
+  const beforeAlert = alerts.find(a => a.id === 'before');
+  const afterAlert = alerts.find(a => a.id === 'after');
 
-  const beforeAlertAngle = (1-(beforeAlert.timeOffset || 0) / duration);
-  const afterAlertAngle = ((afterAlert.timeOffset || 0) / duration);
+  const beforeAlertAngle = beforeAlert ? (1-(beforeAlert.timeOffset || 0) / duration) : 0;
+  const afterAlertAngle = afterAlert ? ((afterAlert.timeOffset || 0) / duration) : 0;
 
   const animatedProps = useAnimatedProps(() => ({
     points: progressShape.value,
@@ -116,14 +117,16 @@ export function CircularProgress() {
   return (
     <View style={[styles.container]} onLayout={onLayout}>
       <Svg width='100%' height='100%' style = {{backgroundColor: theme.colors.secondary}}>
-        <Polyline
-          points={polylinePath(size, beforeAlertAngle).map((point: { x: number; y: number }) => `${point.x},${point.y}`).join(' ')}
-          fill={theme.colors.primary}
-        />
+        {beforeAlert && (
+          <Polyline
+            points={polylinePath(size, beforeAlertAngle).map((point: { x: number; y: number }) => `${point.x},${point.y}`).join(' ')}
+            fill={theme.colors.primary}
+          />
+        )}
         <AnimatedPolyline
           animatedProps={animatedProps as any}
         />
-        {timeLeft < 1 && (
+        {timeLeft < 1 && afterAlert && (
           <>
             <Polyline
               points={polylinePath(size, afterAlertAngle).map((point: { x: number; y: number }) => `${point.x},${point.y}`).join(' ')}

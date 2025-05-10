@@ -14,7 +14,7 @@ export function TimerEditing() {
    const {
      duration,
      timeLeft,
-     beforeAlert,
+     alerts,
      presetName,
      presetColor,
      resetNewTimer,
@@ -25,7 +25,7 @@ export function TimerEditing() {
 
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
   const [validInput, setValidInput] = useState(true);
-  const isValidTime = validInput && timeLeft > 0 && (!beforeAlert.enabled || timeLeft > beforeAlert.timeOffset);
+  const isValidTime = validInput && timeLeft > 0 && alerts.every(alert => !alert.enabled || alert.id !== 'before' || timeLeft > alert.timeOffset);
   const router = useRouter();
 
   const handleReset = () => {
@@ -52,6 +52,12 @@ export function TimerEditing() {
     setSaveDialogVisible(false);
   };
 
+  const getTimeColor = () => {
+    if (!validInput) return theme.colors.error;
+    const activeAlert = alerts.find(alert => alert.enabled && timeLeft <= alert.timeOffset);
+    return activeAlert ? theme.colors.error : theme.colors.white;
+  };
+
   return (
     <View style={styles.timerEditingContainer}>
       <View style={styles.timerInputAndControlsContainer}>
@@ -59,7 +65,7 @@ export function TimerEditing() {
           <TimeInput
             initialSeconds={timeLeft}
             onTimeChange={handleDurationChange}
-            timeColor={!validInput || (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) ? theme.colors.error : theme.colors.white}
+            timeColor={getTimeColor()}
           />
         </View>
         <View style={styles.controlsContainer}>
