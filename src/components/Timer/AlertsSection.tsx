@@ -8,9 +8,7 @@ import { Alert } from '@/src/types/alerts';
 
 export function AlertsSection() {
   const {
-    beforeAlert,
-    endAlert,
-    afterAlert,
+    alerts,
     isRunning,
     timeLeft,
     updateAlert,
@@ -25,23 +23,29 @@ export function AlertsSection() {
     return undefined;
   };
 
+  const isAlertActive = (alert: Alert) => {
+    if (!alert.enabled || !isRunning) return false;
+
+    switch (alert.id) {
+      case 'end':
+        return timeLeft <= 0;
+      case 'before':
+        return timeLeft <= alert.timeOffset;
+      case 'after':
+        return timeLeft < 0 && Math.abs(timeLeft) >= alert.timeOffset;
+      default:
+        return false;
+    }
+  };
+
   return (
     <>
       <View style={styles.alertsContainer}>
-        {[beforeAlert, endAlert, afterAlert].map((alert) => alert && (
+        {alerts.map((alert) => (
           <AlertIcon
             key={alert.id}
             alert={alert}
-            isActive={
-              alert.enabled &&
-              isRunning &&
-              (alert.id === 'end'
-                ? timeLeft <= 0
-                : alert.id === 'before'
-                ? timeLeft <= alert.timeOffset
-                : timeLeft < 0 &&
-                  Math.abs(timeLeft) >= alert.timeOffset)
-            }
+            isActive={isAlertActive(alert)}
             onPress={() => setEditingAlert(alert)}
             onToggle={(enabled) => {
               const updatedAlert = { ...alert, enabled };

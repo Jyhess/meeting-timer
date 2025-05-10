@@ -19,9 +19,7 @@ export function useTimerRedux() {
     timeLeft,
     isRunning,
     state,
-    beforeAlert,
-    endAlert,
-    afterAlert,
+    alerts,
     effectDuration,
     presetName,
     presetColor,
@@ -52,8 +50,6 @@ export function useTimerRedux() {
 
   useEffect(() => {
     const checkAlerts = () => {
-      const alerts = [beforeAlert, endAlert, afterAlert];
-
       alerts.forEach(alert => {
         if (!alert.enabled || startedAlerts.current.has(alert.id)) return;
 
@@ -82,7 +78,7 @@ export function useTimerRedux() {
     if (state === 'running') {
       checkAlerts();
     }
-  }, [timeLeft, state, beforeAlert, endAlert, afterAlert, dispatch, playSound]);
+  }, [timeLeft, state, alerts, dispatch, playSound]);
 
   useEffect(() => {
     if (shouldFlash) {
@@ -106,8 +102,8 @@ export function useTimerRedux() {
   }, [stopAudioSound, dispatch]);
 
   const savePreset = useCallback(async (name?: string, color?: string) => {
-    await presets.createOrUpdatePreset(duration, [beforeAlert, endAlert, afterAlert], name, color);
-  }, [duration, beforeAlert, endAlert, afterAlert, presets]);
+    await presets.createOrUpdatePreset(duration, alerts, name, color);
+  }, [duration, alerts, presets]);
 
   const setDuration = useCallback((duration: number) => {
     dispatch(actions.setDuration(duration));
@@ -149,9 +145,7 @@ export function useTimerRedux() {
       endTime: null,
       isRunning: false,
       state: 'idle',
-      beforeAlert: settings.defaultAlerts[0],
-      endAlert: settings.defaultAlerts[1],
-      afterAlert: settings.defaultAlerts[2],
+      alerts: settings.defaultAlerts,
       effectDuration: settings.defaultAlertDuration,
       presetName: '',
       presetColor: '',
@@ -176,6 +170,14 @@ export function useTimerRedux() {
     dispatch(actions.updateAlert(alert));
   }, [dispatch]);
 
+  const addAlert = useCallback((alert: Alert) => {
+    dispatch(actions.addAlert(alert));
+  }, [dispatch]);
+
+  const removeAlert = useCallback((id: string) => {
+    dispatch(actions.removeAlert(id));
+  }, [dispatch]);
+
   const addTimerTime = useCallback((seconds: number) => {
     dispatch(actions.addTime(seconds));
   }, [dispatch]);
@@ -185,9 +187,7 @@ export function useTimerRedux() {
     timeLeft,
     isRunning,
     state,
-    beforeAlert,
-    endAlert,
-    afterAlert,
+    alerts,
     effectDuration,
     presetName,
     presetColor,
@@ -203,6 +203,8 @@ export function useTimerRedux() {
     resetNewTimer,
     loadTimerFromPreset,
     updateAlert,
+    addAlert,
+    removeAlert,
     addTimerTime,
     stopAlerts
   };
