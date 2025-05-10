@@ -16,7 +16,7 @@ export function TimerRunning() {
     timeLeft,
     isRunning,
     state,
-    beforeAlert,
+    alerts,
     shouldFlash,
     hasActiveAlert,
     stopTimer,
@@ -79,7 +79,8 @@ export function TimerRunning() {
     if (timeLeft < 0) {
       return theme.colors.error;
     }
-    if (beforeAlert.enabled && timeLeft <= beforeAlert.timeOffset) {
+    const beforeAlert = alerts.find(a => a.id === 'before');
+    if (beforeAlert?.enabled && timeLeft <= beforeAlert.timeOffset) {
       return theme.colors.secondary;
     }
     return theme.colors.white;

@@ -8,9 +8,7 @@ interface TimerState {
   endTime: number | null;
   isRunning: boolean;
   state: 'idle' | 'running' | 'paused';
-  beforeAlert: Alert;
-  endAlert: Alert;
-  afterAlert: Alert;
+  alerts: Alert[];
   effectDuration: number;
   presetName: string;
   presetColor: string;
@@ -25,9 +23,7 @@ const initialState: TimerState = {
   endTime: null,
   isRunning: false,
   state: 'idle',
-  beforeAlert: DEFAULT_ALERTS[0],
-  endAlert: DEFAULT_ALERTS[1],
-  afterAlert: DEFAULT_ALERTS[2],
+  alerts: DEFAULT_ALERTS,
   effectDuration: 3,
   presetName: '',
   presetColor: '',
@@ -82,26 +78,23 @@ const timerSlice = createSlice({
       state.timeLeft = action.payload.seconds;
       state.timeLeftMS = action.payload.seconds * 1000;
       state.endTime = null;
-      state.beforeAlert = action.payload.alerts.find(a => a.id === 'before') || state.beforeAlert;
-      state.endAlert = action.payload.alerts.find(a => a.id === 'end') || state.endAlert;
-      state.afterAlert = action.payload.alerts.find(a => a.id === 'after') || state.afterAlert;
+      state.alerts = action.payload.alerts;
       state.isRunning = false;
       state.state = 'idle';
       state.presetName = action.payload.name;
       state.presetColor = action.payload.color;
     },
     updateAlert: (state, action: PayloadAction<Alert>) => {
-      switch (action.payload.id) {
-        case 'before':
-          state.beforeAlert = { ...action.payload };
-          break;
-        case 'end':
-          state.endAlert = { ...action.payload };
-          break;
-        case 'after':
-          state.afterAlert = { ...action.payload };
-          break;
+      const index = state.alerts.findIndex(a => a.id === action.payload.id);
+      if (index !== -1) {
+        state.alerts[index] = { ...action.payload };
       }
+    },
+    addAlert: (state, action: PayloadAction<Alert>) => {
+      state.alerts.push(action.payload);
+    },
+    removeAlert: (state, action: PayloadAction<string>) => {
+      state.alerts = state.alerts.filter(a => a.id !== action.payload);
     },
     addTime: (state, action: PayloadAction<number>) => {
       if (state.endTime) {
