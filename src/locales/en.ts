@@ -85,5 +85,6 @@ export const en = {
     postEnd: 'Alert after end',
     end: 'Alert at end',
     atEnd: 'At end',
+    name: 'Name',
   },
 }; 

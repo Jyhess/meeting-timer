@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, Modal, Pressable, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Modal, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { theme } from '../../theme';
 import { Icon } from './Icon';
+import { NameInput } from '../common/NameInput';
 import { useTranslation } from '../../hooks/useTranslation';
 
 const PRESET_COLORS = [
@@ -31,7 +32,6 @@ export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose
   const { t } = useTranslation();
   const [name, setName] = useState(defaultName);
   const [selectedColor, setSelectedColor] = useState(defaultColor || PRESET_COLORS[0]);
-  const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     setName(defaultName);
@@ -39,19 +39,6 @@ export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose
       setSelectedColor(defaultColor);
     }
   }, [defaultName, defaultColor]);
-
-  useEffect(() => {
-    if (isVisible) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-    }
-  }, [isVisible]);
-
-  const handleClear = () => {
-    inputRef.current?.focus();
-    setName('');
-  };
 
   const handleSave = () => {
     if (name.trim()) {
@@ -71,25 +58,12 @@ export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose
         <View style={styles.modalContent}>
           <Text style={styles.title}>{t('preset.saveTitle')}</Text>
           
-          <View style={styles.inputContainer}>
-            <TextInput
-              ref={inputRef}
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder={t('preset.namePlaceholder')}
-              placeholderTextColor={theme.colors.gray.medium}
-              selectTextOnFocus
-              autoFocus
-            />
-            <Pressable 
-              style={styles.clearButton}
-              onPress={handleClear}
-              disabled={!name.trim()}
-            >
-              <Icon name="backspace" size={20} color={theme.colors.danger} />
-            </Pressable>
-          </View>
+          <NameInput
+            value={name}
+            onChange={setName}
+            placeholder={t('preset.namePlaceholder')}
+            autoFocus
+          />
 
           <Text style={styles.subtitle}>{t('preset.color')}</Text>
           <View style={styles.colorGrid}>
@@ -151,21 +125,6 @@ const styles = StyleSheet.create({
     color: theme.colors.white,
     marginTop: theme.spacing.medium,
     marginBottom: theme.spacing.small,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.secondary,
-    borderRadius: theme.borders.radius.medium,
-  },
-  input: {
-    flex: 1,
-    padding: theme.spacing.medium,
-    color: theme.colors.white,
-    fontSize: theme.typography.fontSize.medium,
-  },
-  clearButton: {
-    padding: theme.spacing.medium,
   },
   colorGrid: {
     flexDirection: 'row',
