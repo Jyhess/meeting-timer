@@ -85,5 +85,6 @@ export const fr = {
     postEnd: 'Alerte après la fin',
     end: 'Alerte à la fin',
     atEnd: 'À la fin',
+    name: 'Nom',
   },
 }; 

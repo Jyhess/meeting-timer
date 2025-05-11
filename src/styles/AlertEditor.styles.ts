@@ -110,4 +110,12 @@ export const styles = StyleSheet.create({
     marginTop: theme.spacing.xs,
     fontStyle: 'italic',
   },
+  nameInput: {
+    backgroundColor: theme.colors.background.secondary,
+    borderRadius: 8,
+    padding: 12,
+    color: theme.colors.white,
+    fontSize: 16,
+    marginTop: 8,
+  },
 });
