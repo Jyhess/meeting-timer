@@ -9,6 +9,7 @@ import { AlertsSection } from './AlertsSection';
 import { ControlButton } from './ControlButton';
 import { useRouter } from 'expo-router';
 import { useTimer } from '@/src/contexts/TimerContext';
+import { isAlertValid } from '@/src/types/alerts';
 
 export function TimerEditing() {
    const {
@@ -25,7 +26,7 @@ export function TimerEditing() {
 
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
   const [validInput, setValidInput] = useState(true);
-  const isValidTime = validInput && timeLeft > 0 && alerts.every(alert => !alert.enabled || alert.id !== 'before' || timeLeft > alert.timeOffset);
+  const isValidTime = validInput && timeLeft > 0 && alerts.every(alert => isAlertValid(alert, timeLeft));
   const router = useRouter();
 
   const handleReset = () => {

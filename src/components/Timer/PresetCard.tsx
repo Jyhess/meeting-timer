@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { sounds } from '../../types/sounds';
 import { Icon } from './Icon';
 import { TimerPreset } from '../../types/timer';
-import { Alert } from '../../types/alerts';
+import { Alert, getAlertTimeText } from '../../types/alerts';
 import { formatTimeFromSeconds } from '../../utils/time';
 import { theme } from '../../theme';
 
@@ -54,11 +54,7 @@ export const PresetCard = ({
                   color={alert.enabled ? displayColor : disabledColor}
                 />
                 <Text style={[styles.alertText, { color: alert.enabled ? displayColor : disabledColor }]}>
-                  {alert.id === 'before'
-                    ? `- ${formatTimeFromSeconds(alert.timeOffset)}`
-                    : alert.id === 'end'
-                      ? t('alerts.atEnd')
-                      : `+ ${formatTimeFromSeconds(alert.timeOffset)}`}
+                  {getAlertTimeText(alert)}
                 </Text>
               </View>
             );

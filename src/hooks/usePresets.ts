@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TimerPreset } from '../types/timer';
+import { AlertType } from '../types/alerts';
 
 interface PresetsState {
   autoPresets: TimerPreset[];
@@ -15,6 +16,24 @@ interface PresetsState {
   reorderBookmarkedPresets: (newOrder: TimerPreset[]) => void;
 }
 
+// Handle compatibility with old presets
+const handleCompatibility = (presetState: PresetsState) => {
+  presetState.autoPresets.forEach(preset => {
+    preset.alerts.forEach(alert => {
+      if (!alert.type) {
+        alert.type = alert.id as AlertType;
+      }
+    });
+  });
+  presetState.bookmarkedPresets.forEach(preset => {
+    preset.alerts.forEach(alert => {
+      if (!alert.type) {
+        alert.type = alert.id as AlertType;
+      }
+    });
+  });
+};
+
 export const usePresets = create<PresetsState>()(
   persist(
     (set, get) => ({
@@ -26,6 +45,7 @@ export const usePresets = create<PresetsState>()(
         set({ isLoading: true });
         try {
           const state = get();
+          handleCompatibility(state);
           set({ 
             autoPresets: state.autoPresets,
             bookmarkedPresets: state.bookmarkedPresets,
@@ -106,6 +126,9 @@ export const usePresets = create<PresetsState>()(
     {
       name: 'app-presets',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.loadPresets();
+      },
     }
   )
 ); 
