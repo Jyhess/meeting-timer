@@ -7,7 +7,7 @@ import { TimeInput } from './TimeInput';
 import { NameInput } from '../common/NameInput';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
-import { Alert, getAlertTitle, hasAlertTimeOffset, getAlertTimePrefix } from '../../types/alerts';
+import { Alert, getAlertTitle, hasAlertTimeOffset, getAlertTimePrefix, AlertType } from '../../types/alerts';
 import { useSettings } from '../../hooks/useSettings';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -16,6 +16,7 @@ type AlertEditorProps = {
   isVisible: boolean;
   onClose: () => void;
   onSave: (updatedAlert: Alert) => void;
+  onDelete: () => void;
 };
 
 export const AlertEditor = ({
@@ -23,12 +24,14 @@ export const AlertEditor = ({
   isVisible,
   onClose,
   onSave,
+  onDelete,
 }: AlertEditorProps) => {
   const { t } = useTranslation();
   const { availableSounds } = useSettings();
   const [editedAlert, setEditedAlert] = useState<Alert>(JSON.parse(JSON.stringify(alert)));
   const [modalVisible, setModalVisible] = useState(isVisible);
   const [isValidTime, setIsValidTime] = useState(true);
+  const [prefix, setPrefix] = useState(getAlertTimePrefix(alert));
 
   useEffect(() => {
     if (isVisible) {
@@ -79,12 +82,26 @@ export const AlertEditor = ({
     }));
   };
 
+  const handleTypeChange = (type: AlertType) => {
+    const newAlert = {
+      ...editedAlert,
+      type: type,
+    };
+    setEditedAlert(newAlert);
+    setPrefix(getAlertTimePrefix(newAlert));
+  };
+
   const handleSave = () => {
     if (isValidTime) {
       editedAlert.enabled = true;
       onSave(JSON.parse(JSON.stringify(editedAlert)));
       onClose();
     }
+  };
+
+  const handleDelete = () => {
+    onDelete();
+    onClose();
   };
 
   const isEffectSelected = (effectId: EffectId) => {
@@ -110,6 +127,45 @@ export const AlertEditor = ({
             <Text style={styles.modalTitle}>{t(getAlertTitle(alert))}</Text>
 
             <View style={styles.modalSection}>
+              <Text style={styles.sectionTitle}>{t('alerts.type')}</Text>
+              <View style={styles.optionsGrid}>
+                <TouchableOpacity
+                  style={[
+                    styles.optionButton,
+                    editedAlert.type === 'before' && styles.optionButtonActive,
+                  ]}
+                  onPress={() => handleTypeChange('before')}
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      editedAlert.type === 'before' && styles.optionTextActive,
+                    ]}
+                  >
+                    {t('alerts.before')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.optionButton,
+                    editedAlert.type === 'after' && styles.optionButtonActive,
+                  ]}
+                  onPress={() => handleTypeChange('after')}
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      editedAlert.type === 'after' && styles.optionTextActive,
+                    ]}
+                  >
+                    {t('alerts.after')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.modalSection}>
               <Text style={styles.sectionTitle}>{t('alerts.name')}</Text>
               <NameInput
                 value={editedAlert.name}
@@ -125,7 +181,7 @@ export const AlertEditor = ({
                   initialSeconds={editedAlert.timeOffset}
                   onTimeChange={handleTimeChange}
                   timeColor={isValidTime ? theme.colors.white : theme.colors.error}
-                  prefix={getAlertTimePrefix(alert)}
+                  prefix={prefix}
                   />
               </View>
             )}
@@ -202,6 +258,14 @@ export const AlertEditor = ({
           </ScrollView>
           
           <View style={styles.modalButtons}>
+            <Pressable 
+              style={[styles.modalButton, styles.modalButtonDanger]} 
+              onPress={handleDelete}
+            >
+              <Text style={[styles.modalButtonText, styles.modalButtonTextDanger]}>
+                {t('common.delete')}
+              </Text>
+            </Pressable>
             <Pressable style={styles.modalButton} onPress={onClose}>
               <Text style={styles.modalButtonText}>{t('common.cancel')}</Text>
             </Pressable>

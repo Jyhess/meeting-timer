@@ -1,6 +1,7 @@
 export const iconMap = {
   add: require('../../assets/icons/add.png'),
   add_circle: require('../../assets/icons/add_circle.png'),
+  add_alert: require('../../assets/icons/add_alert.png'),
   alarm: require('../../assets/icons/alarm.png'),
   arrow_back: require('../../assets/icons/arrow_back.png'),
   arrow_left: require('../../assets/icons/arrow_left.png'),

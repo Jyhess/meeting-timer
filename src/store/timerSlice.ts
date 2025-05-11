@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Alert, DEFAULT_ALERTS } from '../types/alerts';
+import { Alert, DEFAULT_ALERTS, sortAlerts } from '../types/alerts';
 
 interface TimerState {
   duration: number;
@@ -13,7 +13,7 @@ interface TimerState {
   presetName: string;
   presetColor: string;
   shouldFlash: boolean;
-  hasActiveAlert: boolean;
+  activeAlert: Alert | null;
 }
 
 const initialState: TimerState = {
@@ -28,7 +28,7 @@ const initialState: TimerState = {
   presetName: '',
   presetColor: '',
   shouldFlash: false,
-  hasActiveAlert: false
+  activeAlert: null
 };
 
 const timerSlice = createSlice({
@@ -88,10 +88,12 @@ const timerSlice = createSlice({
       const index = state.alerts.findIndex(a => a.id === action.payload.id);
       if (index !== -1) {
         state.alerts[index] = { ...action.payload };
+        state.alerts = sortAlerts(state.alerts);
       }
     },
     addAlert: (state, action: PayloadAction<Alert>) => {
       state.alerts.push(action.payload);
+      state.alerts = sortAlerts(state.alerts);
     },
     removeAlert: (state, action: PayloadAction<string>) => {
       state.alerts = state.alerts.filter(a => a.id !== action.payload);
@@ -119,8 +121,8 @@ const timerSlice = createSlice({
     setShouldFlash: (state, action: PayloadAction<boolean>) => {
       state.shouldFlash = action.payload;
     },
-    setHasActiveAlert: (state, action: PayloadAction<boolean>) => {
-      state.hasActiveAlert = action.payload;
+    setActiveAlert: (state, action: PayloadAction<Alert | null>) => {
+      state.activeAlert = action.payload;
     }
   }
 });
