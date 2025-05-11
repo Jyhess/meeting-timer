@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
-import { SoundName, soundMap } from '../types/sounds';
+import { SoundId, sounds } from '../types/sounds';
 import { AudioContext } from './AudioContext';
 
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [soundDuration, setSoundDuration] = useState<number | null>(null);
-  const [playingSound, setPlayingSound] = useState<SoundName | null>(null);
+  const [playingSound, setPlayingSound] = useState<SoundId | null>(null);
   
   useEffect(() => {
     if (!audioRef.current) {
@@ -29,7 +29,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  const playSound = async (sound: SoundName) => {
+  const playSound = async (sound: SoundId) => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -38,8 +38,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         audio.pause();
       }
 
-      if (audio.src !== soundMap[sound]) {
-        audio.src = soundMap[sound];
+      if (audio.src !== sounds[sound].source) {
+        audio.src = sounds[sound].source;
       }
 
       audio.currentTime = 0;

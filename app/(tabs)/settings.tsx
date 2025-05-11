@@ -14,7 +14,7 @@ import { IconName } from '../../src/types/icons';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
 import { theme } from '../../src/theme';
-import { sounds } from '../../src/config/alerts';
+import { getSoundConfigs } from '../../src/types/sounds';
 import { ToggleSlider } from '@/src/components/Timer/ToggleSlider';
 import { useAudio } from '@/src/contexts/AudioContext';
 import { Link } from 'expo-router';
@@ -147,7 +147,7 @@ export default function SettingsScreen() {
             </Text>
             
             <View style={styles.soundsList}>
-              {sounds.map((soundConfig) => (
+              {getSoundConfigs().map((soundConfig) => (
                 <View key={soundConfig.id} style={styles.soundItem}>
                   <View style={styles.soundInfo}>
                     <Icon name={soundConfig.icon as IconName} size={24} color={theme.colors.white} />

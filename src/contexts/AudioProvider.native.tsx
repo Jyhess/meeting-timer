@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Audio as ExpoAudio, AVPlaybackSource, AVPlaybackStatus } from 'expo-av';
-import { soundMap, SoundName } from '../types/sounds';
+import { sounds, SoundId } from '../types/sounds';
 import { AudioContext } from './AudioContext';
 
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -8,7 +8,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isInitialized, setIsInitialized] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [soundDuration, setSoundDuration] = useState<number | null>(null);
-  const [playingSound, setPlayingSound] = useState<SoundName | null>(null);
+  const [playingSound, setPlayingSound] = useState<SoundId | null>(null);
 
   useEffect(() => {
     const initAudio = async () => {
@@ -31,14 +31,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     initAudio();
   }, []);
 
-  const playSound = async (soundName: SoundName) => {
+  const playSound = async (soundName: SoundId) => {
     console.log(`[AudioProvider.native] ▶️ Demande de lecture pour: ${soundName}`);
     try {
       if (audioRef.current) {
         await audioRef.current.unloadAsync();
       }
       const { sound } = await ExpoAudio.Sound.createAsync(
-        soundMap[soundName] as AVPlaybackSource,
+        sounds[soundName].source as AVPlaybackSource,
         { shouldPlay: true },
         onPlaybackStatusUpdate
       );

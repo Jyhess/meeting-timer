@@ -1,36 +1,14 @@
-export type AlertEffect = 'flash' | 'shake';
+import { SoundId } from './sounds';
+import { EffectId } from './effects';
 
-export type AlertSoundId = 
-  | 'bell'
-  | 'gong'
-  | 'chime'
-  | 'alarm'
-  | 'attention'
-  | 'success'
-  | 'transition'
-  | 'meditation'
-  | 'flute'
-  | 'ringing'
-  | 'titou'
-  | 'foghorn'
-  | 'bingbong'
-  | 'bigben'
-  | 'bell2'
-  | 'churchbell';
-  
-export const DEFAULT_SOUNDS = [
-  'bell',
-  'gong',
-  'alarm',
-] as AlertSoundId[];
 
 export type Alert = {
   id: string;
   name: string;
   enabled: boolean;
   timeOffset: number;
-  sound: AlertSoundId;
-  effects: AlertEffect[];
+  sound: SoundId;
+  effects: EffectId[];
 };
 
 export const DEFAULT_ALERTS = [
@@ -40,7 +18,7 @@ export const DEFAULT_ALERTS = [
     enabled: false,
     timeOffset: 0,
     sound: 'bell',
-    effects: ['flash', 'shake'] as AlertEffect[],
+    effects: ['flash', 'shake'] as EffectId[],
   },
   {
     id: 'end',
@@ -48,7 +26,7 @@ export const DEFAULT_ALERTS = [
     enabled: true,
     timeOffset: 0,
     sound: 'gong',
-    effects: ['flash', 'shake'] as AlertEffect[],
+    effects: ['flash', 'shake'] as EffectId[],
   },
   {
     id: 'after',
@@ -56,6 +34,6 @@ export const DEFAULT_ALERTS = [
     enabled: false,
     timeOffset: 0,
     sound: 'alarm',
-    effects: ['flash', 'shake'] as AlertEffect[],
+    effects: ['flash', 'shake'] as EffectId[],
   },
 ] as Alert[];
