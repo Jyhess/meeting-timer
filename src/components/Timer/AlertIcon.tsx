@@ -6,9 +6,11 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { IconName } from '@/src/types/icons';
 import { Alert } from '../../types/alerts';
 import { ToggleSlider } from './ToggleSlider';
-import { sounds } from '../../config/alerts';
+import { sounds } from '../../types/sounds';
+import { effects } from '../../types/effects';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertIcon.styles';
 import { theme } from '../../theme';
@@ -25,7 +27,7 @@ type AlertIconProps = {
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: AlertIconProps) => {
-  const soundConfig = sounds.find(s => s.id === alert.sound);
+  const soundConfig = sounds[alert.sound];
   const [localEnabled, setLocalEnabled] = useState(alert.enabled);
   
   // Synchronize local state with alert state
@@ -64,15 +66,11 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: Ale
     
     return (
       <View style={styles.effectIconsContainer}>
-        {alert.effects.map(effect => {
-          const iconName = 
-            effect === 'flash' ? 'flash' :
-            effect === 'shake' ? 'vibration' : '';
-            
+        {alert.effects.map(effect => {           
           return (
             <Icon 
               key={effect}
-              name={iconName as any}
+              name={effects[effect].icon as IconName}
               size={12}
               color={isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light}
               style={styles.effectIcon}

@@ -1,4 +1,5 @@
-import { Alert, AlertSoundId, DEFAULT_ALERTS, DEFAULT_SOUNDS } from '../types/alerts';
+import { Alert, DEFAULT_ALERTS } from '../types/alerts';
+import { SoundId, DEFAULT_SOUNDS } from '../types/sounds';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,9 +11,9 @@ const DEFAULT_LANGUAGE: Language = 'fr';
 interface SettingsState {
   defaultAlerts: Alert[];
   defaultAlertDuration: number;
-  availableSounds: AlertSoundId[];
+  availableSounds: SoundId[];
   language: Language;
-  toggleSound: (soundId: AlertSoundId, enabled: boolean) => void;
+  toggleSound: (soundId: SoundId, enabled: boolean) => void;
   updateDefaultAlert: (alert: Alert) => void;
   setDefaultAlertDuration: (seconds: number) => void;
   setLanguage: (language: Language) => void;
@@ -31,7 +32,7 @@ export const useSettings = create<SettingsState>()(
     (set) => ({
       ...defaultSettings,
 
-      toggleSound: (soundId: AlertSoundId, enabled: boolean) => {
+      toggleSound: (soundId: SoundId, enabled: boolean) => {
         set((state: SettingsState) => {
           const updatedSounds = enabled
             ? [...state.availableSounds, soundId]
