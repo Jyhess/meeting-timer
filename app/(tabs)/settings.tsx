@@ -46,7 +46,9 @@ export default function SettingsScreen() {
   const sdkVersion = Constants.expoConfig?.sdkVersion || '?';
   const platform = Platform.OS || '?';
   const platformVersion = Platform.Version || '?';
-  const lastUpdateTime = Application.getLastUpdateTimeAsync().then((date) => date.toISOString().replace('T', ' ').slice(0, 16)) || '?';
+  const lastUpdateTime = Platform.OS === 'web' 
+    ? 'N/A' 
+    : Application.getLastUpdateTimeAsync().then((date) => date.toISOString().replace('T', ' ').slice(0, 16)) || '?';
 
   const handleCopyVersion = async () => {
     const toCopy = `Version ${version} (Build ${buildNumber})` + 
