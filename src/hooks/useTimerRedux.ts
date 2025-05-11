@@ -24,7 +24,7 @@ export function useTimerRedux() {
     presetName,
     presetColor,
     shouldFlash,
-    hasActiveAlert
+    activeAlert
   } = useSelector((state: RootState) => state.timer);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -66,7 +66,7 @@ export function useTimerRedux() {
           if (alert.effects.includes('shake')) {
             dispatch(actions.setShouldFlash(true));
           }
-          dispatch(actions.setHasActiveAlert(true));
+          dispatch(actions.setActiveAlert(alert));
         }
       });
     };
@@ -80,7 +80,7 @@ export function useTimerRedux() {
     if (shouldFlash) {
       alertTimerRef.current = setTimeout(() => {
         dispatch(actions.setShouldFlash(false));
-        dispatch(actions.setHasActiveAlert(false));
+        dispatch(actions.setActiveAlert(null));
       }, effectDuration * 1000);
     }
     return () => {
@@ -94,7 +94,7 @@ export function useTimerRedux() {
   const stopAlerts = useCallback(() => {
     stopAudioSound();
     dispatch(actions.setShouldFlash(false));
-    dispatch(actions.setHasActiveAlert(false));
+    dispatch(actions.setActiveAlert(null));
   }, [stopAudioSound, dispatch]);
 
   const savePreset = useCallback(async (name?: string, color?: string) => {
@@ -146,7 +146,7 @@ export function useTimerRedux() {
       presetName: '',
       presetColor: '',
       shouldFlash: false,
-      hasActiveAlert: false
+      activeAlert: null
     }));
   }, [dispatch, settings.defaultAlertDuration]);
 
@@ -188,7 +188,7 @@ export function useTimerRedux() {
     presetName,
     presetColor,
     shouldFlash,
-    hasActiveAlert,
+    activeAlert,
     savePreset,
     setDuration,
     startTimer,

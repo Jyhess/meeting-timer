@@ -1,5 +1,5 @@
 import { Alert } from '../alert.types';
-import { isAlertActive, isAlertValid, shouldAlertTrigger, getAlertTimePrefix, getAlertTitle, getAlertTimeText } from '../alert.utils';
+import { isAlertActive, isAlertValid, shouldAlertTrigger, getAlertTimePrefix, getAlertTitle, getAlertTimeText, sortAlerts } from '../alert.utils';
 
 describe('Alert Utils', () => {
   const mockAlerts: Alert[] = [
@@ -151,6 +151,64 @@ describe('Alert Utils', () => {
     it('should return formatted time with plus for after alert', () => {
       const alert = mockAlerts[2];
       expect(getAlertTimeText(alert)).toBe('+01:00');
+    });
+  });
+
+  describe('sortAlerts', () => {
+    it('should put end alert between before and end alerts', () => {
+      const alerts = [
+        { ...mockAlerts[2] },
+        { ...mockAlerts[0] },
+        { ...mockAlerts[1] }
+      ];
+      const sorted = sortAlerts(alerts);
+      expect(sorted[0].type).toBe('before');
+      expect(sorted[1].type).toBe('end');
+      expect(sorted[2].type).toBe('after');
+    });
+
+    it('should sort before alerts by timeOffset in descending order', () => {
+      const alerts = [
+        { ...mockAlerts[0], timeOffset: 30 },
+        { ...mockAlerts[0], timeOffset: 60 },
+        { ...mockAlerts[0], timeOffset: 15 }
+      ];
+      const sorted = sortAlerts(alerts);
+      expect(sorted[0].timeOffset).toBe(60);
+      expect(sorted[1].timeOffset).toBe(30);
+      expect(sorted[2].timeOffset).toBe(15);
+    });
+
+    it('should sort after alerts by timeOffset in ascending order', () => {
+      const alerts = [
+        { ...mockAlerts[2], timeOffset: 60 },
+        { ...mockAlerts[2], timeOffset: 30 },
+        { ...mockAlerts[2], timeOffset: 90 }
+      ];
+      const sorted = sortAlerts(alerts);
+      expect(sorted[0].timeOffset).toBe(30);
+      expect(sorted[1].timeOffset).toBe(60);
+      expect(sorted[2].timeOffset).toBe(90);
+    });
+
+    it('should maintain correct order: end -> before -> after', () => {
+      const alerts = [
+        { ...mockAlerts[2], timeOffset: 30 }, // after
+        { ...mockAlerts[0], timeOffset: 60 }, // before
+        { ...mockAlerts[1] }, // end
+        { ...mockAlerts[0], timeOffset: 30 }, // before
+        { ...mockAlerts[2], timeOffset: 60 }  // after
+      ];
+      const sorted = sortAlerts(alerts);
+      expect(sorted[0].type).toBe('before');
+      expect(sorted[1].type).toBe('before');
+      expect(sorted[2].type).toBe('end');
+      expect(sorted[3].type).toBe('after');
+      expect(sorted[4].type).toBe('after');
+      expect(sorted[0].timeOffset).toBe(60);
+      expect(sorted[1].timeOffset).toBe(30);
+      expect(sorted[3].timeOffset).toBe(30);
+      expect(sorted[4].timeOffset).toBe(60);
     });
   });
 }); 

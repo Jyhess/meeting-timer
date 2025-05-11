@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { styles } from '../../styles/TimerRunning.styles';
 import { theme } from '../../../src/theme';
 import { TimeInput } from './TimeInput';
@@ -18,7 +18,7 @@ export function TimerRunning() {
     state,
     alerts,
     shouldFlash,
-    hasActiveAlert,
+    activeAlert,
     stopTimer,
     resetTimer,
     addTimerTime,
@@ -94,6 +94,9 @@ export function TimerRunning() {
 
       <View style={styles.timerRunningAndControlsContainer}>
         <View style={styles.timerContainer}>
+        {activeAlert && (
+          <Text style={styles.alertText}>{activeAlert.name}</Text>
+          )}
           <TimeDisplay
             timeBuffer={formatTimeFromSeconds(timeLeft)}
             timeColor={getTimeColor()}
@@ -163,7 +166,7 @@ export function TimerRunning() {
           <AlertsSection />
         )}
       </View>
-      {hasActiveAlert && (
+      {activeAlert && (
         <ControlButton
           icon="volume_off"
           onPress={() => {

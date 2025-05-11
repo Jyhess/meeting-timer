@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.tertiary,
     padding: theme.spacing.medium,
     borderRadius: theme.borders.radius.large,
-    minWidth: 100,
+    minWidth: 40,
   },
   alertIconContainer: {
     position: 'relative',
