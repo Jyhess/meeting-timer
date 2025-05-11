@@ -1,19 +1,10 @@
-import { SoundId } from './sounds';
-import { EffectId } from './effects';
-
-
-export type Alert = {
-  id: string;
-  name: string;
-  enabled: boolean;
-  timeOffset: number;
-  sound: SoundId;
-  effects: EffectId[];
-};
+import { Alert } from './alert.types';
+import { EffectId } from '../effects';
 
 export const DEFAULT_ALERTS = [
   {
     id: 'before',
+    type: 'before',
     name: 'Bientôt fini',
     enabled: false,
     timeOffset: 0,
@@ -22,6 +13,7 @@ export const DEFAULT_ALERTS = [
   },
   {
     id: 'end',
+    type: 'end',
     name: 'Temps écoulé',
     enabled: true,
     timeOffset: 0,
@@ -30,6 +22,7 @@ export const DEFAULT_ALERTS = [
   },
   {
     id: 'after',
+    type: 'after',
     name: 'Temps dépassé',
     enabled: false,
     timeOffset: 0,

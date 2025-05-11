@@ -6,7 +6,7 @@ import { Icon } from './Icon';
 import { TimeInput } from './TimeInput';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
-import { Alert } from '../../types/alerts';
+import { Alert, getAlertTitle, hasAlertTimeOffset, getAlertTimePrefix } from '../../types/alerts';
 import { useSettings } from '../../hooks/useSettings';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -99,20 +99,16 @@ export const AlertEditor = ({
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={styles.modalContent}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.modalTitle}>{alert.id === 'before'
-                    ? t('alerts.preEnd')
-                    : alert.id === 'after'
-                    ? t('alerts.postEnd')
-                    : t('alerts.end')}</Text>
+            <Text style={styles.modalTitle}>{t(getAlertTitle(alert))}</Text>
 
-            {alert.id !== 'end' && (
+            {hasAlertTimeOffset(alert) && (
               <View style={styles.timeInputContainer}>
                 <TimeInput
                   initialSeconds={editedAlert.timeOffset}
                   onTimeChange={handleTimeChange}
                   timeColor={isValidTime ? theme.colors.white : theme.colors.error}
-                  prefix={alert.id === 'before' ? '-' : '+'}
-                />
+                  prefix={getAlertTimePrefix(alert)}
+                  />
               </View>
             )}
 

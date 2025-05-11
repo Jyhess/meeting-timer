@@ -96,8 +96,8 @@ export function CircularProgress() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, size]);
 
-  const beforeAlert = alerts.find(a => a.id === 'before');
-  const afterAlert = alerts.find(a => a.id === 'after');
+  const beforeAlert = alerts.find(a => a.type === 'before');
+  const afterAlert = alerts.find(a => a.type === 'after');
 
   const beforeAlertAngle = beforeAlert ? (1-(beforeAlert.timeOffset || 0) / duration) : 0;
   const afterAlertAngle = afterAlert ? ((afterAlert.timeOffset || 0) / duration) : 0;

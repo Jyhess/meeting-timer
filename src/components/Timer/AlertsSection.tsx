@@ -4,7 +4,7 @@ import { AlertIcon } from './AlertIcon';
 import { AlertEditor } from './AlertEditor';
 import { theme } from '../../theme';
 import { useTimer } from '@/src/contexts/TimerContext';
-import { Alert } from '@/src/types/alerts';
+import { Alert, isAlertActive, isAlertValid } from '@/src/types/alerts';
 
 export function AlertsSection() {
   const {
@@ -17,25 +17,10 @@ export function AlertsSection() {
   const [editingAlert, setEditingAlert] = useState<Alert | null>(null);
 
   const getAlertTimeColor = (alert: Alert) => {
-    if (alert.id === 'before' && alert.enabled && timeLeft <= alert.timeOffset) {
+    if (! isAlertValid(alert, timeLeft)) {
       return theme.colors.error;
     }
     return undefined;
-  };
-
-  const isAlertActive = (alert: Alert) => {
-    if (!alert.enabled || !isRunning) return false;
-
-    switch (alert.id) {
-      case 'end':
-        return timeLeft <= 0;
-      case 'before':
-        return timeLeft <= alert.timeOffset;
-      case 'after':
-        return timeLeft < 0 && Math.abs(timeLeft) >= alert.timeOffset;
-      default:
-        return false;
-    }
   };
 
   return (
@@ -45,7 +30,7 @@ export function AlertsSection() {
           <AlertIcon
             key={alert.id}
             alert={alert}
-            isActive={isAlertActive(alert)}
+            isActive={isRunning && isAlertActive(alert, timeLeft)}
             onPress={() => setEditingAlert(alert)}
             onToggle={(enabled) => {
               const updatedAlert = { ...alert, enabled };
