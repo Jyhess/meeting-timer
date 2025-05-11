@@ -64,4 +64,10 @@ export const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
     },
+    alertText: {
+        fontSize: theme.typography.fontSize.large,
+        fontWeight: theme.typography.fontWeight.bold,
+        color: theme.colors.white,
+        textAlign: 'center',
+    },
 });

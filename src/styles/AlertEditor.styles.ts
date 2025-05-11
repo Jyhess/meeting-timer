@@ -118,4 +118,10 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
   },
+  modalButtonDanger: {
+    backgroundColor: theme.colors.danger,
+  },
+  modalButtonTextDanger: {
+    color: theme.colors.white,
+  },
 });

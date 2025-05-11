@@ -76,7 +76,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: Ale
 
   return (
     <View style={styles.alertItemContainer}>
-      <View style={styles.alertIconContainer}>
+      <View>
         <Pressable onPress={onPress}>
           <AnimatedView 
             style={[

@@ -30,3 +30,20 @@ export function getAlertTitle(alert: Alert): string {
   return alertBehaviors[alert.type].getTitle();
 }
 
+export const sortAlerts = (alerts: Alert[]): Alert[] => {
+  return [...alerts].sort((a, b) => {
+    if (a.type === 'before' && b.type !== 'before') return -1;
+    if (a.type !== 'before' && b.type === 'before') return 1;
+
+    if (a.type === 'end' && b.type !== 'end') return -1;
+    if (a.type !== 'end' && b.type === 'end') return 1;
+
+    // Les alertes de type 'before' sont ensuite, triées par timeOffset
+    if (a.type === 'before' && b.type === 'before') {
+      return b.timeOffset - a.timeOffset;
+    }
+
+    // Les alertes de type 'after' sont en dernier, triées par timeOffset
+    return a.timeOffset - b.timeOffset;
+  });
+};
