@@ -4,6 +4,7 @@ import { SoundId, getSoundConfigs } from '../../types/sounds';
 import { effects, EffectId } from '../../types/effects';
 import { Icon } from './Icon';
 import { TimeInput } from './TimeInput';
+import { NameInput } from '../common/NameInput';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
 import { Alert, getAlertTitle, hasAlertTimeOffset, getAlertTimePrefix } from '../../types/alerts';
@@ -71,6 +72,13 @@ export const AlertEditor = ({
     }
   };
 
+  const handleNameChange = (text: string) => {
+    setEditedAlert(prev => ({
+      ...prev,
+      name: text,
+    }));
+  };
+
   const handleSave = () => {
     if (isValidTime) {
       editedAlert.enabled = true;
@@ -100,6 +108,16 @@ export const AlertEditor = ({
         <View style={styles.modalContent}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.modalTitle}>{t(getAlertTitle(alert))}</Text>
+
+            <View style={styles.modalSection}>
+              <Text style={styles.sectionTitle}>{t('alerts.name')}</Text>
+              <NameInput
+                value={editedAlert.name}
+                onChange={handleNameChange}
+                placeholder={t(getAlertTitle(alert))}
+                autoFocus
+              />
+            </View>
 
             {hasAlertTimeOffset(alert) && (
               <View style={styles.timeInputContainer}>
