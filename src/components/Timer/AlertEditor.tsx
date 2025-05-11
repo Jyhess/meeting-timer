@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Modal, Platform, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { sounds, effects } from '../../config/alerts';
+import { SoundId, getSoundConfigs } from '../../types/sounds';
+import { effects, EffectId } from '../../types/effects';
 import { Icon } from './Icon';
 import { TimeInput } from './TimeInput';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
-import { Alert, AlertEffect, AlertSoundId } from '../../types/alerts';
+import { Alert } from '../../types/alerts';
 import { useSettings } from '../../hooks/useSettings';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -40,14 +41,14 @@ export const AlertEditor = ({
     }
   }, [isVisible, alert]);
 
-  const handleSoundSelect = (soundId: AlertSoundId) => {
+  const handleSoundSelect = (soundId: SoundId) => {
     setEditedAlert(prev => ({
       ...prev,
       sound: soundId,
     }));
   };
 
-  const handleEffectToggle = (effectId: AlertEffect) => {
+  const handleEffectToggle = (effectId: EffectId) => {
     setEditedAlert(prev => {
       const newEffects = prev.effects.includes(effectId)
         ? prev.effects.filter(e => e !== effectId)
@@ -78,12 +79,13 @@ export const AlertEditor = ({
     }
   };
 
-  const isEffectSelected = (effectId: AlertEffect) => {
+  const isEffectSelected = (effectId: EffectId) => {
     return editedAlert.effects.includes(effectId);
   };
 
   // Filtrer les sons disponibles
-  const availableSoundConfigs = sounds.filter(sound => availableSounds.includes(sound.id));
+  const availableSoundConfigs = getSoundConfigs()
+    .filter(sound => availableSounds.includes(sound.id));
 
   return (
     <Modal
@@ -110,7 +112,7 @@ export const AlertEditor = ({
                   onTimeChange={handleTimeChange}
                   timeColor={isValidTime ? theme.colors.white : theme.colors.error}
                   prefix={alert.id === 'before' ? '-' : '+'}
-                  />
+                />
               </View>
             )}
 
@@ -134,7 +136,7 @@ export const AlertEditor = ({
                     onPress={() => handleSoundSelect(sound.id)}
                   >
                     <Icon 
-                      name={sound?.icon as any}
+                      name={sound.icon as any}
                       size={28}
                       color={'#fff'}
                     />
@@ -154,28 +156,28 @@ export const AlertEditor = ({
             <View style={styles.modalSection}>
               <Text style={styles.sectionTitle}>{t('alerts.effects')}</Text>
               <View style={styles.optionsGrid}>
-                {effects.map((effect) => (
+                {Object.entries(effects).map(([id, config]) => (
                   <TouchableOpacity
-                    key={effect.id}
+                    key={id}
                     style={[
                       styles.optionButton,
-                      isEffectSelected(effect.id as AlertEffect) && styles.optionButtonActive,
+                      isEffectSelected(id as EffectId) && styles.optionButtonActive,
                     ]}
-                    onPress={() => handleEffectToggle(effect.id as AlertEffect)}
+                    onPress={() => handleEffectToggle(id as EffectId)}
                   >
                     <Icon
-                      name={effect.icon as any}
+                      name={config.icon as any}
                       size={24}
-                      color={isEffectSelected(effect.id as AlertEffect) ? '#fff' : '#666'}
+                      color={isEffectSelected(id as EffectId) ? '#fff' : '#666'}
                     />
                     <Text
                       style={[
                         styles.optionText,
-                        isEffectSelected(effect.id as AlertEffect) && styles.optionTextActive,
+                        isEffectSelected(id as EffectId) && styles.optionTextActive,
                       ]}
                     >
-                      {t(`effects.${effect.id}`)}
-                      {effect.id === 'shake' && Platform.OS !== 'web' && (
+                      {t(`effects.${id}`)}
+                      {id === 'shake' && Platform.OS !== 'web' && (
                         <Text style={styles.effectNote}> (+ vibration)</Text>
                       )}
                     </Text>

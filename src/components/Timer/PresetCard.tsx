@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { sounds } from '../../config/alerts';
+import { sounds } from '../../types/sounds';
 import { Icon } from './Icon';
 import { TimerPreset } from '../../types/timer';
 import { Alert } from '../../types/alerts';
@@ -43,7 +43,7 @@ export const PresetCard = ({
         <Text style={styles.duration}>{formatTimeFromSeconds(preset.seconds)}</Text>
         <View style={styles.alerts}>
           {alerts.map((alert: Alert) => {
-            const soundConfig = sounds.find(s => s.id === alert.sound);
+            const soundConfig = sounds[alert.sound];
             if (!soundConfig) return null;
 
             return (
