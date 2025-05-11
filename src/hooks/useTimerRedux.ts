@@ -7,7 +7,7 @@ import { useSettings } from './useSettings';
 import { usePresets } from './usePresets';
 import { useVibration } from './useVibration';
 import { useKeepAwake } from './useKeepAwake';
-import { Alert } from '../types/alerts';
+import { Alert, DEFAULT_ALERTS, shouldAlertTrigger } from '../types/alerts';
 
 export function useTimerRedux() {
   const dispatch = useDispatch();
@@ -53,11 +53,7 @@ export function useTimerRedux() {
       alerts.forEach(alert => {
         if (!alert.enabled || startedAlerts.current.has(alert.id)) return;
 
-        const shouldTrigger = (
-          (alert.id === 'end' && timeLeft === 0) ||
-          (alert.id === 'before' && timeLeft === alert.timeOffset) ||
-          (alert.id === 'after' && timeLeft === -alert.timeOffset)
-        );
+        const shouldTrigger = shouldAlertTrigger(alert, timeLeft);
 
         if (shouldTrigger) {
           startedAlerts.current.add(alert.id);
@@ -145,14 +141,14 @@ export function useTimerRedux() {
       endTime: null,
       isRunning: false,
       state: 'idle',
-      alerts: settings.defaultAlerts,
+      alerts: DEFAULT_ALERTS,
       effectDuration: settings.defaultAlertDuration,
       presetName: '',
       presetColor: '',
       shouldFlash: false,
       hasActiveAlert: false
     }));
-  }, [dispatch, settings.defaultAlerts, settings.defaultAlertDuration]);
+  }, [dispatch, settings.defaultAlertDuration]);
 
   const loadTimerFromPreset = useCallback((presetId: string) => {
     const preset = presets.getPreset(presetId);

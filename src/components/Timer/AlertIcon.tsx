@@ -7,14 +7,13 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { IconName } from '@/src/types/icons';
-import { Alert } from '../../types/alerts';
+import { Alert, getAlertTimeText } from '@/src/types/alerts';
 import { ToggleSlider } from './ToggleSlider';
 import { sounds } from '../../types/sounds';
 import { effects } from '../../types/effects';
 import { Icon } from './Icon';
 import { styles } from '../../styles/AlertIcon.styles';
 import { theme } from '../../theme';
-import { formatTimeFromSeconds } from '@/src/utils/time';
 
 type AlertIconProps = {
   alert: Alert;
@@ -34,12 +33,6 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: Ale
   useEffect(() => {
     setLocalEnabled(alert.enabled);
   }, [alert.enabled]);
-
-  const getAlertTimeText = () => {
-    if (alert.id === 'end') return 'End';
-    const prefix = alert.id === 'before' ? '-' : '+';
-    return `${prefix}${formatTimeFromSeconds(alert.timeOffset)}`;
-  };
 
   // Shake animation
   const shakeAnimation = useAnimatedStyle(() => {
@@ -103,7 +96,7 @@ export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: Ale
               { color: isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light },
               timeColor && { color: timeColor }
             ]}>
-              {getAlertTimeText()}
+              {getAlertTimeText(alert)}
             </Text>
             {renderEffectIcons()}
           </AnimatedView>
