@@ -63,10 +63,10 @@ export const ClickButton = ({
 const styles = StyleSheet.create({
   button: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginHorizontal: 8,
+    paddingVertical: theme.spacing.medium,
+    paddingHorizontal: theme.spacing.small,
+    borderRadius: theme.borders.radius.medium,
+    marginHorizontal: theme.spacing.xs,
   },
   buttonDefault: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   text: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: theme.typography.fontSize.medium,
+    fontWeight: theme.typography.fontWeight.medium,
     textAlign: 'center',
   },
   textDefault: {

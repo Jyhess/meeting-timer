@@ -12,8 +12,8 @@ export const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: theme.colors.background.primary,
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: theme.borders.radius.medium,
+    padding: theme.spacing.medium,
     width: Math.min(screenWidth - 20, 500),
     maxWidth: '100%',
     maxHeight: '90%',
@@ -35,17 +35,14 @@ export const styles = StyleSheet.create({
   optionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-  },
-  effectNote: {
-    fontSize: 12,
-    color: '#999',
+    gap: theme.spacing.small,
+    justifyContent: 'center',
   },
   modalButtons: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 8,
-    marginTop: 24,
+    justifyContent: 'center',
+    gap: theme.spacing.xs,
+    marginTop: theme.spacing.medium,
   },
   noSoundsText: {
     fontSize: theme.typography.fontSize.small,
@@ -56,8 +53,8 @@ export const styles = StyleSheet.create({
   colorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
+    gap: theme.spacing.medium,
     justifyContent: 'center',
-    marginTop: 12,
+    marginTop: theme.spacing.medium,
   },
 });

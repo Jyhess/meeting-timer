@@ -80,7 +80,7 @@ export const fr = {
     availableSoundsDescription: 'Activez ou désactivez les sons que vous souhaitez utiliser',
     noSoundsAvailable: 'Aucun son disponible. Activez des sons dans les préférences.',
     sound: 'Son',
-    effects: 'Effets',
+    new: 'Nouvelle alerte',
     preEnd: 'Temps bientôt écoulé',
     postEnd: 'Temps dépassé',
     end: 'Temps écoulé',

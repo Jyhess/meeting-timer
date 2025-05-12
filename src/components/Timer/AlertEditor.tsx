@@ -116,10 +116,9 @@ export const AlertEditor = ({
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={styles.modalContent}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.modalTitle}>{t(getAlertTitle(alert))}</Text>
+            <Text style={styles.modalTitle}>{t('alerts.new')}</Text>
 
             {hasAlertTimeOffset(alert) && (
-              <Section title={t('alerts.type')}>
                 <View style={styles.optionsGrid}>
                   <OptionButton
                     id="before"
@@ -134,41 +133,36 @@ export const AlertEditor = ({
                     onPress={() => handleTypeChange('after')}
                   />
                 </View>
-              </Section>
             )}
 
             {hasAlertTimeOffset(alert) && (
-              <Section title={t('alerts.timeOffset')}>
-                <View style={styles.timeInputContainer}>
-                  <TimeInput
-                    initialSeconds={editedAlert.timeOffset}
-                    onTimeChange={handleTimeChange}
-                    timeColor={isValidTime ? theme.colors.white : theme.colors.error}
-                    prefix={prefix}
-                  />
-                </View>
-              </Section>
+              <View style={styles.timeInputContainer}>
+                <TimeInput
+                  initialSeconds={editedAlert.timeOffset}
+                  onTimeChange={handleTimeChange}
+                  timeColor={isValidTime ? theme.colors.white : theme.colors.error}
+                  prefix={prefix}
+                />
+              </View>
             )}
 
-            <Section title={t('alerts.sound')}>
-              {availableSoundConfigs.length === 0 && (
-                <Text style={styles.noSoundsText}>
-                  {t('alerts.noSoundsAvailable')}
-                </Text>
-              )}
-              <View style={styles.optionsGrid}>
-                {availableSoundConfigs.map((sound) => (
-                  <OptionButton
-                    key={sound.id}
-                    id={sound.id}
-                    label={t(`sounds.${sound.id}`)}
-                    isSelected={editedAlert.sound === sound.id}
-                    onPress={() => handleSoundSelect(sound.id)}
-                    icon={sound.icon}
-                  />
-                ))}
-              </View>
-            </Section>
+            {availableSoundConfigs.length === 0 && (
+              <Text style={styles.noSoundsText}>
+                {t('alerts.noSoundsAvailable')}
+              </Text>
+            )}
+            <View style={styles.optionsGrid}>
+              {availableSoundConfigs.map((sound) => (
+                <OptionButton
+                  key={sound.id}
+                  id={sound.id}
+                  label={t(`sounds.${sound.id}`)}
+                  isSelected={editedAlert.sound === sound.id}
+                  onPress={() => handleSoundSelect(sound.id)}
+                  icon={sound.icon}
+                />
+              ))}
+            </View>
 
             <Section title={t('alerts.name')}>
               <NameInput
