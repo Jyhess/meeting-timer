@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Modal, ScrollView, StyleSheet } from 'react-native';
 import { SoundId, getSoundConfigs } from '../../types/sounds';
-import { effects, EffectId } from '../../types/effects';
 import { TimeInput } from './TimeInput';
 import { NameInput } from '../common/NameInput';
 import { OptionButton } from '../common/OptionButton';
@@ -55,19 +54,6 @@ export const AlertEditor = ({
     }));
   };
 
-  const handleEffectToggle = (effectId: EffectId) => {
-    setEditedAlert(prev => {
-      const newEffects = prev.effects.includes(effectId)
-        ? prev.effects.filter(e => e !== effectId)
-        : [...prev.effects, effectId];
-
-      return {
-        ...prev,
-        effects: newEffects,
-      };
-    });
-  };
-
   const handleTimeChange = (seconds: number, isValid: boolean) => {
     setIsValidTime(isValid);
     if (isValid) {
@@ -114,10 +100,6 @@ export const AlertEditor = ({
     onClose();
   };
 
-  const isEffectSelected = (effectId: EffectId) => {
-    return editedAlert.effects.includes(effectId);
-  };
-
   // Filtrer les sons disponibles
   const availableSoundConfigs = getSoundConfigs()
     .filter(sound => availableSounds.includes(sound.id));
@@ -157,23 +139,23 @@ export const AlertEditor = ({
 
             {hasAlertTimeOffset(alert) && (
               <Section title={t('alerts.timeOffset')}>
-              <View style={styles.timeInputContainer}>
-                <TimeInput
-                  initialSeconds={editedAlert.timeOffset}
-                  onTimeChange={handleTimeChange}
-                  timeColor={isValidTime ? theme.colors.white : theme.colors.error}
-                  prefix={prefix}
-                />
-              </View>
+                <View style={styles.timeInputContainer}>
+                  <TimeInput
+                    initialSeconds={editedAlert.timeOffset}
+                    onTimeChange={handleTimeChange}
+                    timeColor={isValidTime ? theme.colors.white : theme.colors.error}
+                    prefix={prefix}
+                  />
+                </View>
               </Section>
             )}
 
             <Section title={t('alerts.sound')}>
-                {availableSoundConfigs.length === 0 && (
-                  <Text style={styles.noSoundsText}>
-                    {t('alerts.noSoundsAvailable')}
-                  </Text>
-                )}
+              {availableSoundConfigs.length === 0 && (
+                <Text style={styles.noSoundsText}>
+                  {t('alerts.noSoundsAvailable')}
+                </Text>
+              )}
               <View style={styles.optionsGrid}>
                 {availableSoundConfigs.map((sound) => (
                   <OptionButton
@@ -210,20 +192,6 @@ export const AlertEditor = ({
               </View>
             </Section>
 
-            <Section title={t('alerts.effects')}>
-              <View style={styles.optionsGrid}>
-                {Object.entries(effects).map(([id, config]) => (
-                  <OptionButton
-                    key={id}
-                    id={id}
-                    label={t(`effects.${id}`)}
-                    isSelected={isEffectSelected(id as EffectId)}
-                    onPress={() => handleEffectToggle(id as EffectId)}
-                    icon={config.icon}
-                  />
-                ))}
-              </View>
-            </Section>
           </ScrollView>
           
           <View style={styles.modalButtons}>
