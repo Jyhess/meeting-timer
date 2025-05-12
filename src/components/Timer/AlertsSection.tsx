@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { AlertIcon } from './AlertIcon';
 import { AlertEditor } from './AlertEditor';
 import { theme } from '../../theme';
 import { useTimer } from '@/src/contexts/TimerContext';
 import { Alert, isAlertActive, isAlertValid } from '@/src/types/alerts';
-import { Icon } from './Icon';
+import { ControlButton } from '../common/ControlButton';
 
 export function AlertsSection() {
   const {
@@ -62,17 +62,12 @@ export function AlertsSection() {
           />
         ))}
         {!isRunning && (
-          <Pressable
-            style={styles.addButton}
+          <ControlButton
             onPress={handleAddAlert}
-            disabled={isRunning}
-          >
-            <Icon 
-              name="add_alert" 
-              size={24} 
-              color={theme.colors.primary} 
+            icon="notification_add" 
+            size={theme.layout.smallIconSize}
+            color={theme.colors.primary} 
             />
-          </Pressable>
         )}
       </View>
 
@@ -100,14 +95,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  addButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: theme.colors.background.secondary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: theme.spacing.small,
   },
 });

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, TextInput, Pressable, StyleSheet } from 'react-native';
-import { Icon } from '../Timer/Icon';
+import { Icon } from './Icon';
 import { theme } from '../../theme';
 
 interface NameInputProps {

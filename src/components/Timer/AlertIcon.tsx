@@ -11,7 +11,7 @@ import { Alert, getAlertTimeText } from '@/src/types/alerts';
 import { ToggleSlider } from './ToggleSlider';
 import { sounds } from '../../types/sounds';
 import { effects } from '../../types/effects';
-import { Icon } from './Icon';
+import { Icon } from '../common/Icon';
 import { styles } from '../../styles/AlertIcon.styles';
 import { theme } from '../../theme';
 

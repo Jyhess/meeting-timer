@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { theme } from '../../theme';
-import { Icon } from './Icon';
 import { NameInput } from '../common/NameInput';
 import { useTranslation } from '../../hooks/useTranslation';
+import { ControlButton } from '../common/ControlButton';
+import { ColorButton } from '../common/ColorButton';
 
 const PRESET_COLORS = [
   '#FF6B6B', // Rouge
@@ -67,30 +68,28 @@ export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose
 
           <Text style={styles.subtitle}>{t('preset.color')}</Text>
           <View style={styles.colorGrid}>
-            {PRESET_COLORS.map((color) => (
-              <Pressable
-                key={color}
-                style={[
-                  styles.colorButton,
-                  { backgroundColor: color },
-                  color === selectedColor && styles.selectedColor,
-                ]}
-                onPress={() => setSelectedColor(color)}
+            {PRESET_COLORS.map(hex => (
+              <ColorButton
+                key={hex}
+                hex={hex}
+                isSelected={hex === selectedColor}
+                onPress={() => setSelectedColor(hex)}
               />
             ))}
           </View>
 
           <View style={styles.buttonContainer}>
-            <Pressable style={styles.button} onPress={onClose}>
-              <Icon name="close" size={24} color={theme.colors.danger} />
-            </Pressable>
-            <Pressable 
-              style={[styles.button, !name.trim() && styles.buttonDisabled]} 
+            <ControlButton
+              icon="close"
+              color={theme.colors.danger}
+              onPress={onClose}
+            />
+            <ControlButton
+              icon="check"
+              color={theme.colors.primary}
               onPress={handleSave}
               disabled={!name.trim()}
-            >
-              <Icon name="check" size={24} color={theme.colors.primary} />
-            </Pressable>
+            />
           </View>
         </View>
       </View>
@@ -133,27 +132,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: theme.spacing.small,
   },
-  colorButton: {
-    width: 40,
-    height: 40,
-    borderRadius: theme.borders.radius.round,
-  },
-  selectedColor: {
-    borderWidth: 3,
-    borderColor: theme.colors.white,
-  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: theme.spacing.large,
     marginTop: theme.spacing.large,
-  },
-  button: {
-    padding: theme.spacing.medium,
-    borderRadius: theme.borders.radius.medium,
-    backgroundColor: theme.colors.background.secondary,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
   },
 }); 

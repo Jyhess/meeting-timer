@@ -24,6 +24,7 @@ export const colors = {
     primary: '#1a1a1a',
     secondary: '#2d2d2d',
     tertiary: '#3a3a3a',
+    selected: '#4CAF50',
   },
 } as const;
 
@@ -77,6 +78,7 @@ export const effects = {
 export const layout = {
   maxButtonSize: 70,
   iconSize: 40,
+  smallIconSize: 24,
   minWidth: 350,
   maxTimerHeight: 520,
   maxTimeInputHeight: 420,
