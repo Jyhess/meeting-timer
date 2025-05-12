@@ -86,5 +86,9 @@ export const fr = {
     end: 'Alerte à la fin',
     atEnd: 'À la fin',
     name: 'Nom',
+    type: 'Type',
+    before: 'Avant',
+    after: 'Après',
+    color: 'Couleur',
   },
 }; 

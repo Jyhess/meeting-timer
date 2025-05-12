@@ -124,4 +124,29 @@ export const styles = StyleSheet.create({
   modalButtonTextDanger: {
     color: theme.colors.white,
   },
+  colorGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+    justifyContent: 'center',
+    marginTop: 12,
+  },
+  colorButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  colorButtonActive: {
+    borderColor: theme.colors.primary,
+    transform: [{ scale: 1.1 }],
+  },
+  colorButtonText: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 4,
+  },
 });
