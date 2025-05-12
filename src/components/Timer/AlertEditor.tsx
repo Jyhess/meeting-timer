@@ -6,12 +6,13 @@ import { TimeInput } from './TimeInput';
 import { NameInput } from '../common/NameInput';
 import { OptionButton } from '../common/OptionButton';
 import { ClickButton } from '../common/ClickButton';
+import { ColorButton } from '../common/ColorButton';
+import { Section } from '../common/Section';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
 import { Alert, getAlertTitle, hasAlertTimeOffset, getAlertTimePrefix, AlertType, AlertColor, ALERT_COLORS } from '../../types/alerts';
 import { useSettings } from '../../hooks/useSettings';
 import { useTranslation } from '../../hooks/useTranslation';
-import { ColorButton } from '../common/ColorButton';
 
 type AlertEditorProps = {
   alert: Alert;
@@ -136,8 +137,7 @@ export const AlertEditor = ({
             <Text style={styles.modalTitle}>{t(getAlertTitle(alert))}</Text>
 
             {hasAlertTimeOffset(alert) && (
-            <View style={styles.modalSection}>
-              <Text style={styles.sectionTitle}>{t('alerts.type')}</Text>
+              <Section title={t('alerts.type')}>
                 <View style={styles.optionsGrid}>
                   <OptionButton
                     id="before"
@@ -152,29 +152,28 @@ export const AlertEditor = ({
                     onPress={() => handleTypeChange('after')}
                   />
                 </View>
-              </View>
+              </Section>
             )}
 
             {hasAlertTimeOffset(alert) && (
+              <Section title={t('alerts.timeOffset')}>
               <View style={styles.timeInputContainer}>
                 <TimeInput
                   initialSeconds={editedAlert.timeOffset}
                   onTimeChange={handleTimeChange}
                   timeColor={isValidTime ? theme.colors.white : theme.colors.error}
                   prefix={prefix}
-                  />
+                />
               </View>
+              </Section>
             )}
 
-            <View style={styles.modalSection}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>{t('alerts.sound')}</Text>
+            <Section title={t('alerts.sound')}>
                 {availableSoundConfigs.length === 0 && (
                   <Text style={styles.noSoundsText}>
                     {t('alerts.noSoundsAvailable')}
                   </Text>
                 )}
-              </View>
               <View style={styles.optionsGrid}>
                 {availableSoundConfigs.map((sound) => (
                   <OptionButton
@@ -187,20 +186,18 @@ export const AlertEditor = ({
                   />
                 ))}
               </View>
-            </View>
+            </Section>
 
-            <View style={styles.modalSection}>
-              <Text style={styles.sectionTitle}>{t('alerts.name')}</Text>
+            <Section title={t('alerts.name')}>
               <NameInput
                 value={editedAlert.name}
                 onChange={handleNameChange}
                 placeholder={t(getAlertTitle(alert))}
                 autoFocus
               />
-            </View>
+            </Section>
 
-            <View style={styles.modalSection}>
-              <Text style={styles.sectionTitle}>{t('alerts.color')}</Text>
+            <Section title={t('alerts.color')}>
               <View style={styles.colorGrid}>
                 {ALERT_COLORS.map(hex => (
                   <ColorButton
@@ -211,11 +208,9 @@ export const AlertEditor = ({
                   />
                 ))}
               </View>
-            </View>
+            </Section>
 
-
-            <View style={styles.modalSection}>
-              <Text style={styles.sectionTitle}>{t('alerts.effects')}</Text>
+            <Section title={t('alerts.effects')}>
               <View style={styles.optionsGrid}>
                 {Object.entries(effects).map(([id, config]) => (
                   <OptionButton
@@ -228,7 +223,7 @@ export const AlertEditor = ({
                   />
                 ))}
               </View>
-            </View>
+            </Section>
           </ScrollView>
           
           <View style={styles.modalButtons}>

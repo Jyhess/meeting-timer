@@ -32,21 +32,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  modalSection: {
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: theme.typography.fontSize.medium,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.white,
-    marginBottom: theme.spacing.small,
-  },
   optionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -67,20 +52,6 @@ export const styles = StyleSheet.create({
     color: theme.colors.gray.light,
     marginTop: theme.spacing.xs,
     fontStyle: 'italic',
-  },
-  nameInput: {
-    backgroundColor: theme.colors.background.secondary,
-    borderRadius: 8,
-    padding: 12,
-    color: theme.colors.white,
-    fontSize: 16,
-    marginTop: 8,
-  },
-  modalButtonDanger: {
-    backgroundColor: theme.colors.danger,
-  },
-  modalButtonTextDanger: {
-    color: theme.colors.white,
   },
   colorGrid: {
     flexDirection: 'row',
