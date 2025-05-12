@@ -10,6 +10,8 @@ import { AlertsSection } from './AlertsSection';
 import { ControlButton } from '../common/ControlButton';
 import { formatTimeFromSeconds } from '@/src/utils/time';
 import { useTimer } from '@/src/contexts/TimerContext';
+import { useTranslation } from '../../hooks/useTranslation';
+import { getAlertTitle } from '@/src/types/alerts';
 
 export function TimerRunning() {
   const {
@@ -30,6 +32,7 @@ export function TimerRunning() {
   const flashViewRef = useRef<FlashViewRef>(null);
   const [addingTime, setAddingTime] = useState(false);
   const [addTimeValue, setAddTimeValue] = useState<{ seconds: number; isValid: boolean }>({ seconds: 0, isValid: false });
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isRunning) {
@@ -95,7 +98,7 @@ export function TimerRunning() {
       <View style={styles.timerRunningAndControlsContainer}>
         <View style={styles.timerContainer}>
         {activeAlert && (
-          <Text style={styles.alertText}>{activeAlert.name}</Text>
+          <Text style={styles.alertText}>{activeAlert.name || t(getAlertTitle(activeAlert))}</Text>
           )}
           <TimeDisplay
             timeBuffer={formatTimeFromSeconds(timeLeft)}

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Modal, Pressable, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Modal, StyleSheet, Dimensions } from 'react-native';
 import { theme } from '../../theme';
 import { NameInput } from '../common/NameInput';
 import { useTranslation } from '../../hooks/useTranslation';
-import { ControlButton } from '../common/ControlButton';
+import { ClickButton } from '../common/ClickButton';
 import { ColorButton } from '../common/ColorButton';
 
 const PRESET_COLORS = [
@@ -79,14 +79,14 @@ export function SavePresetDialog({ isVisible, defaultName, defaultColor, onClose
           </View>
 
           <View style={styles.buttonContainer}>
-            <ControlButton
-              icon="close"
-              color={theme.colors.danger}
+            <ClickButton
+              label={t('common.cancel')}
+              variant="danger"
               onPress={onClose}
             />
-            <ControlButton
-              icon="check"
-              color={theme.colors.primary}
+            <ClickButton
+              label={t('common.save')}
+              variant="primary"
               onPress={handleSave}
               disabled={!name.trim()}
             />

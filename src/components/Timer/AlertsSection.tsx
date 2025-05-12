@@ -67,7 +67,7 @@ export function AlertsSection() {
           <ControlButton
             onPress={handleAddAlert}
             icon="notification_add" 
-            size={theme.layout.smallIconSize}
+            size={theme.layout.iconSize}
             color={theme.colors.primary} 
             />
         )}

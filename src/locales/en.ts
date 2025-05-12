@@ -80,7 +80,7 @@ export const en = {
     availableSoundsDescription: 'Enable or disable sounds you want to use',
     noSoundsAvailable: 'No sounds available. Enable sounds in preferences.',
     sound: 'Sound',
-    effects: 'Effects',
+    new: 'New alert',
     preEnd: 'Time almost over',
     postEnd: 'Time exceeded',
     end: 'Time over',
