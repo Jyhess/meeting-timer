@@ -6,7 +6,7 @@ import { TimeInput } from './TimeInput';
 import { SavePresetDialog } from './SavePresetDialog';
 import { formatTimeFromSeconds } from '@/src/utils/time';
 import { AlertsSection } from './AlertsSection';
-import { ControlButton } from './ControlButton';
+import { ControlButton } from '../common/ControlButton';
 import { useRouter } from 'expo-router';
 import { useTimer } from '@/src/contexts/TimerContext';
 import { isAlertValid } from '@/src/types/alerts';

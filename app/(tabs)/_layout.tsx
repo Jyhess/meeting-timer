@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Icon } from '../../src/components/Timer/Icon';
+import { Icon } from '../../src/components/common/Icon';
 import { Platform } from 'react-native';
 import { theme } from '../../src/theme';
 import { useTranslation } from '../../src/hooks/useTranslation';

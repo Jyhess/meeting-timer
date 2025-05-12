@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: theme.colors.background.primary,
     borderRadius: 12,
     padding: 20,
     width: Math.min(screenWidth - 20, 500),
@@ -19,11 +19,11 @@ export const styles = StyleSheet.create({
     maxHeight: '90%',
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: theme.typography.fontSize.large,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.white,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: theme.spacing.large,
   },
   timeInputContainer: {
     flex: 1,
@@ -52,24 +52,6 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
   },
-  optionButton: {
-    backgroundColor: '#333',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    minWidth: 100,
-  },
-  optionButtonActive: {
-    backgroundColor: '#666',
-  },
-  optionText: {
-    color: '#666',
-    marginTop: 8,
-    fontSize: 14,
-  },
-  optionTextActive: {
-    color: '#fff',
-  },
   effectNote: {
     fontSize: 12,
     color: '#999',
@@ -79,30 +61,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: 8,
     marginTop: 24,
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginHorizontal: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  modalButtonPrimary: {
-    backgroundColor: theme.colors.primary,
-  },
-  modalButtonDisabled: {
-    backgroundColor: theme.colors.disabled,
-    opacity: 0.5,
-  },
-  modalButtonText: {
-    color: theme.colors.white,
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  modalButtonTextDisabled: {
-    color: theme.colors.gray.light,
   },
   noSoundsText: {
     fontSize: theme.typography.fontSize.small,
@@ -130,23 +88,5 @@ export const styles = StyleSheet.create({
     gap: 16,
     justifyContent: 'center',
     marginTop: 12,
-  },
-  colorButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  colorButtonActive: {
-    borderColor: theme.colors.primary,
-    transform: [{ scale: 1.1 }],
-  },
-  colorButtonText: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginTop: 4,
   },
 });

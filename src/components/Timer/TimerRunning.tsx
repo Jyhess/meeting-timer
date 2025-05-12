@@ -7,7 +7,7 @@ import { TimeDisplay } from './TimeDisplay';
 import { FlashView, FlashViewRef } from './FlashView';
 import { CircularProgress } from '@/src/components/Timer/CircularProgress';
 import { AlertsSection } from './AlertsSection';
-import { ControlButton } from './ControlButton';
+import { ControlButton } from '../common/ControlButton';
 import { formatTimeFromSeconds } from '@/src/utils/time';
 import { useTimer } from '@/src/contexts/TimerContext';
 

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, Modal, Platform, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, Modal, ScrollView, StyleSheet } from 'react-native';
 import { SoundId, getSoundConfigs } from '../../types/sounds';
 import { effects, EffectId } from '../../types/effects';
-import { Icon } from './Icon';
 import { TimeInput } from './TimeInput';
 import { NameInput } from '../common/NameInput';
+import { OptionButton } from '../common/OptionButton';
+import { ClickButton } from '../common/ClickButton';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
 import { Alert, getAlertTitle, hasAlertTimeOffset, getAlertTimePrefix, AlertType, AlertColor, ALERT_COLORS } from '../../types/alerts';
 import { useSettings } from '../../hooks/useSettings';
 import { useTranslation } from '../../hooks/useTranslation';
+import { ColorButton } from '../common/ColorButton';
 
 type AlertEditorProps = {
   alert: Alert;
@@ -137,39 +139,18 @@ export const AlertEditor = ({
             <View style={styles.modalSection}>
               <Text style={styles.sectionTitle}>{t('alerts.type')}</Text>
                 <View style={styles.optionsGrid}>
-                  <TouchableOpacity
-                    style={[
-                      styles.optionButton,
-                      editedAlert.type === 'before' && styles.optionButtonActive,
-                    ]}
+                  <OptionButton
+                    id="before"
+                    label={t('alerts.before')}
+                    isSelected={editedAlert.type === 'before'}
                     onPress={() => handleTypeChange('before')}
-                  >
-                    <Text
-                      style={[
-                        styles.optionText,
-                        editedAlert.type === 'before' && styles.optionTextActive,
-                      ]}
-                    >
-                      {t('alerts.before')}
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[
-                      styles.optionButton,
-                      editedAlert.type === 'after' && styles.optionButtonActive,
-                    ]}
+                  />
+                  <OptionButton
+                    id="after"
+                    label={t('alerts.after')}
+                    isSelected={editedAlert.type === 'after'}
                     onPress={() => handleTypeChange('after')}
-                  >
-                    <Text
-                      style={[
-                        styles.optionText,
-                        editedAlert.type === 'after' && styles.optionTextActive,
-                      ]}
-                    >
-                      {t('alerts.after')}
-                    </Text>
-                  </TouchableOpacity>
+                  />
                 </View>
               </View>
             )}
@@ -196,28 +177,14 @@ export const AlertEditor = ({
               </View>
               <View style={styles.optionsGrid}>
                 {availableSoundConfigs.map((sound) => (
-                  <TouchableOpacity
+                  <OptionButton
                     key={sound.id}
-                    style={[
-                      styles.optionButton,
-                      editedAlert.sound === sound.id && styles.optionButtonActive,
-                    ]}
+                    id={sound.id}
+                    label={t(`sounds.${sound.id}`)}
+                    isSelected={editedAlert.sound === sound.id}
                     onPress={() => handleSoundSelect(sound.id)}
-                  >
-                    <Icon 
-                      name={sound.icon as any}
-                      size={28}
-                      color={'#fff'}
-                    />
-                    <Text
-                      style={[
-                        styles.optionText,
-                        editedAlert.sound === sound.id && styles.optionTextActive,
-                      ]}
-                    >
-                      {t(`sounds.${sound.id}`)}
-                    </Text>
-                  </TouchableOpacity>
+                    icon={sound.icon}
+                  />
                 ))}
               </View>
             </View>
@@ -235,20 +202,13 @@ export const AlertEditor = ({
             <View style={styles.modalSection}>
               <Text style={styles.sectionTitle}>{t('alerts.color')}</Text>
               <View style={styles.colorGrid}>
-                {Object.entries(ALERT_COLORS).map(([color, hex]) => (
-                  <TouchableOpacity
-                    key={color}
-                    style={[
-                      styles.colorButton,
-                      { backgroundColor: hex },
-                      editedAlert.color === color && styles.colorButtonActive,
-                    ]}
-                    onPress={() => handleColorSelect(color as AlertColor)}
-                  >
-                    {editedAlert.color === color && (
-                      <Icon name="check" size={24} color={color === 'white' ? '#000' : '#fff'} />
-                    )}
-                  </TouchableOpacity>
+                {ALERT_COLORS.map(hex => (
+                  <ColorButton
+                    key={hex}
+                    hex={hex}
+                    isSelected={editedAlert.color === hex}
+                    onPress={() => handleColorSelect(hex)}
+                  />
                 ))}
               </View>
             </View>
@@ -258,66 +218,36 @@ export const AlertEditor = ({
               <Text style={styles.sectionTitle}>{t('alerts.effects')}</Text>
               <View style={styles.optionsGrid}>
                 {Object.entries(effects).map(([id, config]) => (
-                  <TouchableOpacity
+                  <OptionButton
                     key={id}
-                    style={[
-                      styles.optionButton,
-                      isEffectSelected(id as EffectId) && styles.optionButtonActive,
-                    ]}
+                    id={id}
+                    label={t(`effects.${id}`)}
+                    isSelected={isEffectSelected(id as EffectId)}
                     onPress={() => handleEffectToggle(id as EffectId)}
-                  >
-                    <Icon
-                      name={config.icon as any}
-                      size={24}
-                      color={isEffectSelected(id as EffectId) ? '#fff' : '#666'}
-                    />
-                    <Text
-                      style={[
-                        styles.optionText,
-                        isEffectSelected(id as EffectId) && styles.optionTextActive,
-                      ]}
-                    >
-                      {t(`effects.${id}`)}
-                      {id === 'shake' && Platform.OS !== 'web' && (
-                        <Text style={styles.effectNote}> (+ vibration)</Text>
-                      )}
-                    </Text>
-                  </TouchableOpacity>
+                    icon={config.icon}
+                  />
                 ))}
               </View>
             </View>
           </ScrollView>
           
           <View style={styles.modalButtons}>
-            {hasAlertTimeOffset(alert) && (
-              <Pressable 
-                style={[styles.modalButton, styles.modalButtonDanger]} 
-                onPress={handleDelete}
-              >
-                <Text style={[styles.modalButtonText, styles.modalButtonTextDanger]}>
-                  {t('common.delete')}
-                </Text>
-              </Pressable>
-            )}
-            <Pressable style={styles.modalButton} onPress={onClose}>
-              <Text style={styles.modalButtonText}>{t('common.cancel')}</Text>
-            </Pressable>
-            <Pressable 
-              style={[
-                styles.modalButton,
-                styles.modalButtonPrimary,
-                (!isValidTime || availableSoundConfigs.length === 0) && styles.modalButtonDisabled
-              ]} 
+            <ClickButton
+              label={t('common.delete')}
+              onPress={handleDelete}
+              variant="danger"
+            />
+            <ClickButton
+              label={t('common.cancel')}
+              onPress={onClose}
+              variant="default"
+            />
+            <ClickButton
+              label={t('common.save')}
               onPress={handleSave}
+              variant="primary"
               disabled={!isValidTime || availableSoundConfigs.length === 0}
-            >
-              <Text style={[
-                styles.modalButtonText,
-                (!isValidTime || availableSoundConfigs.length === 0) && styles.modalButtonTextDisabled
-              ]}>
-                {t('common.save')}
-              </Text>
-            </Pressable>
+            />
           </View>
         </View>
       </View>
