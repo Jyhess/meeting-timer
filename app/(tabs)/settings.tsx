@@ -27,6 +27,7 @@ import * as Clipboard from 'expo-clipboard';
 import * as Device from 'expo-device';
 import { ControlButton } from '@/src/components/common/ControlButton';
 import { OptionButton } from '@/src/components/common/OptionButton';
+import { Section } from '@/src/components/common/Section';
 
 export default function SettingsScreen() {
   const { t, language, changeLanguage } = useTranslation();
@@ -99,12 +100,7 @@ export default function SettingsScreen() {
         </View>
         
         <ScrollView style={styles.content}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('alerts.duration')}</Text>
-            <Text style={styles.sectionDescription}>
-              {t('alerts.durationDescription')}
-            </Text>
-            
+          <Section style={styles.section} title={t('alerts.duration')} description={t('alerts.durationDescription')}>
             <View style={styles.durationContainer}>
               <View style={styles.durationInputContainer}>
                 <TextInput
@@ -140,14 +136,9 @@ export default function SettingsScreen() {
                 />
               </View>
             </View>
-          </View>
+          </Section>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('alerts.availableSounds')}</Text>
-            <Text style={styles.sectionDescription}>
-              {t('alerts.availableSoundsDescription')}
-            </Text>
-            
+          <Section style={styles.section} title={t('alerts.availableSounds')} description={t('alerts.availableSoundsDescription')}>
             <View style={styles.soundsList}>
               {getSoundConfigs().map((soundConfig) => (
                 <View key={soundConfig.id} style={styles.soundItem}>
@@ -170,14 +161,9 @@ export default function SettingsScreen() {
                 </View>
               ))}
             </View>
-          </View>
+          </Section>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('common.language')}</Text>
-            <Text style={styles.sectionDescription}>
-              {t('common.languageDescription')}
-            </Text>
-            
+          <Section style={styles.section} title={t('common.language')} description={t('common.languageDescription')}>
             <View style={styles.languageContainer}>
               <OptionButton
                 id="fr"
@@ -192,11 +178,9 @@ export default function SettingsScreen() {
                 onPress={() => handleLanguageChange('en')}
               />
             </View>
-          </View>
+          </Section>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('common.about')}</Text>
-            <Text style={styles.sectionDescription}>{t('common.aboutDescription')}</Text>
+          <Section style={styles.section} title={t('common.about')} description={t('common.aboutDescription')}>
             <View style={styles.versionContainer}>
               <Text style={styles.versionText}>Version {version} - Build {buildNumber}</Text>
               <Text style={styles.versionText}>{platform} {platformVersion}</Text>
@@ -217,7 +201,7 @@ export default function SettingsScreen() {
                 <Icon name="arrow_back" size={24} color="#aaa" style={{ transform: [{ rotate: '180deg' }] }} />
               </Pressable>
             </Link>
-          </View>
+          </Section>
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>

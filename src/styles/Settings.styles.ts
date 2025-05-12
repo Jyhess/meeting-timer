@@ -31,17 +31,6 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     overflow: 'hidden',
   },
-  sectionTitle: {
-    fontSize: theme.typography.fontSize.medium,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.white,
-    marginBottom: theme.spacing.small,
-  },
-  sectionDescription: {
-    fontSize: theme.typography.fontSize.small,
-    color: theme.colors.gray.light,
-    marginBottom: theme.spacing.medium,
-  },
   languageContainer: {
     flexDirection: 'row',
     gap: theme.spacing.medium,
