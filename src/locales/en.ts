@@ -86,5 +86,9 @@ export const en = {
     end: 'Alert at end',
     atEnd: 'At end',
     name: 'Name',
+    type: 'Type',
+    before: 'Before',
+    after: 'After',
+    color: 'Color',
   },
 }; 

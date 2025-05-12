@@ -7,7 +7,7 @@ import { TimeInput } from './TimeInput';
 import { NameInput } from '../common/NameInput';
 import { styles } from '../../styles/AlertEditor.styles';
 import { theme } from '../../theme';
-import { Alert, getAlertTitle, hasAlertTimeOffset, getAlertTimePrefix, AlertType } from '../../types/alerts';
+import { Alert, getAlertTitle, hasAlertTimeOffset, getAlertTimePrefix, AlertType, AlertColor, ALERT_COLORS } from '../../types/alerts';
 import { useSettings } from '../../hooks/useSettings';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -91,6 +91,13 @@ export const AlertEditor = ({
     setPrefix(getAlertTimePrefix(newAlert));
   };
 
+  const handleColorSelect = (color: AlertColor) => {
+    setEditedAlert(prev => ({
+      ...prev,
+      color,
+    }));
+  };
+
   const handleSave = () => {
     if (isValidTime) {
       editedAlert.enabled = true;
@@ -126,54 +133,46 @@ export const AlertEditor = ({
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.modalTitle}>{t(getAlertTitle(alert))}</Text>
 
+            {hasAlertTimeOffset(alert) && (
             <View style={styles.modalSection}>
               <Text style={styles.sectionTitle}>{t('alerts.type')}</Text>
-              <View style={styles.optionsGrid}>
-                <TouchableOpacity
-                  style={[
-                    styles.optionButton,
-                    editedAlert.type === 'before' && styles.optionButtonActive,
-                  ]}
-                  onPress={() => handleTypeChange('before')}
-                >
-                  <Text
+                <View style={styles.optionsGrid}>
+                  <TouchableOpacity
                     style={[
-                      styles.optionText,
-                      editedAlert.type === 'before' && styles.optionTextActive,
+                      styles.optionButton,
+                      editedAlert.type === 'before' && styles.optionButtonActive,
                     ]}
+                    onPress={() => handleTypeChange('before')}
                   >
-                    {t('alerts.before')}
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={[
+                        styles.optionText,
+                        editedAlert.type === 'before' && styles.optionTextActive,
+                      ]}
+                    >
+                      {t('alerts.before')}
+                    </Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[
-                    styles.optionButton,
-                    editedAlert.type === 'after' && styles.optionButtonActive,
-                  ]}
-                  onPress={() => handleTypeChange('after')}
-                >
-                  <Text
+                  <TouchableOpacity
                     style={[
-                      styles.optionText,
-                      editedAlert.type === 'after' && styles.optionTextActive,
+                      styles.optionButton,
+                      editedAlert.type === 'after' && styles.optionButtonActive,
                     ]}
+                    onPress={() => handleTypeChange('after')}
                   >
-                    {t('alerts.after')}
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={[
+                        styles.optionText,
+                        editedAlert.type === 'after' && styles.optionTextActive,
+                      ]}
+                    >
+                      {t('alerts.after')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-
-            <View style={styles.modalSection}>
-              <Text style={styles.sectionTitle}>{t('alerts.name')}</Text>
-              <NameInput
-                value={editedAlert.name}
-                onChange={handleNameChange}
-                placeholder={t(getAlertTitle(alert))}
-                autoFocus
-              />
-            </View>
+            )}
 
             {hasAlertTimeOffset(alert) && (
               <View style={styles.timeInputContainer}>
@@ -224,6 +223,38 @@ export const AlertEditor = ({
             </View>
 
             <View style={styles.modalSection}>
+              <Text style={styles.sectionTitle}>{t('alerts.name')}</Text>
+              <NameInput
+                value={editedAlert.name}
+                onChange={handleNameChange}
+                placeholder={t(getAlertTitle(alert))}
+                autoFocus
+              />
+            </View>
+
+            <View style={styles.modalSection}>
+              <Text style={styles.sectionTitle}>{t('alerts.color')}</Text>
+              <View style={styles.colorGrid}>
+                {Object.entries(ALERT_COLORS).map(([color, hex]) => (
+                  <TouchableOpacity
+                    key={color}
+                    style={[
+                      styles.colorButton,
+                      { backgroundColor: hex },
+                      editedAlert.color === color && styles.colorButtonActive,
+                    ]}
+                    onPress={() => handleColorSelect(color as AlertColor)}
+                  >
+                    {editedAlert.color === color && (
+                      <Icon name="check" size={24} color={color === 'white' ? '#000' : '#fff'} />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+
+            <View style={styles.modalSection}>
               <Text style={styles.sectionTitle}>{t('alerts.effects')}</Text>
               <View style={styles.optionsGrid}>
                 {Object.entries(effects).map(([id, config]) => (
@@ -258,14 +289,16 @@ export const AlertEditor = ({
           </ScrollView>
           
           <View style={styles.modalButtons}>
-            <Pressable 
-              style={[styles.modalButton, styles.modalButtonDanger]} 
-              onPress={handleDelete}
-            >
-              <Text style={[styles.modalButtonText, styles.modalButtonTextDanger]}>
-                {t('common.delete')}
-              </Text>
-            </Pressable>
+            {hasAlertTimeOffset(alert) && (
+              <Pressable 
+                style={[styles.modalButton, styles.modalButtonDanger]} 
+                onPress={handleDelete}
+              >
+                <Text style={[styles.modalButtonText, styles.modalButtonTextDanger]}>
+                  {t('common.delete')}
+                </Text>
+              </Pressable>
+            )}
             <Pressable style={styles.modalButton} onPress={onClose}>
               <Text style={styles.modalButtonText}>{t('common.cancel')}</Text>
             </Pressable>
