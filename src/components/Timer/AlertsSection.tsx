@@ -4,7 +4,7 @@ import { AlertIcon } from './AlertIcon';
 import { AlertEditor } from './AlertEditor';
 import { theme } from '../../theme';
 import { useTimer } from '@/src/contexts/TimerContext';
-import { Alert, isAlertActive, isAlertValid } from '@/src/types/alerts';
+import { Alert, ALERT_COLORS, isAlertActive, isAlertValid } from '@/src/types/alerts';
 import { ControlButton } from '../common/ControlButton';
 
 export function AlertsSection() {
@@ -34,9 +34,10 @@ export function AlertsSection() {
       enabled: true,
       timeOffset: 30,
       sound: 'bell',
-      effects: ['flash'],
+      effects: ['flash', 'shake'],
+      color: ALERT_COLORS[0],
     };
-    addAlert(newAlert);
+    //addAlert(newAlert);
     setEditingAlert(newAlert);
   };
 
@@ -59,6 +60,7 @@ export function AlertsSection() {
               updateAlert(updatedAlert);
             }}
             timeColor={getAlertTimeColor(alert)}
+            isRunning={isRunning}
           />
         ))}
         {!isRunning && (
@@ -92,8 +94,8 @@ export function AlertsSection() {
 const styles = StyleSheet.create({
   alertsContainer: {
     width: '100%',
-    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: theme.spacing.xs,
   },
 });

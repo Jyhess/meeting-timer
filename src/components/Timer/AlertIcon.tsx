@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import Animated, { 
-  useAnimatedStyle, 
-  withRepeat, 
-  withSequence,
-  withTiming,
-} from 'react-native-reanimated';
-import { IconName } from '@/src/types/icons';
-import { Alert, getAlertTimeText } from '@/src/types/alerts';
+import { Alert, getAlertTimeText, getAlertTitle } from '@/src/types/alerts';
 import { ToggleSlider } from './ToggleSlider';
 import { sounds } from '../../types/sounds';
-import { effects } from '../../types/effects';
 import { Icon } from '../common/Icon';
 import { styles } from '../../styles/AlertIcon.styles';
 import { theme } from '../../theme';
+import { useTranslation } from '../../hooks/useTranslation';
+
 
 type AlertIconProps = {
   alert: Alert;
@@ -21,96 +15,69 @@ type AlertIconProps = {
   onPress: () => void;
   onToggle: (enabled: boolean) => void;
   timeColor?: string;
+  isRunning: boolean;
 };
 
-const AnimatedView = Animated.createAnimatedComponent(View);
-
-export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor }: AlertIconProps) => {
+export const AlertIcon = ({ alert, isActive, onPress, onToggle, timeColor, isRunning }: AlertIconProps) => {
   const soundConfig = sounds[alert.sound];
   const [localEnabled, setLocalEnabled] = useState(alert.enabled);
-  
+  const { t } = useTranslation();
+
   // Synchronize local state with alert state
   useEffect(() => {
     setLocalEnabled(alert.enabled);
   }, [alert.enabled]);
 
-  // Shake animation
-  const shakeAnimation = useAnimatedStyle(() => {
-    if (isActive && alert.effects.includes('shake')) {
-      return {
-         transform: [{
-          translateX: withRepeat(
-            withSequence(
-              withTiming(-5, { duration: 100 }),
-              withTiming(5, { duration: 100 }),
-              withTiming(0, { duration: 100 })
-            ),
-            -1
-          ),
-        }],
-      };
-    }
-    return { transform: [{ translateX: 0 }] };
-  });
-
-  // Générer des icônes pour les effets actifs
-  const renderEffectIcons = () => {
-    if (!alert.effects || alert.effects.length === 0) return null;
-    
-    return (
-      <View style={styles.effectIconsContainer}>
-        {alert.effects.map(effect => {           
-          return (
-            <Icon 
-              key={effect}
-              name={effects[effect].icon as IconName}
-              size={12}
-              color={isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light}
-              style={styles.effectIcon}
-            />
-          );
-        })}
-      </View>
-    );
-  };
-
   return (
-    <View style={styles.alertItemContainer}>
-      <View>
-        <Pressable onPress={onPress}>
-          <AnimatedView 
-            style={[
-              styles.alertIcon,
-              !localEnabled && styles.alertIconDisabled,
-              isActive && styles.alertIconActive,
-              alert.effects.includes('shake') && shakeAnimation,
-            ]}
-          >
-            <Icon 
-              name={soundConfig?.icon as any}
-              size={28}
-              color={isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light}
-            />
-            <Text style={[
-              styles.alertTime,
-              { color: isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light },
-              timeColor && { color: timeColor }
-            ]}>
-              {getAlertTimeText(alert)}
-            </Text>
-            {renderEffectIcons()}
-          </AnimatedView>
-        </Pressable>
-      </View>
-      <View style={styles.sliderContainer}>
-        <ToggleSlider
-          value={localEnabled}
-          onToggle={(enabled) => {
-            setLocalEnabled(enabled);
-            onToggle(enabled);
-          }}
+    <Pressable onPress={onPress}>
+      <View 
+        style={[
+          styles.alertItemContainer,
+        ]}
+      >
+        <View style={styles.timeContainer}>
+          <Text style={[
+            styles.alertTime,
+            { color: isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light },
+            timeColor && { color: timeColor }
+          ]}>
+            {getAlertTimeText(alert)}
+          </Text>
+        </View>
+
+        <View style={[
+          styles.colorDot,
+          { backgroundColor: alert.color }
+        ]} />
+
+        <View style={styles.nameContainer}>
+          <Text style={[
+            styles.alertName,
+            { color: isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light }
+          ]}>
+            {alert.name || t(getAlertTitle(alert))}
+          </Text>
+        </View>
+
+        <Icon 
+          name={soundConfig?.icon as any}
+          size={theme.layout.smallIconSize}
+          color={isActive ? theme.colors.secondary : localEnabled ? theme.colors.white : theme.colors.gray.light}
+          style={styles.soundIcon}
         />
+
+        {isRunning && (
+          <View style={styles.sliderContainer}>
+            <ToggleSlider
+              value={localEnabled}
+            onToggle={(enabled) => {
+              setLocalEnabled(enabled);
+              onToggle(enabled);
+            }}
+            />
+          </View>
+        )}
       </View>
-    </View>
+    </Pressable>
   );
 };
