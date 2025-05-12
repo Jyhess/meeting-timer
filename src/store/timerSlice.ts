@@ -86,10 +86,13 @@ const timerSlice = createSlice({
     },
     updateAlert: (state, action: PayloadAction<Alert>) => {
       const index = state.alerts.findIndex(a => a.id === action.payload.id);
-      if (index !== -1) {
-        state.alerts[index] = { ...action.payload };
-        state.alerts = sortAlerts(state.alerts);
+      if (index === -1) {
+        state.alerts.push(action.payload);
       }
+      else {
+        state.alerts[index] = { ...action.payload };
+      }
+      state.alerts = sortAlerts(state.alerts);
     },
     addAlert: (state, action: PayloadAction<Alert>) => {
       state.alerts.push(action.payload);

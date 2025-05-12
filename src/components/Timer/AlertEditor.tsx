@@ -179,18 +179,20 @@ export const AlertEditor = ({
               />
             </Section>
 
-            <Section title={t('alerts.color')}>
-              <View style={styles.colorGrid}>
-                {ALERT_COLORS.map(hex => (
-                  <ColorButton
-                    key={hex}
-                    hex={hex}
-                    isSelected={editedAlert.color === hex}
-                    onPress={() => handleColorSelect(hex)}
-                  />
-                ))}
-              </View>
-            </Section>
+            {hasAlertTimeOffset(alert) && (
+              <Section title={t('alerts.color')}>
+                <View style={styles.colorGrid}>
+                  {ALERT_COLORS.map(hex => (
+                    <ColorButton
+                      key={hex}
+                      hex={hex}
+                      isSelected={editedAlert.color === hex}
+                      onPress={() => handleColorSelect(hex)}
+                    />
+                  ))}
+                </View>
+              </Section>
+            )}
 
           </ScrollView>
           
