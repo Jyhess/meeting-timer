@@ -8,8 +8,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { theme } from '../../theme';
 import Svg, { Polyline } from 'react-native-svg';
-import { polylinePath } from '../../utils/polyline';
+import { polylinePath, polylinePathToEnd } from '../../utils/polyline';
 import { useTimer } from '@/src/contexts/TimerContext';
+import { Alert } from '../../types/alerts';
 const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
 
 export function CircularProgress() {
@@ -67,6 +68,12 @@ export function CircularProgress() {
       const remaining = 1 - ((duration+timeLeft-1) / duration);
       progressNegative.value = getAnimetedValue(remaining, progressNegative.value);
     }
+    // When the timer is reset, we need to reset the progress
+    if( timeLeft == duration)
+    {
+      progress.value = 0;
+      progressNegative.value = 0;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, duration, isRunning]);
 
@@ -96,11 +103,8 @@ export function CircularProgress() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, size]);
 
-  const beforeAlert = alerts.find(a => a.type === 'before');
-  const afterAlert = alerts.find(a => a.type === 'after');
-
-  const beforeAlertAngle = beforeAlert ? (1-(beforeAlert.timeOffset || 0) / duration) : 0;
-  const afterAlertAngle = afterAlert ? ((afterAlert.timeOffset || 0) / duration) : 0;
+  const beforeAlerts = alerts.filter(a => a.type === 'before');
+  const afterAlerts = alerts.filter(a => a.type === 'after').sort((a, b) => (b.timeOffset || 0) - (a.timeOffset || 0));
 
   const animatedProps = useAnimatedProps(() => ({
     points: progressShape.value,
@@ -114,24 +118,50 @@ export function CircularProgress() {
     opacity: 0.7,
   }));
 
+  const renderBeforeAlerts = () => {
+    return beforeAlerts.map((alert: Alert) => {
+      const angle = 1 - ((alert.timeOffset || 0) / duration);
+      const points = polylinePathToEnd(size, angle)
+        .map((point: { x: number; y: number }) => `${point.x},${point.y}`)
+        .join(' ');
+
+      return (
+        <Polyline
+          key={alert.id}
+          points={points}
+          fill={alert.color || theme.colors.white}
+        />
+      );
+    });
+  };
+
+  const renderAfterAlerts = () => {
+    return afterAlerts.map((alert: Alert) => {
+      const angle = (alert.timeOffset || 0) / duration;
+      const points = polylinePath(size, angle)
+        .map((point: { x: number; y: number }) => `${point.x},${point.y}`)
+        .join(' ');
+
+      return (
+        <Polyline
+          key={alert.id}
+          points={points}
+          fill={alert.color || theme.colors.white}
+        />
+      );
+    });
+  };
+
   return (
     <View style={[styles.container]} onLayout={onLayout}>
-      <Svg width='100%' height='100%' style = {{backgroundColor: theme.colors.secondary}}>
-        {beforeAlert && (
-          <Polyline
-            points={polylinePath(size, beforeAlertAngle).map((point: { x: number; y: number }) => `${point.x},${point.y}`).join(' ')}
-            fill={theme.colors.primary}
-          />
-        )}
+      <Svg width='100%' height='100%' style = {{backgroundColor: theme.colors.primary}}>
+        {renderBeforeAlerts()}
         <AnimatedPolyline
           animatedProps={animatedProps as any}
         />
-        {timeLeft < 1 && afterAlert && (
+        {timeLeft < 1 && afterAlerts.length > 0 && (
           <>
-            <Polyline
-              points={polylinePath(size, afterAlertAngle).map((point: { x: number; y: number }) => `${point.x},${point.y}`).join(' ')}
-              fill={theme.colors.danger}
-            />
+            {renderAfterAlerts()}
             <AnimatedPolyline
               animatedProps={animatedProps2 as any}
             />
