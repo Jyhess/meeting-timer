@@ -4,12 +4,14 @@ import { EffectId } from '../effects';
 export type AlertType = 'before' | 'end' | 'after';
 
 export const ALERT_COLORS = [
+  '#00FF00', // Vert
   '#FFA500', // Orange
   '#007AFF', // Bleu
   '#808080', // Gris
   '#000000', // Noir
   '#FFFFFF', // Blanc
   '#FFD700', // Jaune
+  '#FF00FF', // Magenta
 ] as const;
 
 export type AlertColor = typeof ALERT_COLORS[number];

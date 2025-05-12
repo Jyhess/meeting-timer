@@ -32,17 +32,17 @@ export const getAngleFromProgress = (percentage: number): number => {
  * @returns An array of points defining the polyline
  */
 export const polylinePath = (size: Size, percentage: number): Point[] => {
+  const center = {x: size.width/2, y: size.height/2};
   if (percentage === 0) {
-    return [{x: size.width/2, y: size.height/2}, {x: size.width/2, y: 0}, {x: size.width/2, y: size.height/2}];
+    return [{x: center.x, y: center.y}, {x: center.x, y: 0}, {x: center.x, y: center.y}];
   }
 
   const angle = getAngleFromProgress(percentage);
-  const angle1 = Math.atan2(size.height, size.width);  // ]0;PI/2[
-  const angle2 = Math.atan2(size.height, -size.width); // ]PI/2;PI[
-  const angle3 = angle1 + Math.PI; // ]PI;3PI/2[
-  const angle4 = angle2 + Math.PI; // ]3PI/2;2PI[
+  const angle1 = Math.atan2(size.height, size.width);  // [0;PI/2[
+  const angle2 = Math.atan2(size.height, -size.width); // [PI/2;PI[
+  const angle3 = angle1 + Math.PI; // [PI;3PI/2[
+  const angle4 = angle2 + Math.PI; // [3PI/2;2PI[
 
-  const center = {x: size.width/2, y: size.height/2};
   let points: Point[] = [
     {x: center.x, y: center.y},
     {x: center.x, y: 0},
@@ -79,4 +79,65 @@ export const polylinePath = (size: Size, percentage: number): Point[] => {
   }
   points.push({x: center.x, y: center.y});
   return points;
+};
+
+/**
+ * Calculate points for a polyline from a starting percentage to the end (100%)
+ * @param size - The dimensions of the container
+ * @param startPercentage - The starting progress percentage (0 to 1)
+ * @returns An array of points defining the polyline from start to end
+ */
+export const polylinePathToEnd = (size: Size, startPercentage: number): Point[] => {
+  const center = {x: size.width/2, y: size.height/2};
+  if(startPercentage === 1) {
+    return [
+      {x: center.x, y: center.y},
+      {x: center.x, y: 0},
+      {x: center.x, y: center.y}
+      ];
+  }
+
+  const angle = getAngleFromProgress(startPercentage);
+  const angleTopRight = Math.atan2(size.height, size.width);
+  const angleTopLeft = Math.atan2(size.height, -size.width);
+  const angleBottomLeft = angleTopRight + Math.PI;
+  const angleBottomRight = angleTopLeft + Math.PI;
+  
+  let points: Point[] = [
+    {x: center.x, y: center.y},
+  ];
+
+  if (angle < angleTopRight) {
+    points.push({x: size.width, y: center.y - (size.width/2) * Math.tan(angle)});
+    points.push({x: size.width, y: size.height});
+    points.push({x: 0, y: size.height});
+    points.push({x: 0, y: 0});
+  } else if (angle <= Math.PI/2) {
+    points.push({x: center.x + (size.height/2) / Math.tan(angle), y: 0});
+    points.push({x: size.width, y: 0});
+    points.push({x: size.width, y: size.height});
+    points.push({x: 0, y: size.height});
+    points.push({x: 0, y: 0});
+  } else if (angle < angleTopLeft) {
+    points.push({x: center.x + (size.height/2) / Math.tan(angle), y: 0});
+  } else if (angle < angleBottomLeft) {
+    points.push({x: 0, y: center.y + (size.width/2) * Math.tan(angle)});
+    points.push({x: 0, y: 0});
+  } else if (angle < angleBottomRight) {
+    points.push({x: center.x - (size.height/2) / Math.tan(angle), y: size.height});
+    points.push({x: 0, y: size.height});
+    points.push({x: 0, y: 0});
+  } else {
+    points.push({x: size.width, y: center.y - (size.width/2) * Math.tan(angle)});
+    points.push({x: size.width, y: size.height});
+    points.push({x: 0, y: size.height});
+    points.push({x: 0, y: 0});
+  }
+
+  // Ajouter le point final
+  points.push({x: center.x, y: 0});
+  points.push({x: center.x, y: center.y});
+
+  return points;
 }; 
+
