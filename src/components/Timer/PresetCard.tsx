@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { sounds } from '../../types/sounds';
-import { Icon } from './Icon';
+import { Icon } from '../common/Icon';
 import { TimerPreset } from '../../types/timer';
 import { Alert, getAlertTimeText } from '../../types/alerts';
 import { formatTimeFromSeconds } from '../../utils/time';
 import { theme } from '../../theme';
+import { ControlButton } from '../common/ControlButton';
 
 type PresetCardProps = {
   preset: TimerPreset;
@@ -65,38 +66,40 @@ export const PresetCard = ({
       {(onEdit || onDelete || onMove) && (
         <View style={styles.actions}>
           {onMove && (
-            <Pressable
+            <ControlButton
               style={styles.actionButton}
+              icon="arrow_left"
+              color={canMoveLeft ? theme.colors.white : theme.colors.gray.dark}
               onPress={() => onMove(preset, 'left')}
               disabled={!canMoveLeft}
-            >
-              <Icon name="arrow_left" size={30} color={canMoveLeft ? theme.colors.white : theme.colors.gray.dark} />
-            </Pressable>
+            />
           )}
           {onEdit && (
-            <Pressable
+            <ControlButton
               style={styles.actionButton}
+              icon="edit"
+              color={theme.colors.white}
               onPress={() => onEdit(preset)}
-            >
-              <Icon name="edit" size={20} color={theme.colors.white} />
-            </Pressable>
+              size={theme.layout.smallIconSize}
+            />
           )}
           {onDelete && (
-            <Pressable
+            <ControlButton
               style={styles.actionButton}
+              icon="bookmark_remove"
+              color={theme.colors.white}
               onPress={() => onDelete(preset)}
-            >
-              <Icon name="bookmark_remove" size={20} color={theme.colors.white} />
-            </Pressable>
+              size={theme.layout.smallIconSize}
+            />
           )}
           {onMove && (
-            <Pressable
+            <ControlButton
               style={styles.actionButton}
+              icon="arrow_right"
+              color={canMoveRight ? theme.colors.white : theme.colors.gray.dark}
               onPress={() => onMove(preset, 'right')}
               disabled={!canMoveRight}
-            >
-              <Icon name="arrow_right" size={30} color={canMoveRight ? theme.colors.white : theme.colors.gray.dark} />
-            </Pressable>
+            />
           )}
         </View>
       )}

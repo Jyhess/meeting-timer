@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Link, useFocusEffect } from 'expo-router';
 import { usePresets } from '../../src/hooks/usePresets';
-import { Icon } from '../../src/components/Timer/Icon';
+import { Icon } from '../../src/components/common/Icon';
 import { PresetCard } from '../../src/components/Timer/PresetCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../../src/styles/Presets.styles';

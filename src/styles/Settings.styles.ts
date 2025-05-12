@@ -26,8 +26,8 @@ export const styles = StyleSheet.create({
   },
   section: {
     marginBottom: theme.spacing.xlarge,
-    padding: 16,
-    borderRadius: 12,
+    padding: theme.spacing.medium,
+    borderRadius: theme.borders.radius.medium,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     overflow: 'hidden',
   },
@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
   },
   languageContainer: {
     flexDirection: 'row',
-    gap: 12,
+    gap: theme.spacing.medium,
   },
   languageButton: {
     flex: 1,
@@ -65,7 +65,6 @@ export const styles = StyleSheet.create({
   },
   durationContainer: {
     borderRadius: theme.borders.radius.medium,
-    //padding: theme.spacing.small,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -94,61 +93,44 @@ export const styles = StyleSheet.create({
   },
   durationControls: {
     flexDirection: 'row',
-    gap: 8,
-  },
-  durationButton: {
-    width: 44,
-    height: 44,
-    borderRadius: theme.borders.radius.round,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    gap: theme.spacing.small,
   },
   soundsList: {
     width: '100%',
-    gap: 12,
+    gap: theme.spacing.small,
   },
   soundItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.gray.dark,
-    padding: 16,
-    borderRadius: 8,
+    padding: theme.spacing.medium,
+    borderRadius: theme.borders.radius.medium,
     width: '100%',
     justifyContent: 'space-between',
   },
   soundInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: theme.spacing.medium,
     flex: 1,
   },
   soundControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: theme.spacing.medium,
   },
   soundName: {
     color: theme.colors.white,
-    fontSize: 16,
+    fontSize: theme.typography.fontSize.medium,
     flex: 1,
   },
   playButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  confirmButton: {
-    width: 44,
-    height: 44,
+    width: theme.layout.iconSize,
+    height: theme.layout.iconSize,
     borderRadius: theme.borders.radius.round,
     backgroundColor: theme.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: theme.spacing.medium,
   },
   legalLink: {
     flexDirection: 'row',
@@ -181,9 +163,5 @@ export const styles = StyleSheet.create({
     padding: theme.spacing.small,
     borderRadius: theme.borders.radius.medium,
     gap: theme.spacing.small,
-  },
-  copyButtonActive: {
-    backgroundColor: theme.colors.primary,
-    opacity: 0.8,
   },
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { styles } from '../../styles/Keypad.styles';
-import { Icon } from './Icon';
+import { Icon } from '../common/Icon';
 import { theme } from '../../theme';
 
 interface KeypadProps {

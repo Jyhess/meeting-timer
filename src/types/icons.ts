@@ -1,7 +1,6 @@
 export const iconMap = {
   add: require('../../assets/icons/add.png'),
   add_circle: require('../../assets/icons/add_circle.png'),
-  add_alert: require('../../assets/icons/add_alert.png'),
   alarm: require('../../assets/icons/alarm.png'),
   arrow_back: require('../../assets/icons/arrow_back.png'),
   arrow_left: require('../../assets/icons/arrow_left.png'),
@@ -28,6 +27,7 @@ export const iconMap = {
   history: require('../../assets/icons/history.png'),
   music_note: require('../../assets/icons/music_note.png'),
   more_time: require('../../assets/icons/more_time.png'),
+  notification_add: require('../../assets/icons/notification_add.png'),
   notifications: require('../../assets/icons/notifications.png'),
   notifications_active: require('../../assets/icons/notifications_active.png'),
   pause: require('../../assets/icons/pause.png'),

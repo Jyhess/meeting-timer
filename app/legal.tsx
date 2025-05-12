@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, Text, View, Pressable, Linking } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Icon } from '@/src/components/Timer/Icon';
+import { Icon } from '@/src/components/common/Icon';
 import Constants from 'expo-constants';
 import { theme } from '@/src/theme';
 import { styles } from '@/src/styles/Legal.styles';

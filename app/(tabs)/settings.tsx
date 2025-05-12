@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Icon } from '../../src/components/Timer/Icon';
+import { Icon } from '../../src/components/common/Icon';
 import { IconName } from '../../src/types/icons';
 import { useSettings } from '../../src/hooks/useSettings';
 import { styles } from '../../src/styles/Settings.styles';
@@ -25,6 +25,8 @@ import Constants from 'expo-constants';
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import * as Device from 'expo-device';
+import { ControlButton } from '@/src/components/common/ControlButton';
+import { OptionButton } from '@/src/components/common/OptionButton';
 
 export default function SettingsScreen() {
   const { t, language, changeLanguage } = useTranslation();
@@ -117,27 +119,25 @@ export default function SettingsScreen() {
               </View>
               
               <View style={styles.durationControls}>
-                <Pressable
-                  style={styles.durationButton}
+                <ControlButton
+                  icon="remove"
                   onPress={() => {
                     const newValue = Math.max(1, parseInt(alertDuration, 10) - 1);
                     setAlertDuration(newValue.toString());
                     setDefaultAlertDuration(newValue);
                   }}
-                >
-                  <Icon name="remove" size={24} color="#eee" />
-                </Pressable>
+                  size={theme.layout.smallIconSize}
+                />
                 
-                <Pressable
-                  style={styles.durationButton}
+                <ControlButton
+                  icon="add"
                   onPress={() => {
                     const newValue = Math.min(30, parseInt(alertDuration, 10) + 1);
                     setAlertDuration(newValue.toString());
                     setDefaultAlertDuration(newValue);
                   }}
-                >
-                  <Icon name="add" size={24} color="#eee" />
-                </Pressable>
+                  size={theme.layout.smallIconSize}
+                />
               </View>
             </View>
           </View>
@@ -160,15 +160,12 @@ export default function SettingsScreen() {
                       value={availableSounds.includes(soundConfig.id)}
                       onToggle={() => toggleSound(soundConfig.id, !availableSounds.includes(soundConfig.id))}
                     />
-                    <Pressable
+                    <ControlButton
                       style={styles.playButton}
+                      icon={playingSound === soundConfig.id ? "stop" : "play_arrow"}
                       onPress={() => playingSound === soundConfig.id ? stopSound() : playSound(soundConfig.id)}
-                    >
-                      <Icon
-                        name={playingSound === soundConfig.id ? "stop" : "play_arrow" as IconName}
-                        size={24}
-                      />
-                    </Pressable>
+                      size={theme.layout.smallIconSize}
+                    />
                   </View>
                 </View>
               ))}
@@ -182,23 +179,18 @@ export default function SettingsScreen() {
             </Text>
             
             <View style={styles.languageContainer}>
-              <Pressable
-                style={[styles.languageButton, language === 'fr' && styles.languageButtonActive]}
+              <OptionButton
+                id="fr"
+                label="Français"
+                isSelected={language === 'fr'}
                 onPress={() => handleLanguageChange('fr')}
-              >
-                <Text style={[styles.languageText, language === 'fr' && styles.languageTextActive]}>
-                  Français
-                </Text>
-              </Pressable>
-              
-              <Pressable
-                style={[styles.languageButton, language === 'en' && styles.languageButtonActive]}
+              />
+              <OptionButton
+                id="en"
+                label="English"
+                isSelected={language === 'en'}
                 onPress={() => handleLanguageChange('en')}
-              >
-                <Text style={[styles.languageText, language === 'en' && styles.languageTextActive]}>
-                  English
-                </Text>
-              </Pressable>
+              />
             </View>
           </View>
 
@@ -212,16 +204,12 @@ export default function SettingsScreen() {
               <Text style={styles.versionText}>SDK {sdkVersion}</Text>
               <Text style={styles.versionText}>{applicationName} ({applicationId})</Text>
               <Text style={styles.versionText}>Updated {lastUpdateTime}</Text>
-              <Pressable
-                style={[styles.copyButton, copied && styles.copyButtonActive]}
+              <ControlButton
+                style={styles.copyButton}
+                icon={copied ? "check" : "content_copy"}
                 onPress={handleCopyVersion}
-              >
-                <Icon
-                  name={copied ? "check" : "content_copy"}
-                  size={20}
-                  color={theme.colors.white}
-                />
-              </Pressable>
+                size={theme.layout.smallIconSize}
+              />
             </View>
             <Link href="/legal" asChild>
               <Pressable style={styles.legalLink}>
