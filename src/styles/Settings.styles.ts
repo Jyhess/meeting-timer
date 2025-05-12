@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     padding: theme.spacing.medium,
   },
   section: {
-    marginBottom: theme.spacing.xlarge,
+    marginBottom: theme.spacing.medium,
     padding: theme.spacing.medium,
     borderRadius: theme.borders.radius.medium,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
