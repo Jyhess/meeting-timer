@@ -69,7 +69,7 @@ export function CircularProgress() {
       progressNegative.value = getAnimetedValue(remaining, progressNegative.value);
     }
     // When the timer is reset, we need to reset the progress
-    if( timeLeft == duration)
+    if( timeLeft === duration )
     {
       progress.value = 0;
       progressNegative.value = 0;
