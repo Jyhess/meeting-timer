@@ -41,6 +41,7 @@ export default function SettingsScreen() {
   const [alertDuration, setAlertDuration] = useState(defaultAlertDuration.toString());
   const { playSound, stopSound, playingSound } = useAudio();
   const [copied, setCopied] = useState(false);
+  const [lastUpdateTime, setLastUpdateTime] = useState('?');
 
   const applicationId = Application.applicationId || '?ID?';
   const applicationName = Application.applicationName || '?NAME?';
@@ -49,18 +50,30 @@ export default function SettingsScreen() {
   const sdkVersion = Constants.expoConfig?.sdkVersion || '?';
   const platform = Platform.OS || '?';
   const platformVersion = Platform.Version || '?';
-  const lastUpdateTime = Platform.OS === 'web' 
-    ? 'N/A' 
-    : Application.getLastUpdateTimeAsync().then((date) => date.toISOString().replace('T', ' ').slice(0, 16)) || '?';
+
+  const getLastUpdateTime = async () => {
+    if (Platform.OS === 'web') {
+      return 'N/A';
+    }
+    const date = await Application.getLastUpdateTimeAsync();
+    return date.toISOString().replace('T', ' ').slice(0, 16) || '?';
+  };
+
+  useEffect(() => {
+    getLastUpdateTime().then(setLastUpdateTime);
+  }, []);
+
+  const getVersionInfo = () => {
+    return `Version ${version} (Build ${buildNumber})` + 
+      `\nPlatform: ${platform} ${platformVersion}` +
+      `\nDevice: ${Device.manufacturer} - ${Device.modelName}` +
+      `\nSDK: ${sdkVersion}` +
+      `\n${applicationName} (${applicationId})` +
+      `\nUpdated: ${lastUpdateTime}`;
+  };
 
   const handleCopyVersion = async () => {
-    const toCopy = `Version ${version} (Build ${buildNumber})` + 
-    `\nPlatform: ${platform} ${platformVersion}` +
-    `\nDevice: ${Device.manufacturer} - ${Device.modelName}` +
-    `\nSDK: ${sdkVersion}` +
-    `\n${applicationName} (${applicationId})` +
-    `\nUpdated: ${lastUpdateTime}`;
-    await Clipboard.setStringAsync(toCopy);
+    await Clipboard.setStringAsync(getVersionInfo());
     setCopied(true);
     if (Platform.OS === 'ios') {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
